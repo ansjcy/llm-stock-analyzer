@@ -113,12 +113,12 @@ jobs:
       - name: Sync reports to frontend
         run: |
           # Copy reports and charts to the frontend's public directory
-          mkdir -p stock-analysis-viewer/public/data
+          mkdir -p stock-analysis-viewer/public/reports
           mkdir -p stock-analysis-viewer/public/charts
           
           # Copy reports
           if [ -d "reports" ] && [ "$(ls -A reports/)" ]; then
-            cp -r reports/* stock-analysis-viewer/public/data/ 2>/dev/null || true
+            cp -r reports/* stock-analysis-viewer/public/reports/ 2>/dev/null || true
             echo "Copied reports to frontend"
           fi
           
@@ -130,11 +130,11 @@ jobs:
           
           # Create a data manifest for the frontend
           echo "Creating data manifest..."
-          cat > stock-analysis-viewer/public/data/manifest.json << EOF
+          cat > stock-analysis-viewer/public/manifest.json << EOF
           {
             "lastUpdated": "$(date -u '+%Y-%m-%dT%H:%M:%S.%3NZ')",
             "ticker": "AMZN",
-            "reports": $(find stock-analysis-viewer/public/data -name "*.json" -not -name "manifest.json" 2>/dev/null | jq -R -s -c 'split("\n")[:-1] | map(gsub("stock-analysis-viewer/public/data/"; ""))' || echo '[]'),
+            "reports": $(find stock-analysis-viewer/public/reports -name "*.json" 2>/dev/null | jq -R -s -c 'split("\n")[:-1] | map(gsub("stock-analysis-viewer/public/reports/"; ""))' || echo '[]'),
             "charts": $(find stock-analysis-viewer/public/charts -type f 2>/dev/null | jq -R -s -c 'split("\n")[:-1] | map(gsub("stock-analysis-viewer/public/charts/"; ""))' || echo '[]'),
             "status": "$([ -f "reports/placeholder.json" ] && echo "failed" || echo "success")"
           }
