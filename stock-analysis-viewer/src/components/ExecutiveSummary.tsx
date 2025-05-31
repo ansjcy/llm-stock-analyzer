@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Brain, TrendingUp, Newspaper, DollarSign } from 'lucide-react';
-import { LLMInsights } from '@/types/analysis';
+import { FileText } from 'lucide-react';
+import { Summary } from '@/types/analysis';
 import HelpTooltip from './HelpTooltip';
 
-interface AIInsightsProps {
-  llmInsights: LLMInsights;
+interface ExecutiveSummaryProps {
+  summary?: Summary;
 }
 
-export default function AIInsights({ llmInsights }: AIInsightsProps) {
+export default function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
   const MarkdownContent = ({ content }: { content: string }) => (
     <div className="prose prose-sm max-w-none 
                     prose-headings:text-gray-800 prose-headings:font-semibold 
@@ -74,64 +74,23 @@ export default function AIInsights({ llmInsights }: AIInsightsProps) {
     </div>
   );
 
+  if (!summary) {
+    return null;
+  }
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
-        <Brain className="mr-2 text-blue-600" />
-        AI生成的见解
+      <div className="flex items-center space-x-2 mb-6">
+        <FileText className="text-indigo-600" />
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">执行摘要</h2>
         <HelpTooltip 
-          content="AI生成的见解结合多个数据源和分析技术，提供对技术指标、基本面指标和市场情绪的全面、智能解读。"
-          title="AI分析概述"
+          content="将所有分析结果合并为关键要点的高级概述。非常适合快速决策，本节将复杂分析提炼为可操作的见解和主要投资主题。"
+          title="执行摘要"
           size="md"
-          className="ml-2"
         />
-      </h2>
-
-      <div className="grid grid-cols-1 gap-6">
-        {llmInsights.technical && (
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-4">
-            <div className="flex items-center space-x-2 mb-3">
-              <TrendingUp className="text-blue-600" size={20} />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">技术分析</h3>
-              <HelpTooltip 
-                content="AI对技术指标、图表形态和价格走势的解读。这种分析结合多个技术信号，提供关于入场/出场时机和趋势方向的可操作见解。"
-                title="AI技术分析"
-                size="sm"
-              />
-            </div>
-            <MarkdownContent content={llmInsights.technical} />
-          </div>
-        )}
-
-        {llmInsights.fundamental && (
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-4">
-            <div className="flex items-center space-x-2 mb-3">
-              <DollarSign className="text-green-600" size={20} />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">基本面分析</h3>
-              <HelpTooltip 
-                content="AI对公司基本面的评估，包括财务健康状况、估值指标、竞争地位和商业模式实力。这有助于评估股票的内在价值和长期前景。"
-                title="AI基本面分析"
-                size="sm"
-              />
-            </div>
-            <MarkdownContent content={llmInsights.fundamental} />
-          </div>
-        )}
-
-        {llmInsights.news && (
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg p-4">
-            <div className="flex items-center space-x-2 mb-3">
-              <Newspaper className="text-purple-600" size={20} />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">新闻与情绪</h3>
-              <HelpTooltip 
-                content="AI对近期新闻、市场情绪和公众认知的分析。包括对财报、分析师意见、行业趋势和可能影响股价的社交媒体情绪的评估。"
-                title="AI情绪分析"
-                size="sm"
-              />
-            </div>
-            <MarkdownContent content={llmInsights.news} />
-          </div>
-        )}
+      </div>
+      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-lg p-6">
+        <MarkdownContent content={summary.executive_summary} />
       </div>
     </div>
   );

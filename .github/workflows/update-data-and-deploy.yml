@@ -44,7 +44,7 @@ jobs:
       
       - name: Run stock analysis
         run: |
-          python src/main.py --ticker AMZN --chinese --charts --save-report --format json
+          python src/main.py --ticker AMZN,AAPL,GOOGL,AVGO,SPY,QQQ,NVDA,TSLA --chinese --charts --save-report --format json
         env:
           PYTHONPATH: ${{ github.workspace }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

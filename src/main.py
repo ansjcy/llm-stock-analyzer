@@ -322,7 +322,17 @@ class StockAnalyzer:
         basic_table.add_row(volume_label, volume_formatted)
 
         basic_table.add_row(pe_ratio_label, f"{stock_info.get('pe_ratio', 'N/A')}")
-        basic_table.add_row(beta_label, f"{stock_info.get('beta', 'N/A')}")
+        
+        # Enhanced beta display - check both stock info and correlation analysis
+        beta_value = stock_info.get('beta')
+        correlation_analysis = results.get('correlation_analysis', {})
+        beta_dict = correlation_analysis.get('beta', {})
+        correlation_beta = beta_dict.get('sp500_beta') if isinstance(beta_dict, dict) else None
+        
+        # Use correlation beta if available and valid, otherwise use stock info beta
+        display_beta = correlation_beta if correlation_beta is not None else beta_value
+        beta_formatted = f"{display_beta:.3f}" if isinstance(display_beta, (int, float)) else "N/A"
+        basic_table.add_row(beta_label, beta_formatted)
 
         console.print(basic_table)
 
@@ -412,7 +422,7 @@ class StockAnalyzer:
                 histogram_label = "柱状图" if self.language == 'zh' else "Histogram"
                 histogram_value = trend.get('macd_histogram', 'N/A')
                 histogram_formatted = f"{histogram_value:.4f}" if isinstance(histogram_value, (int, float)) else str(histogram_value)
-                tech_summary += f"• MACD: {trend.get('macd_signal', 'N/A')} ({histogram_label}: {histogram_formatted})\n"
+                tech_summary += f"• MACD: {trend.get('macd_trend', 'N/A')} ({histogram_label}: {histogram_formatted})\n"
 
             # Get moving average trend from the moving_averages section
             moving_averages = tech_analysis.get('moving_averages', {})
@@ -455,7 +465,15 @@ class StockAnalyzer:
             div_label = t('diversification_score') if self.language == 'zh' else "Diversification Score"
             beta_label = t('beta_vs_sp500') if self.language == 'zh' else "Beta (vs S&P 500)"
             corr_summary += f"\n{div_label}: {diversification}\n"
-            corr_summary += f"{beta_label}: {beta:.3f}" if isinstance(beta, (int, float)) else f"Beta: {beta}"
+            
+            # Handle beta display from correlation analysis
+            if isinstance(beta, dict):
+                sp500_beta = beta.get('sp500_beta', 'N/A')
+                beta_formatted = f"{sp500_beta:.3f}" if isinstance(sp500_beta, (int, float)) else "N/A"
+            else:
+                beta_formatted = f"{beta:.3f}" if isinstance(beta, (int, float)) else str(beta) if beta != 'N/A' else "N/A"
+            
+            corr_summary += f"{beta_label}: {beta_formatted}"
 
             console.print(Panel(corr_summary, title=corr_title))
 
@@ -624,7 +642,7 @@ class StockAnalyzer:
             # Add trend indicators
             trend = tech_analysis.get('trend', {})
             if trend:
-                md_content += f"- **MACD Signal:** {trend.get('macd_signal', 'N/A')}\n"
+                md_content += f"- **MACD Signal:** {trend.get('macd_trend', 'N/A')}\n"
 
             # Get moving average trend from the moving_averages section
             moving_averages = tech_analysis.get('moving_averages', {})
@@ -657,8 +675,13 @@ class StockAnalyzer:
                     md_content += f"\n| {index_name} | {corr_value} |"
 
             beta_value = correlation.get('beta', 'N/A')
-            beta_formatted = f"{beta_value:.3f}" if isinstance(beta_value, (int, float)) else str(beta_value)
-
+            # Handle beta display from correlation analysis for markdown
+            if isinstance(beta_value, dict):
+                sp500_beta = beta_value.get('sp500_beta', 'N/A')
+                beta_formatted = f"{sp500_beta:.3f}" if isinstance(sp500_beta, (int, float)) else "N/A"
+            else:
+                beta_formatted = f"{beta_value:.3f}" if isinstance(beta_value, (int, float)) else str(beta_value) if beta_value != 'N/A' else "N/A"
+            
             md_content += f"""
 
 **Diversification Score:** {correlation.get('diversification_score', 'N/A')}  
@@ -980,7 +1003,7 @@ class StockAnalyzer:
 
 
 @click.command()
-@click.option('--ticker', '-t', required=True, help='Stock ticker symbol (e.g., AAPL, MSFT)')
+@click.option('--ticker', '-t', required=True, help='Stock ticker symbol(s) - use comma to separate multiple tickers (e.g., AAPL,MSFT,GOOGL)')
 @click.option('--detailed', '-d', is_flag=True, help='Show detailed analysis')
 @click.option('--save-report', '-s', is_flag=True, help='Save report to file')
 @click.option('--charts', '-c', is_flag=True, help='Generate technical analysis charts')
@@ -1003,7 +1026,14 @@ def main(ticker, detailed, save_report, charts, start_date, end_date, report_for
         console.print(f"[red]{error_msg}[/red]")
         sys.exit(1)
 
-    ticker = ticker.upper()
+    # Parse ticker symbols - support multiple tickers separated by comma
+    ticker_list = [t.strip().upper() for t in ticker.split(',') if t.strip()]
+    
+    # Validate that we have at least one ticker
+    if not ticker_list:
+        error_msg = "No valid ticker symbols provided." if language == 'en' else "未提供有效的股票代码。"
+        console.print(f"[red]{error_msg}[/red]")
+        sys.exit(1)
 
     # Parse benchmark symbols
     benchmark_symbols = None
@@ -1018,6 +1048,7 @@ def main(ticker, detailed, save_report, charts, start_date, end_date, report_for
         detailed_text = "详细" if detailed else "摘要"
         features_label = "功能"
         features_text = "25+技术指标 | 策略组合 | 相关性分析"
+        total_stocks_label = "股票总数"
     else:
         title = "LLM Stock Analysis Tool - Enhanced Edition"
         analyzing_label = "Analyzing"
@@ -1025,30 +1056,53 @@ def main(ticker, detailed, save_report, charts, start_date, end_date, report_for
         detailed_text = "Detailed" if detailed else "Summary"
         features_label = "Features"
         features_text = "25+ Technical Indicators | Strategic Combinations | Correlation Analysis"
+        total_stocks_label = "Total Stocks"
 
+    # Display ticker list
+    ticker_display = ", ".join(ticker_list)
     console.print(Panel.fit(
         f"[bold blue]{title}[/bold blue]\n"
-        f"{analyzing_label}: [green]{ticker}[/green]\n"
+        f"{analyzing_label}: [green]{ticker_display}[/green]\n"
+        f"{total_stocks_label}: {len(ticker_list)}\n"
         f"{mode_label}: {detailed_text}\n"
         f"{features_label}: {features_text}"
     ))
 
     try:
         analyzer = StockAnalyzer(llm_provider=llm_provider, benchmark_symbols=benchmark_symbols, language=language)
-        results = analyzer.analyze_stock(
-            ticker=ticker,
-            detailed=detailed,
-            start_date=start_date,
-            end_date=end_date,
-            generate_charts=charts
-        )
+        
+        # Analyze each ticker
+        for i, current_ticker in enumerate(ticker_list, 1):
+            # Show progress for multiple tickers
+            if len(ticker_list) > 1:
+                progress_msg = f"Processing {i}/{len(ticker_list)}: {current_ticker}" if language == 'en' else f"处理 {i}/{len(ticker_list)}: {current_ticker}"
+                console.print(f"\n[bold cyan]{'='*60}[/bold cyan]")
+                console.print(f"[bold cyan]{progress_msg}[/bold cyan]")
+                console.print(f"[bold cyan]{'='*60}[/bold cyan]")
 
-        # Display results
-        analyzer.display_results(results, detailed=detailed)
+            results = analyzer.analyze_stock(
+                ticker=current_ticker,
+                detailed=detailed,
+                start_date=start_date,
+                end_date=end_date,
+                generate_charts=charts
+            )
 
-        # Save report if requested
-        if save_report:
-            analyzer.save_report(results, format_type=report_format)
+            # Display results
+            analyzer.display_results(results, detailed=detailed)
+
+            # Save report if requested
+            if save_report:
+                analyzer.save_report(results, format_type=report_format)
+                
+            # Add spacing between multiple ticker analyses
+            if len(ticker_list) > 1 and i < len(ticker_list):
+                console.print("\n")
+
+        # Summary message for multiple tickers
+        if len(ticker_list) > 1:
+            completion_msg = f"Analysis completed for all {len(ticker_list)} stocks." if language == 'en' else f"已完成所有 {len(ticker_list)} 只股票的分析。"
+            console.print(f"\n[bold green]✅ {completion_msg}[/bold green]")
 
     except KeyboardInterrupt:
         interrupt_msg = "Analysis interrupted by user" if language == 'en' else "用户中断分析"
@@ -1057,7 +1111,7 @@ def main(ticker, detailed, save_report, charts, start_date, end_date, report_for
     except Exception as e:
         error_msg = f"Error during analysis: {e}" if language == 'en' else f"分析过程中出错：{e}"
         console.print(f"\n[red]{error_msg}[/red]")
-        stock_logger.error(f"Analysis error for {ticker}: {e}")
+        stock_logger.error(f"Analysis error: {e}")
         sys.exit(1)
 
 

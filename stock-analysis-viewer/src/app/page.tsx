@@ -7,6 +7,8 @@ import TechnicalAnalysis from '@/components/TechnicalAnalysis';
 import CorrelationChart from '@/components/CorrelationChart';
 import NewsSection from '@/components/NewsSection';
 import AIInsights from '@/components/AIInsights';
+import ExecutiveSummary from '@/components/ExecutiveSummary';
+import InvestmentRecommendation from '@/components/InvestmentRecommendation';
 import { Upload, FileText, TrendingUp, AlertCircle, ChevronDown, Moon, Sun } from 'lucide-react';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 
@@ -439,29 +441,47 @@ function HomeContent() {
           </div>
         </div>
 
-        <StockOverview 
-          ticker={analysisData.ticker}
-          stockInfo={analysisData.stock_info}
-          analysisDate={analysisData.analysis_date}
-        />
+        <div className="mb-6">
+          <StockOverview 
+            ticker={analysisData.ticker}
+            stockInfo={analysisData.stock_info}
+            analysisDate={analysisData.analysis_date}
+          />
+        </div>
         
-        <TechnicalAnalysis 
-          technicalAnalysis={analysisData.technical_analysis}
-          charts={analysisData.charts}
-        />
+        <div className="mb-6">
+          <ExecutiveSummary 
+            summary={analysisData.summary}
+          />
+        </div>
         
-        <CorrelationChart 
-          correlationAnalysis={analysisData.correlation_analysis}
-        />
+        <div className="mb-6">
+          <InvestmentRecommendation 
+            recommendation={analysisData.recommendation}
+          />
+        </div>
         
-        <NewsSection 
-          newsAnalysis={analysisData.news_analysis}
-        />
+        <div className="mb-6">
+          <TechnicalAnalysis 
+            technicalAnalysis={analysisData.technical_analysis}
+            charts={analysisData.charts}
+          />
+        </div>
+        
+        <div className="mb-6">
+          <CorrelationChart 
+            correlationAnalysis={analysisData.correlation_analysis}
+          />
+        </div>
+        
+        <div className="mb-6">
+          <NewsSection 
+            newsAnalysis={analysisData.news_analysis}
+          />
+        </div>
         
         <AIInsights 
           llmInsights={analysisData.llm_insights}
-          recommendation={analysisData.recommendation}
-          summary={analysisData.summary}
         />
       </div>
     </div>

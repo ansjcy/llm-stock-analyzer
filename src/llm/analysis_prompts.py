@@ -633,7 +633,7 @@ class AnalysisPrompts:
         """Get executive summary prompt"""
         
         if language == 'zh':
-            system_prompt = "你是一位专业的投资研究主管，负责为高级管理层和客户提供简洁而全面的执行摘要。请突出关键见解和可操作的投资要点。"
+            system_prompt = "你是一位专业的投资研究主管，负责为高级管理层和客户提供简洁而全面的执行摘要。请突出关键见解和可操作的投资要点，并基于技术分析数据提供具体的股价区间预测。"
             
             user_prompt = f"""
             作为投资研究主管，请为{ticker} ({stock_info.get('name', ticker)})提供执行摘要。
@@ -672,14 +672,20 @@ class AnalysisPrompts:
                - 主要风险因素
                - 风险调整评级
             
-            4. **即刻行动要求**：
+            4. **股价区间预测**：
+               - 基于技术分析数据，提供3个月和6个月的股价区间预测
+               - 包括支撑位和阻力位
+               - 基于技术指标（RSI、MACD、移动平均线等）的价格目标
+               - 突破/跌破关键技术位的情景分析
+            
+            5. **即刻行动要求**：
                - 需要立即关注的事项
                - 时间敏感的催化剂
             
-            限制在300字以内，突出最关键的投资要点。
+            限制在400字以内，突出最关键的投资要点和具体的价格预测。
             """
         else:
-            system_prompt = "You are a senior investment research director responsible for providing concise yet comprehensive executive summaries for senior management and clients. Highlight key insights and actionable investment points."
+            system_prompt = "You are a senior investment research director responsible for providing concise yet comprehensive executive summaries for senior management and clients. Highlight key insights and actionable investment points, and provide specific stock price range estimates based on technical analysis data."
             
             user_prompt = f"""
             As a senior investment research director, provide an executive summary for {ticker} ({stock_info.get('name', ticker)}).
@@ -718,11 +724,17 @@ class AnalysisPrompts:
                - Primary risk factors
                - Risk-adjusted rating
             
-            4. **IMMEDIATE ACTION ITEMS**:
+            4. **STOCK PRICE RANGE ESTIMATION**:
+               - Based on technical analysis data, provide 3-month and 6-month price range forecasts
+               - Include support and resistance levels
+               - Price targets based on technical indicators (RSI, MACD, moving averages, etc.)
+               - Scenario analysis for breaking above/below key technical levels
+            
+            5. **IMMEDIATE ACTION ITEMS**:
                - Items requiring immediate attention
                - Time-sensitive catalysts
             
-            Keep under 300 words, highlighting the most critical investment points.
+            Keep under 400 words, highlighting the most critical investment points and specific price predictions.
             """
         
         return {
