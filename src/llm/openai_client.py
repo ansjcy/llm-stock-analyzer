@@ -89,6 +89,28 @@ class OpenAIClient(BaseLLMClient):
             stock_logger.error(f"Error generating news analysis: {e}")
             return f"Error generating news analysis: {str(e)}"
     
+    def generate_warren_buffett_analysis(self, ticker: str, warren_buffett_data: Dict[str, Any], 
+                                       stock_info: Dict[str, Any]) -> str:
+        """Generate Warren Buffett style investment analysis using LLM"""
+        try:
+            prompts = AnalysisPrompts.get_warren_buffett_analysis_prompt(ticker, warren_buffett_data, stock_info, self.language)
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": prompts["system"]},
+                    {"role": "user", "content": prompts["user"]}
+                ],
+                temperature=0.7,
+                max_tokens=2500
+            )
+            
+            return response.choices[0].message.content
+            
+        except Exception as e:
+            stock_logger.error(f"Error generating Warren Buffett analysis: {e}")
+            return f"Error generating Warren Buffett analysis: {str(e)}"
+    
     def generate_investment_recommendation(self, ticker: str, stock_info: Dict[str, Any],
                                          technical_analysis: str, fundamental_analysis: str,
                                          news_analysis: str) -> str:

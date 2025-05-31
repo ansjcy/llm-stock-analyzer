@@ -31,6 +31,12 @@ class BaseLLMClient(ABC):
         pass
     
     @abstractmethod
+    def generate_warren_buffett_analysis(self, ticker: str, warren_buffett_data: Dict[str, Any], 
+                                       stock_info: Dict[str, Any]) -> str:
+        """Generate Warren Buffett style investment analysis using LLM"""
+        pass
+    
+    @abstractmethod
     def generate_investment_recommendation(self, ticker: str, stock_info: Dict[str, Any],
                                          technical_analysis: str, fundamental_analysis: str,
                                          news_analysis: str) -> str:

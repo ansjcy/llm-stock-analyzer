@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StockAnalysisResult } from '@/types/analysis';
 import StockOverview from '@/components/StockOverview';
 import TechnicalAnalysis from '@/components/TechnicalAnalysis';
@@ -9,6 +9,7 @@ import NewsSection from '@/components/NewsSection';
 import AIInsights from '@/components/AIInsights';
 import ExecutiveSummary from '@/components/ExecutiveSummary';
 import InvestmentRecommendation from '@/components/InvestmentRecommendation';
+import WarrenBuffettAnalysis from '@/components/WarrenBuffettAnalysis';
 import { Upload, FileText, TrendingUp, AlertCircle, ChevronDown, Moon, Sun } from 'lucide-react';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 
@@ -35,7 +36,7 @@ function HomeContent() {
     return `${basePath}${path}`;
   };
 
-  const loadAvailableReports = async () => {
+  const loadAvailableReports = useCallback(async () => {
     try {
       setLoadingReports(true);
       const response = await fetch(getApiUrl('/api/reports'));
@@ -50,7 +51,7 @@ function HomeContent() {
     } finally {
       setLoadingReports(false);
     }
-  };
+  }, []);
 
   const loadReport = async (reportPath: string) => {
     if (!reportPath) return;
@@ -175,6 +176,134 @@ function HomeContent() {
         diversification_score: 65
       },
       fundamental_analysis: {},
+      warren_buffett_analysis: {
+        ticker: "AAPL",
+        analysis_date: "2025-01-09T10:00:00Z",
+        overall_signal: "buy",
+        confidence: 78.5,
+        total_score: 17,
+        max_possible_score: 22,
+        score_percentage: 77.3,
+        margin_of_safety: 12.5,
+        fundamental_analysis: {
+          score: 6,
+          max_score: 8,
+          score_percentage: 75.0,
+          details: [
+            "强劲的股本回报率24.3%（>15%）",
+            "保守的债务水平（0.31）",
+            "优秀的营业利润率（29.8%）",
+            "强劲的流动性（流动比率：1.1）"
+          ],
+          metrics: {
+            return_on_equity: 0.243,
+            debt_to_equity: 0.31,
+            operating_margin: 0.298,
+            current_ratio: 1.1
+          }
+        },
+        consistency_analysis: {
+          score: 4,
+          max_score: 4,
+          score_percentage: 100.0,
+          details: [
+            "5年以上持续正收益",
+            "强劲的收益增长趋势（15.2%）",
+            "低收益波动性",
+            "可预测的商业模式"
+          ],
+          revenue_growth_consistency: 0.92,
+          earnings_growth_consistency: 0.88,
+          fcf_growth_consistency: 0.85
+        },
+        moat_analysis: {
+          score: 4,
+          max_score: 6,
+          score_percentage: 66.7,
+          details: [
+            "强大的品牌价值和生态系统",
+            "客户高转换成本",
+            "溢价定价能力"
+          ],
+          competitive_advantages: [
+            "生态系统锁定效应",
+            "高端品牌定位",
+            "垂直整合供应链",
+            "强大的研发能力"
+          ],
+          moat_strength: "宽阔"
+        },
+        management_analysis: {
+          score: 3,
+          max_score: 4,
+          score_percentage: 75.0,
+          details: [
+            "优秀的资本配置策略",
+            "通过回购和分红实现强劲股东回报",
+            "谨慎投资增长计划"
+          ],
+          capital_allocation_score: 8.5,
+          shareholder_returns_score: 9.2
+        },
+        intrinsic_value_analysis: {
+          intrinsic_value: 195.5,
+          current_price: 185.5,
+          margin_of_safety: 12.5,
+          valuation_method: "带终值的DCF模型",
+          dcf_details: {
+            free_cash_flow: 95000000000,
+            growth_rate: 0.08,
+            terminal_value: 2800000000000,
+            discount_rate: 0.09
+          },
+          reasoning: [
+            "强劲的自由现金流生成支持高内在价值",
+            "保守的年增长假设8%",
+            "9%的折现率考虑了公司风险状况",
+            "当前价格提供了充足的安全边际"
+          ]
+        },
+        investment_reasoning: [
+          "苹果公司展现出卓越的基本面实力，拥有强劲的股本回报率和利润率",
+          "业务在收益和收入增长方面表现出卓越的一致性",
+          "公司通过其生态系统拥有宽阔的经济护城河",
+          "管理层在股东价值创造方面有着良好的记录",
+          "当前估值为长期投资者提供了合理的安全边际"
+        ],
+        buffett_principles: {
+          individual_principles: {
+            financial_strength: {
+              score: 85.0,
+              meets_criteria: true,
+              description: "强劲的股本回报率29.8%，保守的债务水平，优秀的营业利润率，以及强劲的流动性状况"
+            },
+            predictable_earnings: {
+              score: 90.0,
+              meets_criteria: true,
+              description: "5年以上持续正收益，强劲的增长趋势和低波动性"
+            },
+            competitive_advantage: {
+              score: 80.0,
+              meets_criteria: true,
+              description: "通过生态系统锁定、高端品牌定位和高转换成本形成宽阔的经济护城河"
+            },
+            quality_management: {
+              score: 85.0,
+              meets_criteria: true,
+              description: "优秀的资本配置策略，强劲的股东回报和谨慎的增长投资"
+            },
+            margin_of_safety: {
+              score: 75.0,
+              meets_criteria: true,
+              description: "当前价格提供合理的安全边际，相对内在价值有12.5%的折价"
+            }
+          },
+          total_principles_met: 5,
+          total_principles: 5,
+          adherence_percentage: 100.0,
+          overall_assessment: "优秀的巴菲特候选股"
+        }
+      },
       news_analysis: {
         articles_found: 5,
         recent_articles: [
@@ -193,7 +322,8 @@ function HomeContent() {
       llm_insights: {
         technical: "## Technical Analysis Summary\n\nThe technical indicators show a **bullish** outlook with high confidence (72.5%). Key findings:\n\n- **RSI at 58.3**: Neutral territory with room for upward movement\n- **MACD showing bullish crossover** with positive histogram\n- **Price above all major moving averages** indicating strong trend\n\n### Strategic Signals\n- RSI+MACD strategy is bullish (score: 8.2/10)\n- Strong volume confirmation supports the upward trend",
         fundamental: "## Fundamental Analysis\n\n**Valuation Assessment**: Moderately valued with P/E of 28.5x\n\n**Key Strengths**:\n- Strong market position in premium consumer electronics\n- Robust services revenue growth\n- Excellent brand loyalty and ecosystem\n\n**Areas to Monitor**:\n- High valuation multiples\n- Dependence on iPhone sales\n- Competitive pressure in emerging markets",
-        news: "## News Sentiment Analysis\n\n**Overall Sentiment**: Positive (7.5/10)\n\n**Key Themes**:\n- Strong quarterly earnings performance\n- AI strategy showing early success\n- Services revenue diversification\n\n**Market Impact**: The recent earnings beat has reinforced investor confidence and supports the current bullish technical setup."
+        news: "## News Sentiment Analysis\n\n**Overall Sentiment**: Positive (7.5/10)\n\n**Key Themes**:\n- Strong quarterly earnings performance\n- AI strategy showing early success\n- Services revenue diversification\n\n**Market Impact**: The recent earnings beat has reinforced investor confidence and supports the current bullish technical setup.",
+        warren_buffett: "## 沃伦·巴菲特投资分析\n\n**投资评级**: 买入 (信心度: 78.5%)\n\n### 核心投资亮点\n\n**1. 卓越的基本面实力**\n- 股本回报率高达24.3%，远超巴菲特15%的标准\n- 营业利润率29.8%，显示出强大的定价能力\n- 保守的债务水平，财务结构稳健\n\n**2. 业务一致性与可预测性**\n- 连续多年实现正收益增长\n- 收益波动性低，商业模式可预测\n- 强劲的现金流生成能力\n\n**3. 宽阔的经济护城河**\n- 生态系统锁定效应创造高转换成本\n- 高端品牌定位带来溢价定价能力\n- 垂直整合供应链提供竞争优势\n\n**4. 优秀的管理质量**\n- 通过股票回购和分红回报股东\n- 谨慎的资本配置策略\n- 强劲的自由现金流生成\n\n### 估值分析\n\n**内在价值**: $195.5 (当前价格: $185.5)\n**安全边际**: 12.5%\n**估值方法**: 带终值的DCF模型\n\n基于保守的8%年增长假设和9%的折现率，当前价格为长期投资者提供了合理的安全边际。\n\n### 巴菲特原则符合度\n\n✅ **财务实力** (85分): 强劲的ROE、低债务、优秀利润率\n✅ **可预测收益** (90分): 持续正收益，增长趋势稳定\n✅ **竞争优势** (80分): 宽阔的经济护城河\n✅ **管理质量** (85分): 股东友好的资本配置\n✅ **安全边际** (75分): 当前价格提供合理折价\n\n**总体评估**: 优秀的巴菲特候选股 (5/5项原则符合)\n\n### 投资建议\n\n苹果公司完全符合沃伦·巴菲特的价值投资标准。公司展现出卓越的基本面实力、可预测的业务模式、宽阔的经济护城河以及优秀的管理团队。当前估值为长期价值投资者提供了有吸引力的投资机会。\n\n**建议仓位**: 适合作为核心持仓，建议配置3-5%的投资组合比重。"
       },
       recommendation: {
         full_analysis: "## Investment Recommendation: BUY\n\n**Target Price**: $195-200 (6-month horizon)\n\n**Investment Thesis**:\n1. Strong technical momentum with bullish indicators\n2. Solid fundamental performance in latest quarter\n3. Positive news sentiment supporting upward trend\n\n**Risk Factors**:\n- High valuation requires continued execution\n- Market volatility could impact tech stocks\n- Competitive pressure in key markets\n\n**Position Sizing**: 3-5% of portfolio for growth-oriented investors"
@@ -211,7 +341,7 @@ function HomeContent() {
   // Load available reports on component mount
   useEffect(() => {
     loadAvailableReports();
-  }, []);
+  }, [loadAvailableReports]);
 
   // Auto-select first report when reports are loaded
   useEffect(() => {
@@ -467,6 +597,15 @@ function HomeContent() {
             charts={analysisData.charts}
           />
         </div>
+        
+        {analysisData.warren_buffett_analysis && (
+          <div className="mb-6">
+            <WarrenBuffettAnalysis 
+              warrenBuffettAnalysis={analysisData.warren_buffett_analysis}
+              llmInsights={analysisData.llm_insights?.warren_buffett}
+            />
+          </div>
+        )}
         
         <div className="mb-6">
           <CorrelationChart 

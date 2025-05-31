@@ -132,6 +132,36 @@ class Translations:
             # File operations
             'report_saved': 'Report saved to: {filename}',
             'error_saving_report': 'Error saving report: {error}',
+            
+            # Warren Buffett Analysis
+            'warren_buffett_analysis': 'Warren Buffett Analysis',
+            'fundamental_strength': 'Fundamental Strength',
+            'business_consistency': 'Business Consistency',
+            'economic_moat': 'Economic Moat',
+            'management_quality': 'Management Quality',
+            'margin_of_safety': 'Margin of Safety',
+            'intrinsic_value': 'Intrinsic Value',
+            'valuation_method': 'Valuation Method',
+            'overall_signal': 'Overall Signal',
+            'confidence_level': 'Confidence Level',
+            'quality_score': 'Quality Score',
+            'analysis_reliability': 'Analysis Reliability',
+            'investment_reasoning': 'Investment Reasoning',
+            'buffett_principles': 'Buffett\'s Investment Principles',
+            'financial_strength': 'Financial Strength',
+            'predictable_earnings': 'Predictable Earnings',
+            'competitive_advantage': 'Competitive Advantage',
+            'quality_management': 'Quality Management',
+            'meets_criteria': 'Meets Criteria',
+            'does_not_meet_criteria': 'Does Not Meet Criteria',
+            'principles_met': 'Principles Met',
+            'overall_assessment': 'Overall Assessment',
+            'intrinsic_value_analysis': 'Intrinsic Value Analysis',
+            'competitive_advantages': 'Competitive Advantages',
+            'moat_strength': 'Moat Strength',
+            'undervalued': 'Undervalued',
+            'overvalued_fair_value': 'Overvalued or Fair Value',
+            'no_investment_reasoning': 'No investment reasoning available',
         }
     
     def _get_chinese_translations(self) -> dict:
@@ -237,6 +267,36 @@ class Translations:
             # File operations
             'report_saved': '报告已保存至：{filename}',
             'error_saving_report': '保存报告时出错：{error}',
+            
+            # Warren Buffett Analysis
+            'warren_buffett_analysis': '沃伦·巴菲特分析',
+            'fundamental_strength': '基本面强度',
+            'business_consistency': '业务一致性',
+            'economic_moat': '经济护城河',
+            'management_quality': '管理质量',
+            'margin_of_safety': '安全边际',
+            'intrinsic_value': '内在价值',
+            'valuation_method': '估值方法',
+            'overall_signal': '整体信号',
+            'confidence_level': '信心水平',
+            'quality_score': '质量评分',
+            'analysis_reliability': '分析可靠性',
+            'investment_reasoning': '投资理由',
+            'buffett_principles': '巴菲特的投资原则',
+            'financial_strength': '财务实力',
+            'predictable_earnings': '可预测收益',
+            'competitive_advantage': '竞争优势',
+            'quality_management': '质量管理',
+            'meets_criteria': '符合标准',
+            'does_not_meet_criteria': '不符合标准',
+            'principles_met': '原则符合',
+            'overall_assessment': '整体评估',
+            'intrinsic_value_analysis': '内在价值分析',
+            'competitive_advantages': '竞争优势',
+            'moat_strength': '护城河强度',
+            'undervalued': '被低估',
+            'overvalued_fair_value': '被高估或公平价值',
+            'no_investment_reasoning': '无可用投资理由',
         }
 
 

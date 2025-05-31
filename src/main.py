@@ -32,6 +32,7 @@ from src.utils.logger import stock_logger
 from src.utils.translations import set_language, t
 from src.data.yahoo_finance import get_yahoo_finance_api
 from src.analysis.technical_indicators import get_technical_analyzer
+from src.analysis.warren_buffett import get_warren_buffett_analyzer
 from src.llm.client_factory import create_llm_client, LLMClientFactory
 
 
@@ -49,6 +50,9 @@ class StockAnalyzer:
         # Initialize technical analyzer with benchmark symbols for correlation analysis
         self.benchmark_symbols = benchmark_symbols
         self.technical_analyzer = get_technical_analyzer(benchmark_symbols=self.benchmark_symbols)
+        
+        # Initialize Warren Buffett analyzer
+        self.warren_buffett_analyzer = get_warren_buffett_analyzer(language=language)
 
         # Try to create LLM client with fallback to available providers
         self.llm_client = None
@@ -96,6 +100,7 @@ class StockAnalyzer:
             'technical_analysis': {},
             'correlation_analysis': {},
             'fundamental_analysis': {},
+            'warren_buffett_analysis': {},
             'news_analysis': {},
             'llm_insights': {},
             'recommendation': {},
@@ -160,6 +165,13 @@ class StockAnalyzer:
             }
             progress.update(task4, completed=1)
 
+            # Step 4.5: Warren Buffett Analysis
+            task45_desc = "Performing Warren Buffett value analysis..." if self.language == 'en' else "执行沃伦·巴菲特价值分析..."
+            task45 = progress.add_task(task45_desc, total=1)
+            warren_buffett_analysis = self.warren_buffett_analyzer.analyze_stock(ticker, stock_info, financial_data)
+            results['warren_buffett_analysis'] = warren_buffett_analysis
+            progress.update(task45, completed=1)
+
             # Step 5: Get news data
             task5_desc = "Fetching recent news..." if self.language == 'en' else "获取最新消息..."
             task5 = progress.add_task(task5_desc, total=1)
@@ -188,7 +200,7 @@ class StockAnalyzer:
             # Step 7: Generate LLM insights (if available)
             if self.llm_client:
                 task7_desc = "Generating AI insights..." if self.language == 'en' else "生成AI洞察..."
-                task7 = progress.add_task(task7_desc, total=4)
+                task7 = progress.add_task(task7_desc, total=5)
 
                 # Enhanced technical analysis insights with comprehensive data
                 if results['technical_analysis']:
@@ -209,6 +221,14 @@ class StockAnalyzer:
                 )
                 results['llm_insights']['fundamental'] = fundamental_insights
                 progress.advance(task7)
+
+                # Warren Buffett analysis insights
+                if results['warren_buffett_analysis']:
+                    warren_buffett_insights = self.llm_client.generate_warren_buffett_analysis(
+                        ticker, results['warren_buffett_analysis'], stock_info
+                    )
+                    results['llm_insights']['warren_buffett'] = warren_buffett_insights
+                    progress.advance(task7)
 
                 # News sentiment analysis
                 if news_articles:
@@ -437,6 +457,74 @@ class StockAnalyzer:
             tech_analysis_title = t('technical_analysis') if self.language == 'zh' else "Technical Analysis"
             console.print(Panel(tech_summary, title=tech_analysis_title))
 
+        # Warren Buffett Value Analysis
+        warren_buffett_analysis = results.get('warren_buffett_analysis', {})
+        if warren_buffett_analysis:
+            wb_title = "Warren Buffett Value Analysis" if self.language == 'en' else "沃伦·巴菲特价值分析"
+            
+            # Get key metrics
+            overall_signal = warren_buffett_analysis.get('overall_signal', 'neutral')
+            confidence = warren_buffett_analysis.get('confidence', 0)
+            score_percentage = warren_buffett_analysis.get('score_percentage', 0)
+            margin_of_safety = warren_buffett_analysis.get('margin_of_safety')
+            
+            # Signal color mapping
+            signal_color = 'green' if overall_signal == 'bullish' else 'red' if overall_signal == 'bearish' else 'yellow'
+            
+            # Translate signal values
+            if self.language == 'zh':
+                signal_trans = {'bullish': '看涨', 'bearish': '看跌', 'neutral': '中性'}
+                overall_signal_display = signal_trans.get(overall_signal, overall_signal)
+                signal_label = "投资信号"
+                confidence_label = "置信度"
+                quality_score_label = "质量评分"
+                margin_safety_label = "安全边际"
+                principles_label = "巴菲特原则"
+            else:
+                overall_signal_display = overall_signal.upper()
+                signal_label = "Investment Signal"
+                confidence_label = "Confidence"
+                quality_score_label = "Quality Score"
+                margin_safety_label = "Margin of Safety"
+                principles_label = "Buffett Principles"
+            
+            wb_summary = f"[bold]{wb_title}[/bold]\n"
+            wb_summary += f"{signal_label}: [{signal_color}]{overall_signal_display}[/] ({confidence_label}: {confidence:.1f}%)\n"
+            wb_summary += f"{quality_score_label}: {score_percentage:.1f}%\n"
+            
+            if margin_of_safety is not None:
+                margin_color = 'green' if margin_of_safety > 0.15 else 'yellow' if margin_of_safety > 0 else 'red'
+                wb_summary += f"{margin_safety_label}: [{margin_color}]{margin_of_safety:.1%}[/]\n"
+            else:
+                wb_summary += f"{margin_safety_label}: N/A\n"
+            
+            # Add Buffett principles evaluation
+            buffett_principles = warren_buffett_analysis.get('buffett_principles', {})
+            if buffett_principles:
+                adherence_percentage = buffett_principles.get('adherence_percentage', 0)
+                overall_assessment = buffett_principles.get('overall_assessment', 'N/A')
+                wb_summary += f"\n[bold]{principles_label}:[/bold]\n"
+                wb_summary += f"• Overall Assessment: {overall_assessment}\n"
+                wb_summary += f"• Principles Met: {buffett_principles.get('total_principles_met', 0)}/{buffett_principles.get('total_principles', 5)} ({adherence_percentage:.1f}%)\n"
+                
+                # Show individual principle status
+                individual_principles = buffett_principles.get('individual_principles', {})
+                if individual_principles:
+                    for principle_name, principle_data in individual_principles.items():
+                        if isinstance(principle_data, dict):
+                            meets_criteria = principle_data.get('meets_criteria', False)
+                            score = principle_data.get('score', 0)
+                            status_icon = "✅" if meets_criteria else "❌"
+                            principle_display = principle_name.replace('_', ' ').title()
+                            wb_summary += f"  {status_icon} {principle_display}: {score:.0f}%\n"
+            
+            # Add key reasoning if available
+            reasoning = warren_buffett_analysis.get('investment_reasoning', '')
+            if reasoning:
+                wb_summary += f"\n[bold]Key Analysis:[/bold]\n{reasoning}"
+            
+            console.print(Panel(wb_summary, title=wb_title))
+
         # Correlation Analysis
         correlation = results.get('correlation_analysis', {})
         if correlation and detailed:
@@ -519,6 +607,13 @@ class StockAnalyzer:
                 console.print(Panel(
                     Markdown(llm_insights['fundamental']),
                     title=fund_title
+                ))
+
+            if 'warren_buffett' in llm_insights:
+                wb_title = "Warren Buffett's Take" if self.language == 'en' else "沃伦·巴菲特观点"
+                console.print(Panel(
+                    Markdown(llm_insights['warren_buffett']),
+                    title=f"[bold magenta]{wb_title}[/bold magenta]"
                 ))
 
             if 'news' in llm_insights and detailed:
@@ -690,22 +785,138 @@ class StockAnalyzer:
 
 """
 
+        # Add Warren Buffett Analysis
+        warren_buffett_analysis = results.get('warren_buffett_analysis', {})
+        if warren_buffett_analysis:
+            overall_signal = warren_buffett_analysis.get('overall_signal', 'neutral')
+            confidence = warren_buffett_analysis.get('confidence', 0)
+            score_percentage = warren_buffett_analysis.get('score_percentage', 0)
+            margin_of_safety = warren_buffett_analysis.get('margin_of_safety')
+            reasoning = warren_buffett_analysis.get('investment_reasoning', '')
+            
+            md_content += f"""## Warren Buffett Value Analysis
+
+**Investment Signal:** {overall_signal.upper()}  
+**Confidence:** {confidence:.1f}%  
+**Quality Score:** {score_percentage:.1f}%  
+**Margin of Safety:** {f"{margin_of_safety:.1%}" if margin_of_safety is not None else "N/A"}  
+
+### Buffett Principles Evaluation
+"""
+            
+            buffett_principles = warren_buffett_analysis.get('buffett_principles', {})
+            if buffett_principles:
+                overall_assessment = buffett_principles.get('overall_assessment', 'N/A')
+                adherence_percentage = buffett_principles.get('adherence_percentage', 0)
+                total_met = buffett_principles.get('total_principles_met', 0)
+                total_principles = buffett_principles.get('total_principles', 5)
+                
+                md_content += f"""
+**Overall Assessment:** {overall_assessment}  
+**Principles Met:** {total_met}/{total_principles} ({adherence_percentage:.1f}%)
+
+| Principle | Status | Score |
+|-----------|--------|-------|"""
+                
+                individual_principles = buffett_principles.get('individual_principles', {})
+                if individual_principles:
+                    for principle_name, principle_data in individual_principles.items():
+                        if isinstance(principle_data, dict):
+                            meets_criteria = principle_data.get('meets_criteria', False)
+                            score = principle_data.get('score', 0)
+                            status_icon = "✅" if meets_criteria else "❌"
+                            principle_display = principle_name.replace('_', ' ').title()
+                            md_content += f"\n| {principle_display} | {status_icon} | {score:.0f}% |"
+                            
+            if reasoning:
+                md_content += f"""
+
+### Investment Analysis
+{reasoning}
+
+"""
+            
+            # Add detailed analysis from each component
+            fundamental_analysis = warren_buffett_analysis.get('fundamental_analysis', {})
+            if fundamental_analysis:
+                details = fundamental_analysis.get('details', [])
+                if details:
+                    md_content += f"""
+### Financial Strength Analysis
+"""
+                    for detail in details:
+                        md_content += f"- {detail}\n"
+            
+            consistency_analysis = warren_buffett_analysis.get('consistency_analysis', {})
+            if consistency_analysis:
+                details = consistency_analysis.get('details', [])
+                if details:
+                    md_content += f"""
+### Earnings Consistency Analysis
+"""
+                    for detail in details:
+                        md_content += f"- {detail}\n"
+            
+            moat_analysis = warren_buffett_analysis.get('moat_analysis', {})
+            if moat_analysis:
+                details = moat_analysis.get('details', [])
+                if details:
+                    md_content += f"""
+### Economic Moat Analysis
+"""
+                    for detail in details:
+                        md_content += f"- {detail}\n"
+            
+            management_analysis = warren_buffett_analysis.get('management_analysis', {})
+            if management_analysis:
+                details = management_analysis.get('details', [])
+                if details:
+                    md_content += f"""
+### Management Quality Analysis
+"""
+                    for detail in details:
+                        md_content += f"- {detail}\n"
+            
+            intrinsic_value_analysis = warren_buffett_analysis.get('intrinsic_value_analysis', {})
+            if intrinsic_value_analysis:
+                per_share_value = intrinsic_value_analysis.get('per_share_value')
+                method = intrinsic_value_analysis.get('method', 'N/A')
+                limitations = intrinsic_value_analysis.get('limitations', [])
+                
+                md_content += f"""
+### Intrinsic Value Analysis
+**Method:** {method}  
+**Estimated Intrinsic Value per Share:** {f"${per_share_value:.2f}" if per_share_value else "N/A"}
+
+"""
+                if limitations:
+                    md_content += "**Limitations:**\n"
+                    for limitation in limitations:
+                        md_content += f"- {limitation}\n"
+
         # Add LLM insights
         llm_insights = results.get('llm_insights', {})
-        if llm_insights.get('technical'):
-            md_content += f"""### AI Technical Analysis
+        if llm_insights:
+            if llm_insights.get('technical'):
+                md_content += f"""### AI Technical Analysis
 {llm_insights['technical']}
 
 """
 
-        if llm_insights.get('fundamental'):
-            md_content += f"""## Fundamental Analysis
+            if llm_insights.get('fundamental'):
+                md_content += f"""## Fundamental Analysis
 {llm_insights['fundamental']}
 
 """
 
-        if llm_insights.get('news'):
-            md_content += f"""## News & Sentiment Analysis
+            if llm_insights.get('warren_buffett'):
+                md_content += f"""## Warren Buffett's Take
+{llm_insights['warren_buffett']}
+
+"""
+
+            if llm_insights.get('news'):
+                md_content += f"""## News & Sentiment Analysis
 {llm_insights['news']}
 
 """

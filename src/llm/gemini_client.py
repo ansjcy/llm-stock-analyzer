@@ -90,6 +90,17 @@ class GeminiClient(BaseLLMClient):
             stock_logger.error(f"Error generating news analysis: {e}")
             return f"Error generating news analysis: {str(e)}"
     
+    def generate_warren_buffett_analysis(self, ticker: str, warren_buffett_data: Dict[str, Any], 
+                                       stock_info: Dict[str, Any]) -> str:
+        """Generate Warren Buffett style investment analysis using Gemini LLM"""
+        try:
+            prompts = AnalysisPrompts.get_warren_buffett_analysis_prompt(ticker, warren_buffett_data, stock_info, self.language)
+            return self._generate_response(prompts["system"], prompts["user"], 2500)
+            
+        except Exception as e:
+            stock_logger.error(f"Error generating Warren Buffett analysis: {e}")
+            return f"Error generating Warren Buffett analysis: {str(e)}"
+    
     def generate_investment_recommendation(self, ticker: str, stock_info: Dict[str, Any],
                                          technical_analysis: str, fundamental_analysis: str,
                                          news_analysis: str) -> str:

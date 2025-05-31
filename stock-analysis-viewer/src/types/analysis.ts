@@ -97,6 +97,7 @@ export interface LLMInsights {
   technical?: string;
   fundamental?: string;
   news?: string;
+  warren_buffett?: string;
 }
 
 export interface Recommendation {
@@ -112,6 +113,116 @@ export interface Charts {
   correlation?: string;
 }
 
+// Warren Buffett Analysis Types
+export interface WarrenBuffettFundamentalAnalysis {
+  score: number;
+  max_score: number;
+  score_percentage: number;
+  details: string[];
+  metrics: {
+    return_on_equity?: number;
+    debt_to_equity?: number;
+    operating_margin?: number;
+    current_ratio?: number;
+    [key: string]: unknown;
+  };
+}
+
+export interface WarrenBuffettConsistencyAnalysis {
+  score: number;
+  max_score: number;
+  score_percentage: number;
+  details: string[];
+  revenue_growth_consistency?: number;
+  earnings_growth_consistency?: number;
+  fcf_growth_consistency?: number;
+}
+
+export interface WarrenBuffettMoatAnalysis {
+  score: number;
+  max_score: number;
+  score_percentage: number;
+  details: string[];
+  competitive_advantages: string[];
+  moat_strength: string;
+}
+
+export interface WarrenBuffettManagementAnalysis {
+  score: number;
+  max_score: number;
+  score_percentage: number;
+  details: string[];
+  capital_allocation_score?: number;
+  shareholder_returns_score?: number;
+}
+
+export interface WarrenBuffettIntrinsicValueAnalysis {
+  intrinsic_value?: number;
+  current_price?: number;
+  margin_of_safety?: number;
+  valuation_method: string;
+  dcf_details?: {
+    free_cash_flow?: number;
+    growth_rate?: number;
+    terminal_value?: number;
+    discount_rate?: number;
+    [key: string]: unknown;
+  };
+  reasoning: string[];
+}
+
+export interface WarrenBuffettPrinciples {
+  individual_principles: {
+    financial_strength: {
+      score: number;
+      meets_criteria: boolean;
+      description: string;
+    };
+    predictable_earnings: {
+      score: number;
+      meets_criteria: boolean;
+      description: string;
+    };
+    competitive_advantage: {
+      score: number;
+      meets_criteria: boolean;
+      description: string;
+    };
+    quality_management: {
+      score: number;
+      meets_criteria: boolean;
+      description: string;
+    };
+    margin_of_safety: {
+      score: number;
+      meets_criteria: boolean;
+      description: string;
+    };
+  };
+  total_principles_met: number;
+  total_principles: number;
+  adherence_percentage: number;
+  overall_assessment: string;
+}
+
+export interface WarrenBuffettAnalysis {
+  ticker: string;
+  analysis_date: string;
+  overall_signal: string;
+  confidence: number;
+  total_score: number;
+  max_possible_score: number;
+  score_percentage: number;
+  margin_of_safety?: number;
+  fundamental_analysis: WarrenBuffettFundamentalAnalysis;
+  consistency_analysis: WarrenBuffettConsistencyAnalysis;
+  moat_analysis: WarrenBuffettMoatAnalysis;
+  management_analysis: WarrenBuffettManagementAnalysis;
+  intrinsic_value_analysis: WarrenBuffettIntrinsicValueAnalysis;
+  investment_reasoning: string | string[];
+  buffett_principles: WarrenBuffettPrinciples;
+}
+
 export interface StockAnalysisResult {
   ticker: string;
   analysis_date: string;
@@ -119,6 +230,7 @@ export interface StockAnalysisResult {
   technical_analysis: TechnicalAnalysis;
   correlation_analysis: CorrelationAnalysis;
   fundamental_analysis: Record<string, unknown>;
+  warren_buffett_analysis?: WarrenBuffettAnalysis;
   news_analysis: NewsAnalysis;
   llm_insights: LLMInsights;
   recommendation: Recommendation;

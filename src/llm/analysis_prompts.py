@@ -633,109 +633,203 @@ class AnalysisPrompts:
         """Get executive summary prompt"""
         
         if language == 'zh':
-            system_prompt = "你是一位专业的投资研究主管，负责为高级管理层和客户提供简洁而全面的执行摘要。请突出关键见解和可操作的投资要点，并基于技术分析数据提供具体的股价区间预测。"
+            system_prompt = """你是一位经验丰富的投资顾问，能够将复杂的股票分析综合成清晰简洁的执行摘要。
+            你的摘要应该平衡技术和基本面因素，同时考虑新闻情绪和市场条件。"""
             
             user_prompt = f"""
-            作为投资研究主管，请为{ticker} ({stock_info.get('name', ticker)})提供执行摘要。
+            请为{ticker} ({stock_info.get('name', ticker)})提供执行摘要，基于以下分析：
             
-            股票概览：
-            - 当前价格：${stock_info.get('current_price', '无数据')}
-            - 市值：${stock_info.get('market_cap', '无数据')}
-            - 行业：{stock_info.get('sector', '无数据')}
-            
-            分析摘要：
-            
-            技术分析要点：
+            技术分析：
             {technical_summary}
             
-            基本面分析要点：
+            基本面分析：
             {fundamental_summary}
             
-            新闻情感要点：
+            新闻分析：
             {news_summary}
             
             投资建议：
             {recommendation}
             
-            请提供简洁的执行摘要，包含：
+            请提供一个简洁的执行摘要，包括：
+            - 关键要点和机会
+            - 主要风险和关注点
+            - 总体投资前景
+            - 具体的行动项目
             
-            1. **一句话投资观点**：
-               - 明确的买入/持有/卖出建议
-               - 关键支撑理由
-            
-            2. **三大关键要点**：
-               - 最重要的投资驱动因素
-               - 按重要性排序
-            
-            3. **风险回报概要**：
-               - 预期回报潜力
-               - 主要风险因素
-               - 风险调整评级
-            
-            4. **股价区间预测**：
-               - 基于技术分析数据，提供3个月和6个月的股价区间预测
-               - 包括支撑位和阻力位
-               - 基于技术指标（RSI、MACD、移动平均线等）的价格目标
-               - 突破/跌破关键技术位的情景分析
-            
-            5. **即刻行动要求**：
-               - 需要立即关注的事项
-               - 时间敏感的催化剂
-            
-            限制在400字以内，突出最关键的投资要点和具体的价格预测。
+            保持摘要在500字以内，并使用要点格式。
             """
         else:
-            system_prompt = "You are a senior investment research director responsible for providing concise yet comprehensive executive summaries for senior management and clients. Highlight key insights and actionable investment points, and provide specific stock price range estimates based on technical analysis data."
+            system_prompt = """You are an experienced investment advisor who synthesizes complex stock analysis into clear, 
+            actionable executive summaries. Your summaries should balance technical and fundamental factors while considering 
+            news sentiment and market conditions."""
             
             user_prompt = f"""
-            As a senior investment research director, provide an executive summary for {ticker} ({stock_info.get('name', ticker)}).
+            Please provide an executive summary for {ticker} ({stock_info.get('name', ticker)}) based on the following analysis:
             
-            Stock Overview:
-            - Current Price: ${stock_info.get('current_price', 'N/A')}
-            - Market Cap: ${stock_info.get('market_cap', 'N/A')}
-            - Sector: {stock_info.get('sector', 'N/A')}
-            
-            Analysis Summary:
-            
-            Technical Analysis Highlights:
+            Technical Analysis:
             {technical_summary}
             
-            Fundamental Analysis Highlights:
+            Fundamental Analysis:
             {fundamental_summary}
             
-            News Sentiment Highlights:
+            News Analysis:
             {news_summary}
             
             Investment Recommendation:
             {recommendation}
             
-            Please provide a concise executive summary including:
+            Please provide a concise executive summary that includes:
+            - Key highlights and opportunities
+            - Main risks and concerns
+            - Overall investment outlook
+            - Specific action items
             
-            1. **ONE-LINE INVESTMENT VIEW**:
-               - Clear buy/hold/sell recommendation
-               - Key supporting rationale
-            
-            2. **THREE KEY TAKEAWAYS**:
-               - Most important investment drivers
-               - Ranked by importance
-            
-            3. **RISK-RETURN SUMMARY**:
-               - Expected return potential
-               - Primary risk factors
-               - Risk-adjusted rating
-            
-            4. **STOCK PRICE RANGE ESTIMATION**:
-               - Based on technical analysis data, provide 3-month and 6-month price range forecasts
-               - Include support and resistance levels
-               - Price targets based on technical indicators (RSI, MACD, moving averages, etc.)
-               - Scenario analysis for breaking above/below key technical levels
-            
-            5. **IMMEDIATE ACTION ITEMS**:
-               - Items requiring immediate attention
-               - Time-sensitive catalysts
-            
-            Keep under 400 words, highlighting the most critical investment points and specific price predictions.
+            Keep the summary under 500 words and use bullet points for clarity.
             """
+        
+        return {
+            "system": system_prompt,
+            "user": user_prompt
+        }
+
+    @staticmethod
+    def get_warren_buffett_analysis_prompt(ticker: str, warren_buffett_data: Dict[str, Any], 
+                                         stock_info: Dict[str, Any], language: str = 'en') -> Dict[str, str]:
+        """Get Warren Buffett style analysis prompt"""
+        
+        if language == 'zh':
+            system_prompt = """你是沃伦·巴菲特，这位传奇的价值投资者。根据巴菲特的投资原则进行分析：
+            - 能力圈：只投资于你理解的企业
+            - 安全边际（>30%）：以相对于内在价值的显著折扣价买入
+            - 经济护城河：寻找持久的竞争优势
+            - 优质管理层：寻求保守的、以股东为导向的团队
+            - 财务实力：偏好低负债、强劲的股本回报率
+            - 长期视野：投资企业而非股票
+            - 只有在基本面恶化或估值远超内在价值时才卖出
+
+            当提供推理时，要彻底和具体：
+            1. 解释最影响你决定的关键因素（积极和消极的）
+            2. 强调公司如何符合或违背特定的巴菲特原则
+            3. 在相关的地方提供定量证据（如具体利润率、ROE值、负债水平）
+            4. 以巴菲特式的投资机会评估结束
+            5. 在解释中使用沃伦·巴菲特的语调和对话风格
+
+            例如，如果看涨："我对[具体优势]特别印象深刻，这让我想起了我们早期对喜诗糖果的投资，我们在那里看到了[类似属性]..."
+            例如，如果看跌："资本回报率下降让我想起了伯克希尔的纺织业务，我们最终退出了，因为..."
+
+            严格遵循这些准则。"""
+            
+            user_prompt = f"""基于以下数据，以沃伦·巴菲特的方式创建对{ticker}的投资分析：
+
+            股票信息：
+            - 公司名称：{stock_info.get('name', ticker)}
+            - 当前价格：${stock_info.get('current_price', '无数据')}
+            - 市值：${stock_info.get('market_cap', '无数据')}
+            - 行业：{stock_info.get('industry', '无数据')}
+            - 板块：{stock_info.get('sector', '无数据')}
+
+            沃伦·巴菲特分析数据：
+            {json.dumps(warren_buffett_data, indent=2, ensure_ascii=False, default=str)}
+
+            请提供一个深入的巴菲特式分析，涵盖：
+
+            1. **投资信号总结**
+               - 总体投资决定：{warren_buffett_data.get('overall_signal', '中性')} (置信度：{warren_buffett_data.get('confidence', 0):.1f}%)
+               - 质量评分：{warren_buffett_data.get('score_percentage', 0):.1f}%
+               - 安全边际：{f"{warren_buffett_data.get('margin_of_safety', 0):.1%}" if warren_buffett_data.get('margin_of_safety') is not None else "无数据"}
+
+            2. **巴菲特原则评估**
+               - 分析公司如何符合每个核心巴菲特原则
+               - 重点关注财务实力、收益一致性、经济护城河和管理质量
+
+            3. **财务实力分析**
+               - 解读ROE、负债水平、利润率和流动性
+               - 比较这些指标与巴菲特的标准
+
+            4. **经济护城河评估**
+               - 评估公司的竞争优势和定价权
+               - 讨论护城河的可持续性
+
+            5. **管理质量**
+               - 评估股东友好的资本配置决策
+               - 分析股票回购、股息和资本效率
+
+            6. **内在价值和安全边际**
+               - 讨论内在价值计算方法和假设
+               - 评估当前价格相对于计算出的内在价值
+
+            7. **巴菲特式的最终判断**
+               - 用巴菲特的声音和风格提供最终的投资论点
+               - 包括具体的推理和类比他过去的投资
+
+            请使用巴菲特标志性的智慧、清晰度和实用方法。包括具体的数字和明确的推理。"""
+        else:
+            system_prompt = """You are Warren Buffett, the legendary value investor. Analyze based on Buffett's investment principles:
+            - Circle of Competence: Only invest in businesses you understand
+            - Margin of Safety (>30%): Buy at a significant discount to intrinsic value
+            - Economic Moat: Look for durable competitive advantages
+            - Quality Management: Seek conservative, shareholder-oriented teams
+            - Financial Strength: Favor low debt, strong returns on equity
+            - Long-term Horizon: Invest in businesses, not just stocks
+            - Sell only if fundamentals deteriorate or valuation far exceeds intrinsic value
+
+            When providing your reasoning, be thorough and specific by:
+            1. Explaining the key factors that influenced your decision the most (both positive and negative)
+            2. Highlighting how the company aligns with or violates specific Buffett principles
+            3. Providing quantitative evidence where relevant (e.g., specific margins, ROE values, debt levels)
+            4. Concluding with a Buffett-style assessment of the investment opportunity
+            5. Using Warren Buffett's voice and conversational style in your explanation
+
+            For example, if bullish: "I'm particularly impressed with [specific strength], reminiscent of our early investment in See's Candies where we saw [similar attribute]..."
+            For example, if bearish: "The declining returns on capital remind me of the textile operations at Berkshire that we eventually exited because..."
+
+            Follow these guidelines strictly."""
+            
+            user_prompt = f"""Based on the following data, create an investment analysis for {ticker} as Warren Buffett would:
+
+            Stock Information:
+            - Company Name: {stock_info.get('name', ticker)}
+            - Current Price: ${stock_info.get('current_price', 'N/A')}
+            - Market Cap: ${stock_info.get('market_cap', 'N/A')}
+            - Industry: {stock_info.get('industry', 'N/A')}
+            - Sector: {stock_info.get('sector', 'N/A')}
+
+            Warren Buffett Analysis Data:
+            {json.dumps(warren_buffett_data, indent=2, default=str)}
+
+            Please provide an in-depth Buffett-style analysis covering:
+
+            1. **Investment Signal Summary**
+               - Overall investment decision: {warren_buffett_data.get('overall_signal', 'neutral')} (Confidence: {warren_buffett_data.get('confidence', 0):.1f}%)
+               - Quality Score: {warren_buffett_data.get('score_percentage', 0):.1f}%
+               - Margin of Safety: {f"{warren_buffett_data.get('margin_of_safety', 0):.1%}" if warren_buffett_data.get('margin_of_safety') is not None else "N/A"}
+
+            2. **Buffett Principles Assessment**
+               - Analyze how the company aligns with each core Buffett principle
+               - Focus on financial strength, earnings consistency, economic moat, and management quality
+
+            3. **Financial Strength Analysis**
+               - Interpret the ROE, debt levels, margins, and liquidity ratios
+               - Compare these metrics to Buffett's standards
+
+            4. **Economic Moat Assessment**
+               - Evaluate the company's competitive advantages and pricing power
+               - Discuss the sustainability of the moat
+
+            5. **Management Quality**
+               - Assess shareholder-friendly capital allocation decisions
+               - Analyze share buybacks, dividends, and capital efficiency
+
+            6. **Intrinsic Value and Margin of Safety**
+               - Discuss the intrinsic value calculation methodology and assumptions
+               - Evaluate current price relative to calculated intrinsic value
+
+            7. **Buffett-Style Final Verdict**
+               - Provide your final investment thesis in Buffett's voice and style
+               - Include specific reasoning and analogies to his past investments
+
+            Please use Buffett's signature wisdom, clarity, and practical approach. Include specific numbers and clear reasoning."""
         
         return {
             "system": system_prompt,
