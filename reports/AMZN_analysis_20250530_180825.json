@@ -1,0 +1,986 @@
+{
+  "ticker": "AMZN",
+  "analysis_date": "2025-05-30T18:07:38.754952",
+  "stock_info": {
+    "symbol": "AMZN",
+    "name": "Amazon.com, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Internet Retail",
+    "country": "United States",
+    "currency": "USD",
+    "market_cap": 2183786921984,
+    "current_price": 205.01,
+    "previous_close": 205.7,
+    "open": 204.775,
+    "day_high": 205.99,
+    "day_low": 201.7,
+    "volume": 50837119,
+    "avg_volume": 51050650,
+    "pe_ratio": 33.55319,
+    "forward_pe": 33.334957,
+    "peg_ratio": null,
+    "price_to_book": 7.113463,
+    "price_to_sales": 3.358055,
+    "dividend_yield": null,
+    "beta": 1.308,
+    "trailing_eps": 6.11,
+    "forward_eps": 6.15,
+    "book_value": 28.82,
+    "return_on_equity": 0.2524,
+    "return_on_assets": 0.07632,
+    "debt_to_equity": 51.641,
+    "current_ratio": 1.048,
+    "quick_ratio": 0.807,
+    "gross_margins": 0.49158,
+    "operating_margins": 0.11823,
+    "profit_margins": 0.1014,
+    "revenue_growth": 0.086,
+    "earnings_growth": 0.622,
+    "52_week_high": 242.52,
+    "52_week_low": 151.61,
+    "analyst_target_price": 238.60323,
+    "recommendation": 1.38571,
+    "recommendation_key": "strong_buy",
+    "number_of_analyst_opinions": 65,
+    "pe_history": {
+      "historical_data": [
+        {
+          "Close": 220.22000122070312,
+          "TTM_EPS": 5.580799585013973,
+          "PE_Ratio": 39.4602955841769
+        },
+        {
+          "Close": 218.94000244140625,
+          "TTM_EPS": 5.580799585013973,
+          "PE_Ratio": 39.23093798768946
+        },
+        {
+          "Close": 225.94000244140625,
+          "TTM_EPS": 5.580799585013973,
+          "PE_Ratio": 40.485238539674334
+        },
+        {
+          "Close": 235.4199981689453,
+          "TTM_EPS": 5.580799585013973,
+          "PE_Ratio": 42.18391909308384
+        },
+        {
+          "Close": 237.4199981689453,
+          "TTM_EPS": 5.580799585013973,
+          "PE_Ratio": 42.54229067936523
+        },
+        {
+          "Close": 233.13999938964844,
+          "TTM_EPS": 5.580799585013973,
+          "PE_Ratio": 41.77537570345571
+        },
+        {
+          "Close": 226.64999389648438,
+          "TTM_EPS": 5.580799585013973,
+          "PE_Ratio": 40.612458921675625
+        },
+        {
+          "Close": 212.8000030517578,
+          "TTM_EPS": 5.580799585013973,
+          "PE_Ratio": 38.13073732717191
+        },
+        {
+          "Close": 203.8000030517578,
+          "TTM_EPS": 5.580799585013973,
+          "PE_Ratio": 36.51806518890564
+        },
+        {
+          "Close": 196.58999633789062,
+          "TTM_EPS": 5.580799585013973,
+          "PE_Ratio": 35.2261344173316
+        },
+        {
+          "Close": 192.82000732421875,
+          "TTM_EPS": 5.580799585013973,
+          "PE_Ratio": 34.550605945785094
+        },
+        {
+          "Close": 205.7100067138672,
+          "TTM_EPS": 5.580799585013973,
+          "PE_Ratio": 36.860310710002345
+        },
+        {
+          "Close": 192.1699981689453,
+          "TTM_EPS": 6.211521871357032,
+          "PE_Ratio": 30.937667474873095
+        },
+        {
+          "Close": 170.66000366210938,
+          "TTM_EPS": 6.211521871357032,
+          "PE_Ratio": 27.474748893514764
+        },
+        {
+          "Close": 179.58999633789062,
+          "TTM_EPS": 6.211521871357032,
+          "PE_Ratio": 28.912398612975593
+        },
+        {
+          "Close": 180.60000610351562,
+          "TTM_EPS": 6.211521871357032,
+          "PE_Ratio": 29.075001238635245
+        },
+        {
+          "Close": 184.4199981689453,
+          "TTM_EPS": 6.211521871357032,
+          "PE_Ratio": 29.68998612390864
+        },
+        {
+          "Close": 188.7100067138672,
+          "TTM_EPS": 6.211521871357032,
+          "PE_Ratio": 30.38063949900247
+        },
+        {
+          "Close": 210.25,
+          "TTM_EPS": 6.211521871357032,
+          "PE_Ratio": 33.848387618100205
+        },
+        {
+          "Close": 201.1199951171875,
+          "TTM_EPS": 6.211521871357032,
+          "PE_Ratio": 32.37853770500349
+        },
+        {
+          "Close": 205.6999969482422,
+          "TTM_EPS": 6.211521871357032,
+          "PE_Ratio": 33.115877430421556
+        }
+      ],
+      "current_pe": 33.115877430421556,
+      "avg_pe_1y": 35.39950546165488,
+      "avg_pe_6m": 35.39950546165488,
+      "avg_pe_3m": 35.39950546165488,
+      "min_pe_1y": 27.474748893514764,
+      "max_pe_1y": 42.54229067936523,
+      "median_pe_1y": 35.2261344173316,
+      "pe_percentile": 66.66666666666666
+    }
+  },
+  "technical_analysis": {
+    "overall_signal": "bearish",
+    "confidence": 16.7,
+    "bullish_signals": 0,
+    "bearish_signals": 2,
+    "total_weighted_signals": 12.0,
+    "moving_averages": {
+      "sma_20": 200.65500030517578,
+      "sma_50": 191.88779998779296,
+      "sma_200": 201.37535011291504,
+      "ema_8": 204.269880489416,
+      "ema_21": 200.27622030863003,
+      "ema_55": 198.08248157747508,
+      "price_vs_sma_20": 2.1703890733032694,
+      "price_vs_sma_50": 6.838472544829721,
+      "price_vs_sma_200": 1.8049102791790839,
+      "sma_trend": "neutral",
+      "golden_cross": false,
+      "death_cross": false
+    },
+    "momentum": {
+      "rsi": 57.87523241852014,
+      "rsi_signal": "neutral",
+      "stochrsi_k": 25.26003423937894,
+      "stochrsi_signal": "neutral",
+      "stoch_k": 54.88375119871896,
+      "stoch_d": 60.49334389458613,
+      "stoch_signal": "neutral",
+      "williams_r": -57.85760730554239,
+      "williams_signal": "neutral",
+      "roc": -0.07798589634807204,
+      "roc_signal": "bearish",
+      "mfi": 51.866408117635636,
+      "mfi_signal": "neutral",
+      "cci": 35.594221903317916,
+      "cci_signal": "neutral"
+    },
+    "trend": {
+      "macd": 4.095117930567966,
+      "macd_signal": 4.13001017155076,
+      "macd_histogram": -0.034892240982793865,
+      "macd_trend": "bearish",
+      "adx": 17.83707831426452,
+      "adx_strength": "weak",
+      "plus_di": 28.5174144797106,
+      "minus_di": 21.638993790734474,
+      "di_trend": "bullish",
+      "sar": 0.0,
+      "sar_signal": "bullish"
+    },
+    "volatility": {
+      "bb_upper": 216.7212778028382,
+      "bb_middle": 200.65500030517578,
+      "bb_lower": 184.58872280751336,
+      "bb_position": 63.55321480751779,
+      "bb_signal": "neutral",
+      "atr": 5.921874506563833,
+      "atr_percent": 2.8885784426311822,
+      "volatility": "low",
+      "stddev": 16.013832172861125
+    },
+    "volume": {
+      "obv": 317720881.0,
+      "obv_trend": "bearish",
+      "volume_sma": 43110220.95,
+      "volume_ratio": 1.179235872137185,
+      "volume_signal": "normal",
+      "ad_line": 908576007.1889476,
+      "cmf": 0.029514092933801913,
+      "cmf_signal": "neutral"
+    },
+    "ichimoku": {
+      "tenkan_sen": 180.0800018310547,
+      "kijun_sen": 198.09500122070312,
+      "senkou_span_a": 203.3300018310547,
+      "senkou_span_b": 196.84500122070312,
+      "chikou_span": 0.0,
+      "cloud_color": "bullish",
+      "price_vs_cloud": "above",
+      "tk_cross_signal": "bearish",
+      "ichimoku_signal": "neutral"
+    },
+    "patterns": {
+      "doji": "True",
+      "hammer": "False",
+      "hanging_man": "False",
+      "bullish_engulfing": "False",
+      "bearish_engulfing": "False",
+      "pattern_signal": "neutral",
+      "gaps": {
+        "gap_up": "False",
+        "gap_down": "False",
+        "gap_size": -0.44968549610166497,
+        "gap_signal": "no_gap"
+      }
+    },
+    "support_resistance": {
+      "pivot_point": 206.24666341145834,
+      "resistance_1": 208.26333109537762,
+      "resistance_2": 210.82666524251303,
+      "resistance_3": 212.8433329264323,
+      "support_1": 203.68332926432294,
+      "support_2": 201.66666158040366,
+      "support_3": 199.10332743326825,
+      "nearest_resistance": 208.26333109537762,
+      "nearest_support": 203.68332926432294,
+      "distance_to_resistance": 1.5869160898071264,
+      "distance_to_support": 0.6471222272379334
+    },
+    "strategic_combinations": {
+      "rsi_macd_strategy": {
+        "signal": "neutral",
+        "confidence": 40,
+        "score": 4.0,
+        "reasoning": "Mixed or neutral RSI/MACD signals"
+      },
+      "bb_rsi_macd_strategy": {
+        "signal": "neutral",
+        "confidence": 45,
+        "score": 4.5,
+        "reasoning": "No clear BB/RSI/MACD convergence"
+      },
+      "ma_rsi_volume_strategy": {
+        "signal": "neutral",
+        "confidence": 50,
+        "score": 5.0,
+        "reasoning": "No clear MA/RSI/Volume alignment"
+      },
+      "overall_strategic_signal": {
+        "signal": "neutral",
+        "confidence": 45.0,
+        "score": 4.5,
+        "signal_strength": 0.0,
+        "strategies_analyzed": 3,
+        "reasoning": "Consensus from 3 strategic combinations"
+      }
+    },
+    "correlation_analysis": {
+      "correlations": {
+        "short_term": {
+          "^GSPC": 0.8101515131411078,
+          "^DJI": 0.7124130967807383,
+          "^IXIC": 0.8716353100800175,
+          "^RUT": 0.7121373186351652,
+          "EFA": 0.11199593671170499,
+          "EEM": 0.3028824451692006,
+          "VTI": 0.8079863624786091,
+          "QQQ": 0.8569823053178678,
+          "XLF": 0.6352648702244074,
+          "XLE": 0.6737902692156904,
+          "XLK": 0.8519735646274439,
+          "XLV": 0.360146449291376,
+          "XLI": 0.704394775922167,
+          "XLP": -0.07730481915659042,
+          "XLY": 0.8889249030744409,
+          "XLU": -0.2214887610274129,
+          "XLRE": 0.07680593456170273,
+          "XLB": 0.5806988499381067,
+          "GLD": -0.6889829419490239,
+          "TLT": -0.03541706588132018,
+          "HYG": 0.7486132671926832,
+          "VNQ": 0.17144554486816338
+        },
+        "medium_term": {
+          "^GSPC": 0.8948631665845642,
+          "^DJI": 0.8422440034890597,
+          "^IXIC": 0.9315038077283643,
+          "^RUT": 0.8841925374201218,
+          "EFA": 0.6327160660641605,
+          "EEM": 0.6474352872219297,
+          "VTI": 0.8956974042972604,
+          "QQQ": 0.918389712001469,
+          "XLF": 0.8054726064884985,
+          "XLE": 0.7600366645930849,
+          "XLK": 0.919202164258182,
+          "XLV": 0.5278930462193593,
+          "XLI": 0.8563809719392664,
+          "XLP": 0.2878712142053427,
+          "XLY": 0.9345790892061577,
+          "XLU": 0.36892199791340025,
+          "XLRE": 0.57070091809688,
+          "XLB": 0.7754243502706912,
+          "GLD": -0.18607389204616273,
+          "TLT": 0.0835308176896722,
+          "HYG": 0.793571424442009,
+          "VNQ": 0.6083810008148213
+        },
+        "long_term": {
+          "^GSPC": 0.8154727103302803,
+          "^DJI": 0.7209275883067323,
+          "^IXIC": 0.8548983529710573,
+          "^RUT": 0.7142742658940118,
+          "EFA": 0.5110555293604226,
+          "EEM": 0.47457763750838716,
+          "VTI": 0.8107683260337846,
+          "QQQ": 0.844160127049641,
+          "XLF": 0.5994941273416247,
+          "XLE": 0.4461168666422804,
+          "XLK": 0.8004381563761233,
+          "XLV": 0.37726452415220463,
+          "XLI": 0.6735754957174503,
+          "XLP": 0.16028535931522658,
+          "XLY": 0.8499585689815269,
+          "XLU": 0.16401033113175797,
+          "XLRE": 0.34396612357832457,
+          "XLB": 0.5990432638672276,
+          "GLD": -0.05753641431172877,
+          "TLT": -0.0015295236013151293,
+          "HYG": 0.6416823479700464,
+          "VNQ": 0.3889350203815175
+        }
+      },
+      "beta": {
+        "sp500_beta": 1.3856505420743226
+      },
+      "correlation_signal": "moderate_market_correlation",
+      "diversification_score": 32.941207459553944,
+      "correlation_summary": {
+        "short_term": {
+          "broad_market": {
+            "avg_correlation": 0.811833717559668,
+            "max_correlation": 0.8716353100800175,
+            "min_correlation": 0.7124130967807383,
+            "count": 5
+          },
+          "small_cap": {
+            "avg_correlation": 0.7121373186351652,
+            "max_correlation": 0.7121373186351652,
+            "min_correlation": 0.7121373186351652,
+            "count": 1
+          },
+          "international": {
+            "avg_correlation": 0.2074391909404528,
+            "max_correlation": 0.3028824451692006,
+            "min_correlation": 0.11199593671170499,
+            "count": 2
+          },
+          "sectors": {
+            "avg_correlation": 0.4473206036671332,
+            "max_correlation": 0.8889249030744409,
+            "min_correlation": -0.2214887610274129,
+            "count": 10
+          },
+          "fixed_income": {
+            "avg_correlation": 0.3565981006556815,
+            "max_correlation": 0.7486132671926832,
+            "min_correlation": -0.03541706588132018,
+            "count": 2
+          },
+          "alternatives": {
+            "avg_correlation": -0.2587686985404303,
+            "max_correlation": 0.17144554486816338,
+            "min_correlation": -0.6889829419490239,
+            "count": 2
+          }
+        },
+        "medium_term": {
+          "broad_market": {
+            "avg_correlation": 0.8965396188201435,
+            "max_correlation": 0.9315038077283643,
+            "min_correlation": 0.8422440034890597,
+            "count": 5
+          },
+          "small_cap": {
+            "avg_correlation": 0.8841925374201218,
+            "max_correlation": 0.8841925374201218,
+            "min_correlation": 0.8841925374201218,
+            "count": 1
+          },
+          "international": {
+            "avg_correlation": 0.6400756766430451,
+            "max_correlation": 0.6474352872219297,
+            "min_correlation": 0.6327160660641605,
+            "count": 2
+          },
+          "sectors": {
+            "avg_correlation": 0.6806483023190862,
+            "max_correlation": 0.9345790892061577,
+            "min_correlation": 0.2878712142053427,
+            "count": 10
+          },
+          "fixed_income": {
+            "avg_correlation": 0.4385511210658406,
+            "max_correlation": 0.793571424442009,
+            "min_correlation": 0.0835308176896722,
+            "count": 2
+          },
+          "alternatives": {
+            "avg_correlation": 0.21115355438432926,
+            "max_correlation": 0.6083810008148213,
+            "min_correlation": -0.18607389204616273,
+            "count": 2
+          }
+        },
+        "long_term": {
+          "broad_market": {
+            "avg_correlation": 0.8092454209382993,
+            "max_correlation": 0.8548983529710573,
+            "min_correlation": 0.7209275883067323,
+            "count": 5
+          },
+          "small_cap": {
+            "avg_correlation": 0.7142742658940118,
+            "max_correlation": 0.7142742658940118,
+            "min_correlation": 0.7142742658940118,
+            "count": 1
+          },
+          "international": {
+            "avg_correlation": 0.49281658343440493,
+            "max_correlation": 0.5110555293604226,
+            "min_correlation": 0.47457763750838716,
+            "count": 2
+          },
+          "sectors": {
+            "avg_correlation": 0.5014152817103746,
+            "max_correlation": 0.8499585689815269,
+            "min_correlation": 0.16028535931522658,
+            "count": 10
+          },
+          "fixed_income": {
+            "avg_correlation": 0.32007641218436567,
+            "max_correlation": 0.6416823479700464,
+            "min_correlation": -0.0015295236013151293,
+            "count": 2
+          },
+          "alternatives": {
+            "avg_correlation": 0.16569930303489436,
+            "max_correlation": 0.3889350203815175,
+            "min_correlation": -0.05753641431172877,
+            "count": 2
+          }
+        }
+      },
+      "top_correlations": {
+        "short_term": {
+          "highest_positive": [
+            [
+              "XLY",
+              0.8889249030744409
+            ],
+            [
+              "^IXIC",
+              0.8716353100800175
+            ],
+            [
+              "QQQ",
+              0.8569823053178678
+            ]
+          ],
+          "lowest_positive": [
+            [
+              "XLP",
+              -0.07730481915659042
+            ],
+            [
+              "XLU",
+              -0.2214887610274129
+            ],
+            [
+              "GLD",
+              -0.6889829419490239
+            ]
+          ]
+        },
+        "medium_term": {
+          "highest_positive": [
+            [
+              "XLY",
+              0.9345790892061577
+            ],
+            [
+              "^IXIC",
+              0.9315038077283643
+            ],
+            [
+              "XLK",
+              0.919202164258182
+            ]
+          ],
+          "lowest_positive": [
+            [
+              "XLP",
+              0.2878712142053427
+            ],
+            [
+              "TLT",
+              0.0835308176896722
+            ],
+            [
+              "GLD",
+              -0.18607389204616273
+            ]
+          ]
+        },
+        "long_term": {
+          "highest_positive": [
+            [
+              "^IXIC",
+              0.8548983529710573
+            ],
+            [
+              "XLY",
+              0.8499585689815269
+            ],
+            [
+              "QQQ",
+              0.844160127049641
+            ]
+          ],
+          "lowest_positive": [
+            [
+              "XLP",
+              0.16028535931522658
+            ],
+            [
+              "TLT",
+              -0.0015295236013151293
+            ],
+            [
+              "GLD",
+              -0.05753641431172877
+            ]
+          ]
+        }
+      },
+      "diversification_recommendations": [
+        "Consider adding GLD for negative correlation benefits",
+        "Low correlation assets for diversification: XLP, GLD, TLT",
+        "International markets show good diversification potential",
+        "Fixed income assets provide good portfolio balance",
+        "Alternative investments (Gold, REITs) offer diversification benefits"
+      ]
+    }
+  },
+  "correlation_analysis": {
+    "correlations": {
+      "short_term": {
+        "^GSPC": 0.8101515131411078,
+        "^DJI": 0.7124130967807383,
+        "^IXIC": 0.8716353100800175,
+        "^RUT": 0.7121373186351652,
+        "EFA": 0.11199593671170499,
+        "EEM": 0.3028824451692006,
+        "VTI": 0.8079863624786091,
+        "QQQ": 0.8569823053178678,
+        "XLF": 0.6352648702244074,
+        "XLE": 0.6737902692156904,
+        "XLK": 0.8519735646274439,
+        "XLV": 0.360146449291376,
+        "XLI": 0.704394775922167,
+        "XLP": -0.07730481915659042,
+        "XLY": 0.8889249030744409,
+        "XLU": -0.2214887610274129,
+        "XLRE": 0.07680593456170273,
+        "XLB": 0.5806988499381067,
+        "GLD": -0.6889829419490239,
+        "TLT": -0.03541706588132018,
+        "HYG": 0.7486132671926832,
+        "VNQ": 0.17144554486816338
+      },
+      "medium_term": {
+        "^GSPC": 0.8948631665845642,
+        "^DJI": 0.8422440034890597,
+        "^IXIC": 0.9315038077283643,
+        "^RUT": 0.8841925374201218,
+        "EFA": 0.6327160660641605,
+        "EEM": 0.6474352872219297,
+        "VTI": 0.8956974042972604,
+        "QQQ": 0.918389712001469,
+        "XLF": 0.8054726064884985,
+        "XLE": 0.7600366645930849,
+        "XLK": 0.919202164258182,
+        "XLV": 0.5278930462193593,
+        "XLI": 0.8563809719392664,
+        "XLP": 0.2878712142053427,
+        "XLY": 0.9345790892061577,
+        "XLU": 0.36892199791340025,
+        "XLRE": 0.57070091809688,
+        "XLB": 0.7754243502706912,
+        "GLD": -0.18607389204616273,
+        "TLT": 0.0835308176896722,
+        "HYG": 0.793571424442009,
+        "VNQ": 0.6083810008148213
+      },
+      "long_term": {
+        "^GSPC": 0.8154727103302803,
+        "^DJI": 0.7209275883067323,
+        "^IXIC": 0.8548983529710573,
+        "^RUT": 0.7142742658940118,
+        "EFA": 0.5110555293604226,
+        "EEM": 0.47457763750838716,
+        "VTI": 0.8107683260337846,
+        "QQQ": 0.844160127049641,
+        "XLF": 0.5994941273416247,
+        "XLE": 0.4461168666422804,
+        "XLK": 0.8004381563761233,
+        "XLV": 0.37726452415220463,
+        "XLI": 0.6735754957174503,
+        "XLP": 0.16028535931522658,
+        "XLY": 0.8499585689815269,
+        "XLU": 0.16401033113175797,
+        "XLRE": 0.34396612357832457,
+        "XLB": 0.5990432638672276,
+        "GLD": -0.05753641431172877,
+        "TLT": -0.0015295236013151293,
+        "HYG": 0.6416823479700464,
+        "VNQ": 0.3889350203815175
+      }
+    },
+    "beta": {
+      "sp500_beta": 1.3856505420743226
+    },
+    "correlation_signal": "moderate_market_correlation",
+    "diversification_score": 32.941207459553944,
+    "correlation_summary": {
+      "short_term": {
+        "broad_market": {
+          "avg_correlation": 0.811833717559668,
+          "max_correlation": 0.8716353100800175,
+          "min_correlation": 0.7124130967807383,
+          "count": 5
+        },
+        "small_cap": {
+          "avg_correlation": 0.7121373186351652,
+          "max_correlation": 0.7121373186351652,
+          "min_correlation": 0.7121373186351652,
+          "count": 1
+        },
+        "international": {
+          "avg_correlation": 0.2074391909404528,
+          "max_correlation": 0.3028824451692006,
+          "min_correlation": 0.11199593671170499,
+          "count": 2
+        },
+        "sectors": {
+          "avg_correlation": 0.4473206036671332,
+          "max_correlation": 0.8889249030744409,
+          "min_correlation": -0.2214887610274129,
+          "count": 10
+        },
+        "fixed_income": {
+          "avg_correlation": 0.3565981006556815,
+          "max_correlation": 0.7486132671926832,
+          "min_correlation": -0.03541706588132018,
+          "count": 2
+        },
+        "alternatives": {
+          "avg_correlation": -0.2587686985404303,
+          "max_correlation": 0.17144554486816338,
+          "min_correlation": -0.6889829419490239,
+          "count": 2
+        }
+      },
+      "medium_term": {
+        "broad_market": {
+          "avg_correlation": 0.8965396188201435,
+          "max_correlation": 0.9315038077283643,
+          "min_correlation": 0.8422440034890597,
+          "count": 5
+        },
+        "small_cap": {
+          "avg_correlation": 0.8841925374201218,
+          "max_correlation": 0.8841925374201218,
+          "min_correlation": 0.8841925374201218,
+          "count": 1
+        },
+        "international": {
+          "avg_correlation": 0.6400756766430451,
+          "max_correlation": 0.6474352872219297,
+          "min_correlation": 0.6327160660641605,
+          "count": 2
+        },
+        "sectors": {
+          "avg_correlation": 0.6806483023190862,
+          "max_correlation": 0.9345790892061577,
+          "min_correlation": 0.2878712142053427,
+          "count": 10
+        },
+        "fixed_income": {
+          "avg_correlation": 0.4385511210658406,
+          "max_correlation": 0.793571424442009,
+          "min_correlation": 0.0835308176896722,
+          "count": 2
+        },
+        "alternatives": {
+          "avg_correlation": 0.21115355438432926,
+          "max_correlation": 0.6083810008148213,
+          "min_correlation": -0.18607389204616273,
+          "count": 2
+        }
+      },
+      "long_term": {
+        "broad_market": {
+          "avg_correlation": 0.8092454209382993,
+          "max_correlation": 0.8548983529710573,
+          "min_correlation": 0.7209275883067323,
+          "count": 5
+        },
+        "small_cap": {
+          "avg_correlation": 0.7142742658940118,
+          "max_correlation": 0.7142742658940118,
+          "min_correlation": 0.7142742658940118,
+          "count": 1
+        },
+        "international": {
+          "avg_correlation": 0.49281658343440493,
+          "max_correlation": 0.5110555293604226,
+          "min_correlation": 0.47457763750838716,
+          "count": 2
+        },
+        "sectors": {
+          "avg_correlation": 0.5014152817103746,
+          "max_correlation": 0.8499585689815269,
+          "min_correlation": 0.16028535931522658,
+          "count": 10
+        },
+        "fixed_income": {
+          "avg_correlation": 0.32007641218436567,
+          "max_correlation": 0.6416823479700464,
+          "min_correlation": -0.0015295236013151293,
+          "count": 2
+        },
+        "alternatives": {
+          "avg_correlation": 0.16569930303489436,
+          "max_correlation": 0.3889350203815175,
+          "min_correlation": -0.05753641431172877,
+          "count": 2
+        }
+      }
+    },
+    "top_correlations": {
+      "short_term": {
+        "highest_positive": [
+          [
+            "XLY",
+            0.8889249030744409
+          ],
+          [
+            "^IXIC",
+            0.8716353100800175
+          ],
+          [
+            "QQQ",
+            0.8569823053178678
+          ]
+        ],
+        "lowest_positive": [
+          [
+            "XLP",
+            -0.07730481915659042
+          ],
+          [
+            "XLU",
+            -0.2214887610274129
+          ],
+          [
+            "GLD",
+            -0.6889829419490239
+          ]
+        ]
+      },
+      "medium_term": {
+        "highest_positive": [
+          [
+            "XLY",
+            0.9345790892061577
+          ],
+          [
+            "^IXIC",
+            0.9315038077283643
+          ],
+          [
+            "XLK",
+            0.919202164258182
+          ]
+        ],
+        "lowest_positive": [
+          [
+            "XLP",
+            0.2878712142053427
+          ],
+          [
+            "TLT",
+            0.0835308176896722
+          ],
+          [
+            "GLD",
+            -0.18607389204616273
+          ]
+        ]
+      },
+      "long_term": {
+        "highest_positive": [
+          [
+            "^IXIC",
+            0.8548983529710573
+          ],
+          [
+            "XLY",
+            0.8499585689815269
+          ],
+          [
+            "QQQ",
+            0.844160127049641
+          ]
+        ],
+        "lowest_positive": [
+          [
+            "XLP",
+            0.16028535931522658
+          ],
+          [
+            "TLT",
+            -0.0015295236013151293
+          ],
+          [
+            "GLD",
+            -0.05753641431172877
+          ]
+        ]
+      }
+    },
+    "diversification_recommendations": [
+      "Consider adding GLD for negative correlation benefits",
+      "Low correlation assets for diversification: XLP, GLD, TLT",
+      "International markets show good diversification potential",
+      "Fixed income assets provide good portfolio balance",
+      "Alternative investments (Gold, REITs) offer diversification benefits"
+    ]
+  },
+  "fundamental_analysis": {
+    "financial_statements_available": true,
+    "key_metrics": {
+      "valuation_metrics": {
+        "pe_ratio": 33.55319,
+        "forward_pe": 33.334957,
+        "peg_ratio": null,
+        "price_to_book": 7.113463,
+        "price_to_sales": 3.358055
+      },
+      "financial_health": {
+        "debt_to_equity": 51.641,
+        "current_ratio": 1.048,
+        "quick_ratio": 0.807
+      },
+      "profitability": {
+        "return_on_equity": 0.2524,
+        "return_on_assets": 0.07632,
+        "gross_margins": 0.49158,
+        "operating_margins": 0.11823,
+        "profit_margins": 0.1014
+      },
+      "growth": {
+        "revenue_growth": 0.086,
+        "earnings_growth": 0.622
+      }
+    }
+  },
+  "news_analysis": {
+    "articles_found": 10,
+    "recent_articles": [
+      {
+        "title": "Gap CEO: The trade war has not stalled our turnaround",
+        "publisher": "Yahoo Finance",
+        "link": "https://finance.yahoo.com/news/gap-ceo-the-trade-war-has-not-stalled-our-turnaround-164452009.html",
+        "publish_time": "2025-05-30 16:44:52",
+        "type": "STORY",
+        "thumbnail": "",
+        "summary": ""
+      },
+      {
+        "title": "Mag 7 valuations before & after Nvidia earnings: Chart of the Day",
+        "publisher": "Yahoo Finance Video",
+        "link": "https://finance.yahoo.com/video/mag-7-valuations-nvidia-earnings-113013059.html",
+        "publish_time": "2025-05-30 11:30:13",
+        "type": "VIDEO",
+        "thumbnail": "",
+        "summary": "<p>Now that <a data-i13n=\"cpos:1;pos:1\" href=\"https://finance.yahoo.com/news/nvidia-stock-pops-as-revenue-tops-forecasts-china-sales-impacts-smaller-than-wall-street-feared-164408100.html\">Nvidia's</a> (<a data-i13n=\"cpos:2;pos:1\" href=\"https://finance.yahoo.com/quote/NVDA\">NVDA</a>) earnings are in the books, Yahoo Finance host <a data-i13n=\"cpos:3;pos:1\" href=\"https://finance.yahoo.com/author/julie-hyman/\">Julie Hyman</a> takes a look at what Big Tech's valuations and forward price-to-earnings (P/E) ratios look like right now, particularly for the \"Magnificent Seven.\"</p>\n<p>To watch more expert insights and analysis on the latest market action, check out more Asking for a Trend <a data-i13n=\"cpos:4;pos:1\" href=\"https://finance.yahoo.com/videos/series/asking-for-a-trend/\">here</a>.</p>"
+      },
+      {
+        "title": "ServiceNow Regenerates On Swarm Of AI Deals With Amazon, Microsoft And More",
+        "publisher": "Investor's Business Daily",
+        "link": "",
+        "publish_time": "2025-05-30 20:00:10",
+        "type": "STORY",
+        "thumbnail": "",
+        "summary": ""
+      },
+      {
+        "title": "Know Your Options: Three Secrets Every Trader Should Know",
+        "publisher": "Zacks",
+        "link": "https://finance.yahoo.com/news/know-options-three-secrets-every-190700512.html",
+        "publish_time": "2025-05-30 19:07:00",
+        "type": "STORY",
+        "thumbnail": "",
+        "summary": ""
+      },
+      {
+        "title": "Is Realty Income\u2019s (O) 9-Year Low a Golden Opportunity for Dividend Investors?",
+        "publisher": "TipRanks",
+        "link": "https://finance.yahoo.com/news/realty-income-o-9-low-182100233.html",
+        "publish_time": "2025-05-30 18:21:00",
+        "type": "STORY",
+        "thumbnail": "",
+        "summary": ""
+      }
+    ]
+  },
+  "llm_insights": {
+    "technical": "\u597d\u7684\uff0c\u4f5c\u4e3a\u4e13\u4e1a\u6280\u672f\u5206\u6790\u5e08\uff0c\u6211\u5c06\u57fa\u4e8e\u60a8\u63d0\u4f9b\u7684\u6570\u636e\uff0c\u5bf9AMZN\u8fdb\u884c\u5168\u9762\u7684\u6280\u672f\u5206\u6790\uff0c\u5e76\u63d0\u4f9b\u53ef\u64cd\u4f5c\u7684\u4ea4\u6613\u5efa\u8bae\u3002\n\n**AMZN (Amazon.com, Inc.) \u6280\u672f\u5206\u6790\u62a5\u544a**\n\n**\u65e5\u671f\uff1a** 2024\u5e745\u670815\u65e5\uff08\u57fa\u4e8e\u63d0\u4f9b\u7684\u6570\u636e\uff09\n**\u80a1\u7968\u4ee3\u7801\uff1a** AMZN\n**\u5f53\u524d\u4ef7\u683c\uff1a** $205.01\n\n**1. \u7b56\u7565\u4fe1\u53f7\u5206\u6790 (\u9ad8\u4f18\u5148\u7ea7)**\n\n*   **\u89e3\u8bfb\u7b56\u7565\u7ec4\u5408\u4fe1\u53f7\uff1a**\n\n    *   **RSI+MACD\u7b56\u7565\uff1aNeutral (\u8bc4\u5206\uff1a4.0)**\uff1a\u8be5\u7b56\u7565\u8868\u660e\u5e02\u573a\u52a8\u91cf\u548c\u8d8b\u52bf\u65b9\u5411\u4e0d\u660e\u6717\u3002RSI\u53ef\u80fd\u63a5\u8fd1\u4e2d\u6027\u533a\u57df\uff0cMACD\u4fe1\u53f7\u7ebf\u53ef\u80fd\u51fa\u73b0\u7f20\u7ed5\uff0c\u7f3a\u4e4f\u660e\u786e\u7684\u4e70\u5165\u6216\u5356\u51fa\u4fe1\u53f7\u3002\n    *   **\u5e03\u6797\u5e26+RSI+MACD\u7b56\u7565\uff1a\u65e0\u6570\u636e (\u8bc4\u5206\uff1a0.0)**\uff1a\u7531\u4e8e\u6570\u636e\u7f3a\u5931\uff0c\u65e0\u6cd5\u8bc4\u4f30\u3002\u901a\u5e38\uff0c\u8be5\u7b56\u7565\u65e8\u5728\u5bfb\u627e\u8d85\u4e70/\u8d85\u5356\u4fe1\u53f7\u4e0e\u8d8b\u52bf\u786e\u8ba4\u7684\u7ed3\u5408\u3002\n    *   **\u79fb\u52a8\u5e73\u5747+RSI+\u6210\u4ea4\u91cf\u7b56\u7565\uff1aNeutral (\u8bc4\u5206\uff1a5.0)**\uff1a\u8be5\u7b56\u7565\u8868\u660e\u4ef7\u683c\u4e0e\u79fb\u52a8\u5e73\u5747\u7ebf\u7684\u5173\u7cfb\u3001RSI\u548c\u6210\u4ea4\u91cf\u4e4b\u95f4\u6ca1\u6709\u5f62\u6210\u4e00\u81f4\u7684\u4fe1\u53f7\u3002\u53ef\u80fd\u4ef7\u683c\u5728\u5747\u7ebf\u9644\u8fd1\u6ce2\u52a8\uff0cRSI\u5728\u4e2d\u6027\u533a\u57df\uff0c\u6210\u4ea4\u91cf\u6ca1\u6709\u660e\u663e\u653e\u5927\u3002\n*   **\u52a0\u6743\u5171\u8bc6\u4fe1\u53f7\u548c\u7f6e\u4fe1\u5ea6\uff1a**\n\n    *   **\u603b\u4f53\u4fe1\u53f7\uff1aBearish (\u7f6e\u4fe1\u5ea6\uff1a16.7%)**\uff1a\u5c3d\u7ba1\u7b56\u7565\u7ec4\u5408\u4fe1\u53f7\u504f\u4e2d\u6027\uff0c\u4f46\u603b\u4f53\u4fe1\u53f7\u504f\u5411\u770b\u8dcc\uff0c\u8868\u660e\u6280\u672f\u6307\u6807\u4e2d\u770b\u8dcc\u4fe1\u53f7\u7565\u5360\u4f18\u52bf\u3002\u4f4616.7%\u7684\u7f6e\u4fe1\u5ea6\u8868\u660e\u4fe1\u53f7\u5f3a\u5ea6\u8f83\u5f31\uff0c\u9700\u8981\u8c28\u614e\u5bf9\u5f85\u3002\n    *   **\u4fe1\u53f7\u6743\u91cd\u63a8\u7406\uff1a** \u603b\u4f53\u4fe1\u53f7\u7684\u6743\u91cd\u53ef\u80fd\u53d7\u5230\u52a8\u91cf\u6307\u6807\u4e2dROC\u7684\u770b\u8dcc\u4fe1\u53f7\uff0c\u4ee5\u53ca\u6210\u4ea4\u91cf\u6307\u6807\u4e2dOBV\u8d8b\u52bf\u7684\u770b\u8dcc\u4fe1\u53f7\u5f71\u54cd\u3002\n*   **\u4fe1\u53f7\u6536\u655b/\u5206\u6b67\u548c\u53ef\u9760\u6027\uff1a**\n\n    *   \u76ee\u524d\u4fe1\u53f7\u5206\u6b67\u8f83\u5927\uff0c\u7b56\u7565\u7ec4\u5408\u4fe1\u53f7\u4e2d\u6027\uff0c\u603b\u4f53\u4fe1\u53f7\u770b\u8dcc\uff0c\u7f6e\u4fe1\u5ea6\u8f83\u4f4e\u3002\u8fd9\u8868\u660e\u5e02\u573a\u5904\u4e8e\u72b9\u8c6b\u72b6\u6001\uff0c\u8d8b\u52bf\u4e0d\u660e\u6717\u3002\n    *   **\u53ef\u9760\u6027\u8bc4\u4f30\uff1a** \u7531\u4e8e\u7f6e\u4fe1\u5ea6\u8f83\u4f4e\uff0c\u4ee5\u53ca\u4fe1\u53f7\u5206\u6b67\uff0c\u5f53\u524d\u4fe1\u53f7\u7684\u53ef\u9760\u6027\u8f83\u4f4e\uff0c\u4e0d\u5efa\u8bae\u57fa\u4e8e\u6b64\u8fdb\u884c\u6fc0\u8fdb\u4ea4\u6613\u3002\n\n**2. \u7efc\u5408\u52a8\u91cf\u5206\u6790**\n\n*   **RSI (57.87523241852014)\uff1a** RSI\u7565\u9ad8\u4e8e50\uff0c\u8868\u660e\u7565\u5fae\u7684\u770b\u6da8\u52a8\u91cf\uff0c\u4f46\u5c1a\u672a\u8fdb\u5165\u8d85\u4e70\u533a\u57df\uff08\u901a\u5e38\u4e3a70\u4ee5\u4e0a\uff09\u3002\u6ca1\u6709\u660e\u663e\u7684\u80cc\u79bb\u4fe1\u53f7\u3002\n*   **\u968f\u673a\u632f\u8361\u5668 (StochRSI K: 25.26003423937894, Stoch K: 54.88375119871896, Stoch D: 60.49334389458613)\uff1a** StochRSI K\u503c\u8f83\u4f4e\uff0c\u53ef\u80fd\u9884\u793a\u7740\u8d85\u5356\u53cd\u5f39\u7684\u673a\u4f1a\uff0c\u4f46Stoch K\u548cD\u503c\u76f8\u5bf9\u8f83\u9ad8\uff0c\u8868\u660e\u52a8\u80fd\u4e2d\u6027\u504f\u591a\u3002\n*   **\u5a01\u5ec9\u6307\u6807 (%R: -57.85760730554239)\uff1a** %R\u503c\u4e3a-57.86\uff0c\u8868\u660e\u65e2\u975e\u8d85\u4e70\u4e5f\u975e\u8d85\u5356\u3002\n*   **\u53d8\u5316\u7387 (ROC: -0.07798589634807204)\uff1a** ROC\u4e3a\u8d1f\u503c\uff0c\u8868\u660e\u4ef7\u683c\u52a8\u80fd\u51cf\u5f31\uff0c\u6784\u6210\u770b\u8dcc\u4fe1\u53f7\u3002\n*   **\u8d44\u91d1\u6d41\u91cf\u6307\u6570 (MFI: 51.866408117635636)\uff1a** MFI\u63a5\u8fd150\uff0c\u8868\u660e\u4e70\u5356\u538b\u529b\u5747\u8861\u3002\n*   **\u5546\u54c1\u901a\u9053\u6307\u6570 (CCI: 35.594221903317916)\uff1a** CCI\u5728\u4e2d\u6027\u533a\u57df\uff0c\u6ca1\u6709\u7ed9\u51fa\u660e\u786e\u4fe1\u53f7\u3002\n\n**3. \u9ad8\u7ea7\u8d8b\u52bf\u5206\u6790**\n\n*   **MACD (MACD: 4.095117930567966, Signal: 4.13001017155076, Histogram: -0.034892240982793865)\uff1a** MACD\u67f1\u72b6\u56fe\u4e3a\u8d1f\u503c\uff0c\u4e14MACD\u7ebf\u7565\u4f4e\u4e8e\u4fe1\u53f7\u7ebf\uff0c\u8868\u660e\u6f5c\u5728\u7684\u770b\u8dcc\u8d8b\u52bf\u3002\n*   **\u79fb\u52a8\u5e73\u5747\u5206\u6790 (SMA/EMA)\uff1a**\n\n    *   \u4ef7\u683c\u9ad8\u4e8eSMA 20\u300150\u548c200\uff0c\u8868\u660e\u957f\u671f\u8d8b\u52bf\u4f9d\u7136\u770b\u6da8\u3002\n    *   EMA 8\u9ad8\u4e8eEMA 21\u548c55\uff0c\u4f46\u4ef7\u683c\u9ad8\u4e8e\u6240\u6709EMA\uff0c\u77ed\u671f\u5185\u53ef\u80fd\u5b58\u5728\u56de\u8c03\u98ce\u9669\u3002\n    *   **\u91d1\u53c9/\u6b7b\u53c9\uff1a** \u672a\u51fa\u73b0\u91d1\u53c9\u6216\u6b7b\u53c9\u3002\n*   **\u5e73\u5747\u65b9\u5411\u6307\u6570 (ADX: 17.83707831426452)\uff1a** ADX\u8f83\u4f4e\uff0c\u8868\u660e\u8d8b\u52bf\u5f3a\u5ea6\u8f83\u5f31\u3002\n*   **\u4e00\u76ee\u5747\u8861\u8868\uff1a**\n\n    *   \u4ef7\u683c\u4f4d\u4e8e\u4e91\u5c42\u4e4b\u4e0a\uff0c\u8868\u793a\u957f\u671f\u8d8b\u52bf\u770b\u6da8\u3002\n    *   \u8f6c\u6362\u7ebf (Tenkan-sen) \u4f4e\u4e8e\u57fa\u51c6\u7ebf (Kijun-sen)\uff0c\u4e3a\u770b\u8dcc\u4fe1\u53f7\u3002\n    *   \u8fdf\u884c\u8de8\u5ea6 (Chikou Span) \u5f53\u524d\u4ef7\u683c\uff0c\u4fe1\u53f7\u4e2d\u6027\u3002\n*   **\u629b\u7269\u7ebfSAR\uff1a** SAR\u4fe1\u53f7\u4e3a\u770b\u6da8\uff0c\u4f46\u9700\u8981\u7ed3\u5408\u5176\u4ed6\u6307\u6807\u5224\u65ad\u3002\n\n**4. \u6ce2\u52a8\u7387\u548c\u98ce\u9669\u8bc4\u4f30**\n\n*   **Bollinger Bands\uff1a** \u4ef7\u683c\u4f4d\u4e8e\u5e03\u6797\u5e26\u4e2d\u8f68\u4e0a\u65b9\uff0c\u4f46\u63a5\u8fd1\u4e0a\u8f68\uff0c\u53ef\u80fd\u9762\u4e34\u56de\u8c03\u538b\u529b\u3002\u5e03\u6797\u5e26\u5bbd\u5ea6\u9002\u4e2d\uff0c\u6ce2\u52a8\u7387\u6b63\u5e38\u3002\n*   **\u5e73\u5747\u771f\u5b9e\u8303\u56f4 (ATR: 5.921874506563833)\uff1a** ATR\u8868\u660e\u6ce2\u52a8\u7387\u8f83\u4f4e\u3002\n*   **\u6ce2\u52a8\u7387\u4f53\u5236\uff1a** \u6ce2\u52a8\u7387\u5904\u4e8e\u8f83\u4f4e\u6c34\u5e73\uff0c\u53ef\u80fd\u9884\u793a\u7740\u672a\u6765\u6ce2\u52a8\u7387\u4e0a\u5347\u3002\n\n**5. \u6210\u4ea4\u91cf\u548c\u667a\u80fd\u8d44\u91d1\u5206\u6790**\n\n*   **On-Balance Volume (OBV: 317720881.0)\uff1a** OBV\u8d8b\u52bf\u4e3a\u770b\u8dcc\uff0c\u8868\u660e\u8d44\u91d1\u6d41\u51fa\u3002\n*   **\u79ef\u7d2f/\u5206\u914d\u7ebf\uff1a** \u65e0\u6cd5\u76f4\u63a5\u5224\u65ad\uff0c\u9700\u8981\u8fdb\u4e00\u6b65\u6570\u636e\u3002\n*   **Chaikin Money Flow (CMF: 0.029514092933801913)\uff1a** CMF\u7565\u9ad8\u4e8e0\uff0c\u8868\u660e\u8f7b\u5fae\u7684\u4e70\u5165\u538b\u529b\u3002\n\n**6. \u5f62\u6001\u8bc6\u522b**\n\n*   **\u8721\u70db\u56fe\u5f62\u6001\uff1a** \u51fa\u73b0\u5341\u5b57\u661f (Doji)\uff0c\u8868\u660e\u5e02\u573a\u72b9\u8c6b\u4e0d\u51b3\uff0c\u53ef\u80fd\u9884\u793a\u7740\u8d8b\u52bf\u53cd\u8f6c\u3002\n*   **\u7f3a\u53e3\u5206\u6790\uff1a** \u65e0\u660e\u663e\u7f3a\u53e3\u3002\n*   **\u652f\u6491\u963b\u529b\u4f4d\uff1a**\n\n    *   \u963b\u529b\u4f4d\uff1a208.26, 210.83, 212.84\n    *   \u652f\u6491\u4f4d\uff1a203.68, 201.67, 199.10\n*   **\u56fe\u8868\u5f62\u6001\uff1a** \u9700\u8981\u8fdb\u4e00\u6b65\u89c2\u5bdf\uff0c\u76ee\u524d\u6ca1\u6709\u660e\u663e\u7684\u56fe\u8868\u5f62\u6001\u3002\n\n**7. \u76f8\u5173\u6027\u548c\u5e02\u573a\u80cc\u666f**\n\n*   **\u4e0e\u4e3b\u8981\u6307\u6570\u7684\u76f8\u5173\u6027\uff1a** \u4e0e\u6807\u666e500\u3001\u7eb3\u65af\u8fbe\u514b\u7b49\u4e3b\u8981\u6307\u6570\u9ad8\u5ea6\u76f8\u5173\uff0c\u8868\u660e\u5e02\u573a\u6574\u4f53\u60c5\u7eea\u5bf9AMZN\u5f71\u54cd\u8f83\u5927\u3002\n*   **\u8d1d\u5854\u7cfb\u6570 (1.3856505420743226)\uff1a** \u8d1d\u5854\u7cfb\u6570\u5927\u4e8e1\uff0c\u8868\u660eAMZN\u7684\u6ce2\u52a8\u6027\u5927\u4e8e\u5e02\u573a\u5e73\u5747\u6c34\u5e73\u3002\n*   **\u591a\u5143\u5316\u6536\u76ca\uff1a** \u591a\u5143\u5316\u8bc4\u5206\u8f83\u4f4e\uff0c\u8868\u660e\u6295\u8d44\u7ec4\u5408\u96c6\u4e2d\u5ea6\u8f83\u9ad8\uff0c\u5efa\u8bae\u589e\u52a0\u4f4e\u76f8\u5173\u6027\u8d44\u4ea7\u3002\n\n**8. \u98ce\u9669\u8c03\u6574\u4fe1\u53f7**\n\n*   **\u4fe1\u53f7\u5f3a\u5ea6\uff1a** \u603b\u4f53\u4fe1\u53f7\u5f3a\u5ea6\u8f83\u5f31\uff0c\u9700\u8981\u8c28\u614e\u5bf9\u5f85\u3002\n*   **\u4ed3\u4f4d\u89c4\u6a21\uff1a** \u5efa\u8bae\u63a7\u5236\u4ed3\u4f4d\u89c4\u6a21\uff0c\u907f\u514d\u8fc7\u5ea6\u98ce\u9669\u3002\n*   **\u6b62\u635f\u4f4d\uff1a** \u57fa\u4e8eATR\u548c\u652f\u6491\u963b\u529b\u4f4d\u8bbe\u7f6e\u6b62\u635f\uff0c\u4f8b\u5982\u5728201.67\u4e0b\u65b9\u8bbe\u7f6e\u6b62\u635f\u3002\n\n**9. \u53ef\u64cd\u4f5c\u7684\u4ea4\u6613\u5efa\u8bae**\n\n*   **\u5165\u573a/\u51fa\u573a\u70b9\u4f4d\uff1a**\n    *   **\u6f5c\u5728\u505a\u7a7a\u673a\u4f1a\uff1a** \u5982\u679c\u4ef7\u683c\u8dcc\u7834203.68\u652f\u6491\u4f4d\uff0c\u53ef\u8003\u8651\u8f7b\u4ed3\u505a\u7a7a\uff0c\u76ee\u6807\u4f4d201.67\uff0c\u6b62\u635f\u4f4d205\u3002\n    *   **\u6f5c\u5728\u505a\u591a\u673a\u4f1a\uff1a** \u5982\u679c\u4ef7\u683c\u6210\u529f\u7a81\u7834208.26\u963b\u529b\u4f4d\uff0c\u53ef\u8003\u8651\u8f7b\u4ed3\u505a\u591a\uff0c\u76ee\u6807\u4f4d210.83\uff0c\u6b62\u635f\u4f4d206\u3002\n*   **\u65f6\u95f4\u6846\u67b6\uff1a** \u77ed\u671f\uff08\u51e0\u65e5\u5230\u51e0\u5468\uff09\u3002\n*   **\u98ce\u9669\u7ba1\u7406\uff1a** \u4e25\u683c\u63a7\u5236\u4ed3\u4f4d\uff0c\u8bbe\u7f6e\u6b62\u635f\uff0c\u907f\u514d\u8ffd\u6da8\u6740\u8dcc\u3002\n*   **\u4fe1\u53f7\u786e\u8ba4\uff1a** \u5bc6\u5207\u5173\u6ce8\u6210\u4ea4\u91cf\u53d8\u5316\uff0c\u5982\u679c\u6210\u4ea4\u91cf\u653e\u5927\uff0c\u5219\u4fe1\u53f7\u53ef\u9760\u6027\u589e\u5f3a\u3002\n\n**10. \u591a\u65f6\u95f4\u6846\u67b6\u89c6\u89d2**\n\n*   **\u77ed\u671f\uff1a** \u77ed\u671f\u5185\u53ef\u80fd\u9762\u4e34\u56de\u8c03\u98ce\u9669\uff0c\u4f46\u957f\u671f\u8d8b\u52bf\u4f9d\u7136\u770b\u6da8\u3002",
+    "fundamental": "\u597d\u7684\uff0c\u4f5c\u4e3a\u4e13\u4e1a\u57fa\u672c\u9762\u5206\u6790\u5e08\uff0c\u6211\u5c06\u57fa\u4e8e\u60a8\u63d0\u4f9b\u7684\u6570\u636e\uff0c\u5bf9Amazon (AMZN) \u8fdb\u884c\u5168\u9762\u7684\u57fa\u672c\u9762\u5206\u6790\uff0c\u5e76\u7ed9\u51fa\u6295\u8d44\u5efa\u8bae\u3002\n\n**1. \u4f30\u503c\u8bc4\u4f30**\n\n*   **\u5f53\u524d\u4f30\u503c\u5224\u65ad\uff1a** \u4ece\u63d0\u4f9b\u7684\u6570\u636e\u6765\u770b\uff0cAMZN \u7684\u4f30\u503c\u76f8\u5bf9\u8f83\u9ad8\u3002\n    *   **\u5e02\u76c8\u7387 (33.55)\uff1a** \u9ad8\u4e8e\u6807\u666e500\u6307\u6570\u7684\u5e73\u5747\u5e02\u76c8\u7387\uff0c\u4e5f\u53ef\u80fd\u9ad8\u4e8e\u96f6\u552e\u884c\u4e1a\u7684\u5e73\u5747\u6c34\u5e73\uff08\u9700\u8981\u5177\u4f53\u884c\u4e1a\u6570\u636e\u5bf9\u6bd4\uff09\u3002\u8fd9\u8868\u660e\u6295\u8d44\u8005\u5bf9 AMZN \u7684\u672a\u6765\u589e\u957f\u62b1\u6709\u8f83\u9ad8\u9884\u671f\u3002\n    *   **\u9884\u671f\u5e02\u76c8\u7387 (33.33)\uff1a** \u7565\u4f4e\u4e8e\u5f53\u524d\u5e02\u76c8\u7387\uff0c\u8bf4\u660e\u5e02\u573a\u9884\u671f\u672a\u6765\u76c8\u5229\u5c06\u7565\u6709\u589e\u957f\uff0c\u4f46\u53d8\u5316\u4e0d\u5927\u3002\n    *   **PEG \u6bd4\u7387 (None)\uff1a** \u7f3a\u4e4f PEG \u6bd4\u7387\uff0c\u65e0\u6cd5\u66f4\u51c6\u786e\u5730\u8bc4\u4f30\u5176\u4f30\u503c\u662f\u5426\u5408\u7406\uff0c\u56e0\u4e3a PEG \u8003\u8651\u4e86\u76c8\u5229\u589e\u957f\u3002\u5982\u679c\u80fd\u83b7\u53d6\u5230\u76c8\u5229\u589e\u957f\u9884\u6d4b\u6570\u636e\uff0c\u8ba1\u7b97PEG\u4f1a\u66f4\u6709\u53c2\u8003\u610f\u4e49\u3002\n    *   **\u5e02\u51c0\u7387 (7.11)\uff1a** \u663e\u8457\u9ad8\u4e8e\u5927\u591a\u6570\u516c\u53f8\u7684\u5e02\u51c0\u7387\uff0c\u8868\u660e\u5e02\u573a\u5bf9\u5176\u8d44\u4ea7\u7684\u6ea2\u4ef7\u8f83\u9ad8\uff0c\u53ef\u80fd\u53cd\u6620\u4e86\u5176\u54c1\u724c\u4ef7\u503c\u3001\u65e0\u5f62\u8d44\u4ea7\u6216\u9ad8\u589e\u957f\u6f5c\u529b\u3002\n    *   **\u5e02\u9500\u7387 (3.36)\uff1a** \u76f8\u5bf9\u4e8e\u4f20\u7edf\u96f6\u552e\u5546\u8f83\u9ad8\uff0c\u4f46\u8003\u8651\u5230 AMZN \u7684\u4e92\u8054\u7f51\u96f6\u552e\u7279\u6027\u548c\u4e91\u8ba1\u7b97\u4e1a\u52a1\uff0c\u8fd9\u4e2a\u6570\u503c\u53ef\u80fd\u5728\u5408\u7406\u8303\u56f4\u5185\u3002\u9700\u8981\u4e0e\u540c\u7c7b\u578b\u7684\u79d1\u6280\u516c\u53f8\u8fdb\u884c\u6bd4\u8f83\u3002\n    *   **\u4f01\u4e1a\u4ef7\u503c/EBITDA (\u65e0\u6570\u636e)\uff1a** \u7f3a\u4e4f\u6b64\u9879\u6570\u636e\uff0c\u65e0\u6cd5\u8fdb\u884c\u66f4\u5168\u9762\u7684\u4f01\u4e1a\u4ef7\u503c\u8bc4\u4f30\u3002\n*   **DCF \u8003\u8651\u56e0\u7d20\uff1a**\n    *   \u7531\u4e8e\u7f3a\u4e4f\u81ea\u7531\u73b0\u91d1\u6d41\u6570\u636e\uff0c\u65e0\u6cd5\u8fdb\u884c\u7cbe\u786e\u7684 DCF \u4f30\u503c\u3002\u4f46\u53ef\u4ee5\u5b9a\u6027\u5730\u8003\u8651\uff1a\u5982\u679c AMZN \u672a\u6765\u80fd\u4fdd\u6301\u8f83\u9ad8\u7684\u8425\u6536\u589e\u957f\u548c\u5229\u6da6\u7387\u63d0\u5347\uff0c\u5176\u81ea\u7531\u73b0\u91d1\u6d41\u6f5c\u529b\u5de8\u5927\uff0c\u53ef\u80fd\u652f\u6301\u8f83\u9ad8\u7684\u4f30\u503c\u3002\n    *   \u9700\u8981\u5173\u6ce8 AMZN \u7684\u8d44\u672c\u652f\u51fa\u8ba1\u5212\uff0c\u56e0\u4e3a\u5b83\u4f1a\u5f71\u54cd\u81ea\u7531\u73b0\u91d1\u6d41\u3002\u5176\u5728\u7269\u6d41\u3001\u4e91\u8ba1\u7b97\u7b49\u9886\u57df\u7684\u6295\u8d44\u53ef\u80fd\u4f1a\u5728\u77ed\u671f\u5185\u538b\u7f29\u81ea\u7531\u73b0\u91d1\u6d41\uff0c\u4f46\u957f\u671f\u6765\u770b\u53ef\u80fd\u5e26\u6765\u66f4\u9ad8\u7684\u56de\u62a5\u3002\n\n**2. \u8d22\u52a1\u5065\u5eb7\u72b6\u51b5\u548c\u6d41\u52a8\u6027**\n\n*   **\u8d44\u4ea7\u8d1f\u503a\u8868\u5f3a\u5ea6\uff1a**\n    *   **\u8d1f\u503a\u6743\u76ca\u6bd4 (51.64%)\uff1a** \u5c5e\u4e8e\u4e2d\u7b49\u6c34\u5e73\uff0c\u8868\u660e\u516c\u53f8\u6709\u4e00\u5b9a\u7684\u8d22\u52a1\u6760\u6746\uff0c\u4f46\u98ce\u9669\u53ef\u63a7\u3002\u9700\u8981\u5173\u6ce8\u5176\u503a\u52a1\u7ed3\u6784\u548c\u507f\u503a\u80fd\u529b\u3002\n*   **\u6d41\u52a8\u6027\uff1a**\n    *   **\u6d41\u52a8\u6bd4\u7387 (1.05)\uff1a** \u7565\u9ad8\u4e8e 1\uff0c\u8868\u660e\u77ed\u671f\u507f\u503a\u80fd\u529b\u5c1a\u53ef\u3002\n    *   **\u901f\u52a8\u6bd4\u7387 (0.81)\uff1a** \u7565\u4f4e\u4e8e 1\uff0c\u8868\u660e\u5728\u7d27\u6025\u60c5\u51b5\u4e0b\uff0c\u53d8\u73b0\u80fd\u529b\u7a0d\u5f31\u3002\n*   **\u73b0\u91d1\u6d41\uff1a**\n    *   \u7f3a\u4e4f\u81ea\u7531\u73b0\u91d1\u6d41\u6570\u636e\uff0c\u65e0\u6cd5\u8bc4\u4f30\u5176\u73b0\u91d1\u6d41\u7a33\u5b9a\u6027\u3002\u9700\u8981\u5173\u6ce8\u5176\u7ecf\u8425\u6d3b\u52a8\u4ea7\u751f\u7684\u73b0\u91d1\u6d41\u662f\u5426\u80fd\u8986\u76d6\u6295\u8d44\u548c\u878d\u8d44\u9700\u6c42\u3002\n*   **\u8425\u8fd0\u8d44\u672c\u7ba1\u7406\uff1a**\n    *   \u9700\u8981\u8fdb\u4e00\u6b65\u5206\u6790\u5176\u5e94\u6536\u8d26\u6b3e\u3001\u5b58\u8d27\u548c\u5e94\u4ed8\u8d26\u6b3e\u7684\u5468\u8f6c\u7387\uff0c\u4ee5\u8bc4\u4f30\u5176\u8425\u8fd0\u8d44\u672c\u7ba1\u7406\u6548\u7387\u3002\n\n**3. \u76c8\u5229\u80fd\u529b\u6307\u6807\u548c\u8d8b\u52bf**\n\n*   **ROE (0.25%) \u548c ROA (0.08%)\uff1a** \u6570\u503c\u975e\u5e38\u4f4e\uff0c\u8fd9\u4e0eAMZN\u7684\u9ad8\u4f30\u503c\u548c\u9ad8\u589e\u957f\u9884\u671f\u4e0d\u7b26\u3002\u9700\u8981\u4ed4\u7ec6\u68c0\u67e5\u8fd9\u4e9b\u6570\u636e\u7684\u6765\u6e90\uff0c\u5e76\u4e0e\u5386\u53f2\u6570\u636e\u548c\u540c\u884c\u8fdb\u884c\u6bd4\u8f83\u3002\n*   **\u5229\u6da6\u7387\uff1a**\n    *   **\u6bdb\u5229\u7387 (49.16%)\uff1a** \u76f8\u5bf9\u8f83\u9ad8\uff0c\u8868\u660e\u5176\u4ea7\u54c1\u6216\u670d\u52a1\u5177\u6709\u4e00\u5b9a\u7684\u5b9a\u4ef7\u80fd\u529b\u3002\n    *   **\u8425\u4e1a\u5229\u6da6\u7387 (11.82%)\uff1a** \u5904\u4e8e\u5408\u7406\u6c34\u5e73\uff0c\u4f46\u4ecd\u6709\u63d0\u5347\u7a7a\u95f4\u3002\n    *   **\u51c0\u5229\u6da6\u7387 (10.14%)\uff1a** \u76f8\u5bf9\u8f83\u4f4e\uff0c\u53ef\u80fd\u53d7\u5230\u8fd0\u8425\u6210\u672c\u3001\u5229\u606f\u652f\u51fa\u6216\u7a0e\u6536\u7684\u5f71\u54cd\u3002\n*   **\u8d44\u4ea7\u5229\u7528\u7387\uff1a** \u9700\u8981\u901a\u8fc7\u5206\u6790\u603b\u8d44\u4ea7\u5468\u8f6c\u7387\u6765\u8bc4\u4f30\u5176\u8d44\u4ea7\u5229\u7528\u6548\u7387\u3002\n*   **\u76c8\u5229\u8d28\u91cf\uff1a** \u9700\u8981\u5173\u6ce8\u5176\u76c8\u5229\u662f\u5426\u4e3b\u8981\u6765\u81ea\u6838\u5fc3\u4e1a\u52a1\uff0c\u4ee5\u53ca\u662f\u5426\u5b58\u5728\u975e\u7ecf\u5e38\u6027\u635f\u76ca\u3002\n\n**4. \u589e\u957f\u524d\u666f\u548c\u53ef\u6301\u7eed\u6027**\n\n*   **\u8425\u6536\u589e\u957f (8.6%)\uff1a** \u8003\u8651\u5230\u5176\u5e9e\u5927\u7684\u4f53\u91cf\uff0c\u8fd9\u4e2a\u589e\u957f\u7387\u4ecd\u7136\u53ef\u89c2\u3002\n*   **\u76c8\u5229\u589e\u957f (62.2%)\uff1a** \u663e\u8457\u9ad8\u4e8e\u8425\u6536\u589e\u957f\uff0c\u8868\u660e\u5176\u76c8\u5229\u80fd\u529b\u6b63\u5728\u6539\u5584\u3002\n*   **\u5e02\u573a\u6269\u5f20\u673a\u4f1a\uff1a** \u5728\u4e91\u8ba1\u7b97\u3001\u4eba\u5de5\u667a\u80fd\u3001\u7535\u5546\u7b49\u9886\u57df\u4ecd\u6709\u5de8\u5927\u7684\u589e\u957f\u6f5c\u529b\u3002\n*   **\u7ade\u4e89\u4f18\u52bf\uff1a** \u5f3a\u5927\u7684\u54c1\u724c\u3001\u5e9e\u5927\u7684\u7528\u6237\u7fa4\u4f53\u3001\u5148\u8fdb\u7684\u7269\u6d41\u7f51\u7edc\u3001\u9886\u5148\u7684\u4e91\u8ba1\u7b97\u6280\u672f\u7b49\u6784\u6210\u4e86\u5176\u5f3a\u5927\u7684\u7ade\u4e89\u4f18\u52bf\u3002\n*   **\u7ba1\u7406\u5c42\uff1a** AMZN \u7684\u7ba1\u7406\u5c42\u4e00\u76f4\u4ee5\u521b\u65b0\u548c\u6267\u884c\u529b\u8457\u79f0\u3002\n\n**5. \u8d44\u672c\u7ed3\u6784\u548c\u80a1\u4e1c\u56de\u62a5**\n\n*   **\u503a\u52a1\u6c34\u5e73\uff1a** \u8d1f\u503a\u6743\u76ca\u6bd4\u9002\u4e2d\uff0c\u4f46\u9700\u8981\u5173\u6ce8\u5176\u503a\u52a1\u7ed3\u6784\u548c\u507f\u503a\u80fd\u529b\u3002\n*   **\u80a1\u606f\u653f\u7b56\uff1a** \u76ee\u524d\u4e0d\u6d3e\u53d1\u80a1\u606f\uff0c\u53ef\u80fd\u66f4\u503e\u5411\u4e8e\u5c06\u8d44\u91d1\u7528\u4e8e\u518d\u6295\u8d44\u548c\u6269\u5f20\u3002\n*   **\u80a1\u7968\u56de\u8d2d\uff1a** \u9700\u8981\u5173\u6ce8\u5176\u662f\u5426\u8fdb\u884c\u80a1\u7968\u56de\u8d2d\uff0c\u4ee5\u63d0\u5347\u80a1\u4e1c\u4ef7\u503c\u3002\n*   **\u5229\u606f\u8986\u76d6\u7387\uff1a** \u9700\u8981\u8ba1\u7b97\u5229\u606f\u8986\u76d6\u7387\uff0c\u4ee5\u8bc4\u4f30\u5176\u507f\u503a\u80fd\u529b\u3002\n\n**6. \u7ade\u4e89\u5730\u4f4d\u548c\u884c\u4e1a\u5206\u6790**\n\n*   **\u5e02\u573a\u4efd\u989d\uff1a** \u5728\u7535\u5546\u548c\u4e91\u8ba1\u7b97\u9886\u57df\u5360\u636e\u9886\u5148\u5730\u4f4d\u3002\n*   **\u884c\u4e1a\u589e\u957f\uff1a** \u7535\u5546\u548c\u4e91\u8ba1\u7b97\u662f\u9ad8\u589e\u957f\u884c\u4e1a\uff0c\u4e3a AMZN \u63d0\u4f9b\u4e86\u826f\u597d\u7684\u53d1\u5c55\u673a\u9047\u3002\n*   **\u76d1\u7ba1\u73af\u5883\uff1a** \u9762\u4e34\u53cd\u5784\u65ad\u5ba1\u67e5\u548c\u6570\u636e\u9690\u79c1\u76d1\u7ba1\u7b49\u98ce\u9669\u3002\n*   **\u6280\u672f\u98a0\u8986\uff1a** \u9700\u8981\u5173\u6ce8\u65b0\u5174\u6280\u672f\u5bf9\u5176\u4e1a\u52a1\u6a21\u5f0f\u7684\u6f5c\u5728\u5f71\u54cd\u3002\n\n**\u7efc\u5408\u8bc4\u4f30\u4e0e\u6295\u8d44\u5efa\u8bae**\n\n\u7efc\u5408\u4ee5\u4e0a\u5206\u6790\uff0c\u6211\u5bf9 AMZN \u7684\u6295\u8d44\u5efa\u8bae\u5982\u4e0b\uff1a\n\n*   **\u98ce\u9669\u63d0\u793a\uff1a**\n    *   \u4f30\u503c\u8f83\u9ad8\uff0c\u5b58\u5728\u56de\u8c03\u98ce\u9669\u3002\n    *   \u5b8f\u89c2\u7ecf\u6d4e\u4e0b\u884c\u53ef\u80fd\u5f71\u54cd\u5176\u7535\u5546\u4e1a\u52a1\u3002\n    *   \u53cd\u5784\u65ad\u5ba1\u67e5\u53ef\u80fd\u5bf9\u5176\u4e1a\u52a1\u6a21\u5f0f\u4ea7\u751f\u5f71\u54cd\u3002\n*   **\u6f5c\u5728\u673a\u4f1a\uff1a**\n    *   \u4e91\u8ba1\u7b97\u4e1a\u52a1\u7684\u9ad8\u901f\u589e\u957f\u3002\n    *   \u4eba\u5de5\u667a\u80fd\u548c\u7269\u8054\u7f51\u7b49\u65b0\u5174\u6280\u672f\u5e26\u6765\u7684\u65b0\u673a\u9047\u3002\n    *   \u56fd\u9645\u5e02\u573a\u6269\u5f20\u6f5c\u529b\u3002\n\n**\u6295\u8d44\u5efa\u8bae\uff1a\u6301\u6709\uff08\u8c28\u614e\u4e50\u89c2\uff09**\n\n*   **\u7406\u7531\uff1a** AMZN \u5177\u6709\u5f3a\u5927\u7684\u7ade\u4e89\u4f18\u52bf\u3001\u826f\u597d\u7684\u589e\u957f\u524d\u666f\u548c\u4f18\u79c0\u7684\u7ba1\u7406\u56e2\u961f\u3002\u867d\u7136\u4f30\u503c\u8f83\u9ad8\uff0c\u4f46\u8003\u8651\u5230\u5176\u957f\u671f\u6f5c\u529b\uff0c\u4ecd\u7136\u503c\u5f97\u6301\u6709\u3002\n*   **\u76ee\u6807\u4ef7\u4f4d\uff1a** \u8003\u8651\u5230\u6570\u636e\u4e0d\u5b8c\u6574\uff0c\u4e14\u7f3a\u4e4f\u5bf9\u672a\u6765\u76c8\u5229\u589e\u957f\u7684\u9884\u6d4b\uff0c\u6211\u65e0\u6cd5\u7ed9\u51fa\u4e00\u4e2a\u7cbe\u786e\u7684\u76ee\u6807\u4ef7\u4f4d\u3002\u5efa\u8bae\u6295\u8d44\u8005\u5bc6\u5207\u5173\u6ce8\u5176\u8d22\u52a1\u6570\u636e\u548c\u884c\u4e1a\u52a8\u6001\uff0c\u5e76\u6839\u636e\u81ea\u8eab\u98ce\u9669\u627f\u53d7\u80fd\u529b\u8fdb\u884c\u5224\u65ad\u3002\n*   **\u5efa\u8bae\uff1a** \u5728\u6301\u6709 AMZN \u7684\u540c\u65f6\uff0c\u4fdd\u6301\u8c28\u614e\u6001\u5ea6\uff0c\u5bc6\u5207\u5173\u6ce8\u5e02\u573a\u98ce\u9669\u548c\u516c\u53f8\u52a8\u6001\u3002\u5982\u679c\u4f30\u503c\u8fc7\u9ad8\u6216\u51fa\u73b0\u4e0d\u5229\u56e0\u7d20\uff0c\u53ef\u4ee5\u8003\u8651\u9002\u5f53\u51cf\u4ed3\u3002\n\n**\u514d\u8d23\u58f0\u660e\uff1a** \u672c\u5206\u6790\u57fa\u4e8e\u60a8\u63d0\u4f9b\u7684\u6570\u636e\uff0c\u4ec5\u4f9b\u53c2\u8003\u3002\u6295\u8d44\u6709\u98ce\u9669\uff0c\u8bf7\u60a8\u5728\u505a\u51fa\u6295\u8d44\u51b3\u7b56\u524d\uff0c\u8fdb\u884c\u5145\u5206\u7684\u5c3d\u804c\u8c03\u67e5\uff0c\u5e76\u54a8\u8be2\u4e13\u4e1a\u7684\u8d22\u52a1\u987e\u95ee\u3002\n",
+    "news": "\u597d\u7684\uff0c\u4f5c\u4e3a\u4e13\u4e1a\u65b0\u95fb\u60c5\u611f\u5206\u6790\u5e08\uff0c\u6211\u5c06\u5bf9\u4ee5\u4e0a\u5173\u4e8e\u4e9a\u9a6c\u900a (AMZN) \u7684\u65b0\u95fb\u8fdb\u884c\u5206\u6790\uff0c\u5e76\u7ed9\u51fa\u6211\u7684\u8bc4\u4f30\u548c\u5efa\u8bae\u3002\n\n**1. \u6574\u4f53\u60c5\u611f\u8bc4\u4f30**\n\n*   **\u65b0\u95fb\u60c5\u611f\uff1a** \u603b\u4f53**\u4e2d\u6027\u504f\u6b63\u9762**\u3002\u867d\u7136\u6709\u4e00\u4e9b\u5173\u4e8e\u884c\u4e1a\u7ade\u4e89\u548c\u5b8f\u89c2\u7ecf\u6d4e\u7684\u8ba8\u8bba\uff0c\u4f46\u66f4\u591a\u7684\u65b0\u95fb\u96c6\u4e2d\u5728\u4e9a\u9a6c\u900a\u5728AI\u9886\u57df\u7684\u5e03\u5c40\u548cAWS\u7684\u589e\u957f\u6f5c\u529b\u4e0a\u3002\n*   **\u60c5\u611f\u5f3a\u5ea6\uff1a** 6/10\u3002\u6b63\u9762\u4fe1\u606f\u4e3b\u8981\u56f4\u7ed5AI\u548c\u4e91\u8ba1\u7b97\u7684\u957f\u671f\u589e\u957f\u6f5c\u529b\uff0c\u800c\u8d1f\u9762\u4fe1\u606f\u5219\u8f83\u4e3a\u5206\u6563\uff0c\u5f3a\u5ea6\u4e0d\u5927\u3002\n*   **\u5e02\u573a\u53cd\u5e94\u9884\u671f\uff1a** \u9884\u8ba1\u5e02\u573a\u53cd\u5e94**\u6e29\u548c\u6b63\u9762**\u3002\u7531\u4e8e\u7f3a\u4e4f\u76f4\u63a5\u7684\u8d22\u52a1\u6570\u636e\u66f4\u65b0\uff0c\u53ef\u80fd\u4e0d\u4f1a\u5f15\u8d77\u5267\u70c8\u7684\u80a1\u4ef7\u6ce2\u52a8\uff0c\u4f46AI\u76f8\u5173\u65b0\u95fb\u53ef\u80fd\u5438\u5f15\u66f4\u591a\u5173\u6ce8\u3002\n\n**2. \u5173\u952e\u4e3b\u9898\u5206\u6790**\n\n*   **AI\u53d1\u5c55\u4e0eAWS\u589e\u957f\uff1a** \u8fd9\u662f\u6700\u7a81\u51fa\u7684\u4e3b\u9898\u3002\n    *   \u91cd\u8981\u6027\uff1a\u6781\u9ad8\u3002AI\u662f\u5f53\u524d\u79d1\u6280\u884c\u4e1a\u6700\u70ed\u95e8\u7684\u9886\u57df\uff0c\u4e9a\u9a6c\u900a\u5728AI\u9886\u57df\u7684\u8fdb\u5c55\u76f4\u63a5\u5173\u7cfb\u5230\u5176\u672a\u6765\u7684\u589e\u957f\u548c\u7ade\u4e89\u529b\u3002\n    *   \u6f5c\u5728\u5f71\u54cd\uff1a\u6b63\u9762\u3002AWS\u4f5c\u4e3a\u4e9a\u9a6c\u900a\u7684\u5229\u6da6\u5f15\u64ce\uff0c\u5176\u5728AI\u9886\u57df\u7684\u9886\u5bfc\u5730\u4f4d\u5c06\u5de9\u56fa\u5176\u5e02\u573a\u4efd\u989d\uff0c\u5e76\u53ef\u80fd\u5e26\u6765\u65b0\u7684\u589e\u957f\u70b9\u3002\n    *   \u884c\u4e1a\u76f8\u5173\u6027\uff1a\u9ad8\u3002\u4e0e\u5fae\u8f6f\u3001\u8c37\u6b4c\u7b49\u4e91\u8ba1\u7b97\u5de8\u5934\u5f62\u6210\u76f4\u63a5\u7ade\u4e89\uff0c\u540c\u65f6\u4e5f\u4e0eNvidia\u3001Marvell\u7b49AI\u82af\u7247\u5382\u5546\u5f62\u6210\u5408\u4f5c\u5173\u7cfb\u3002\n*   **\u5b8f\u89c2\u7ecf\u6d4e\u4e0e\u96f6\u552e\u884c\u4e1a\uff1a** Gap\u7684CEO\u8c08\u5230\u8d38\u6613\u6218\u7684\u5f71\u54cd\uff0cTarget\u548cWalmart\u7684\u65b0\u95fb\u6697\u793a\u4e86\u96f6\u552e\u884c\u4e1a\u7684\u7ade\u4e89\u683c\u5c40\u3002\n    *   \u91cd\u8981\u6027\uff1a\u4e2d\u7b49\u3002\u5b8f\u89c2\u7ecf\u6d4e\u548c\u884c\u4e1a\u7ade\u4e89\u662f\u5f71\u54cd\u4e9a\u9a6c\u900a\u7535\u5546\u4e1a\u52a1\u7684\u91cd\u8981\u56e0\u7d20\u3002\n    *   \u6f5c\u5728\u5f71\u54cd\uff1a\u4e2d\u6027\u3002\u8fd9\u4e9b\u65b0\u95fb\u53cd\u6620\u4e86\u96f6\u552e\u884c\u4e1a\u9762\u4e34\u7684\u6311\u6218\uff0c\u4f46\u4e5f\u6697\u793a\u4e86\u673a\u9047\uff0c\u4f8b\u5982\u901a\u8fc7\u4f18\u5316\u8fd0\u8425\u548c\u4f9b\u5e94\u94fe\u6765\u63d0\u9ad8\u7ade\u4e89\u529b\u3002\n    *   \u884c\u4e1a\u76f8\u5173\u6027\uff1a\u9ad8\u3002\u4e9a\u9a6c\u900a\u4f5c\u4e3a\u6700\u5927\u7684\u7535\u5546\u5e73\u53f0\uff0c\u5176\u8868\u73b0\u53d7\u5230\u6574\u4e2a\u96f6\u552e\u884c\u4e1a\u7684\u5f71\u54cd\u3002\n*   **\u5176\u4ed6\uff1a** \u5305\u62ec\u671f\u6743\u4ea4\u6613\u3001REITs\u6295\u8d44\u7b49\uff0c\u4e0e\u4e9a\u9a6c\u900a\u5173\u8054\u5ea6\u8f83\u4f4e\u3002\n\n**3. \u77ed\u671f\u5f71\u54cd\u8bc4\u4f30**\n\n*   **\u9884\u671f\u7684\u5373\u65f6\u80a1\u4ef7\u53cd\u5e94\uff1a** \u9884\u8ba1\u80a1\u4ef7\u4f1a\u6709\u5c0f\u5e45\u4e0a\u6da8\uff0c\u4f46\u5e45\u5ea6\u4e0d\u4f1a\u592a\u5927\uff0c\u9664\u975e\u6709\u5176\u4ed6\u91cd\u5927\u6d88\u606f\u51fa\u73b0\u3002\n*   **\u4ea4\u6613\u91cf\u548c\u6ce2\u52a8\u6027\u5f71\u54cd\uff1a** AI\u76f8\u5173\u65b0\u95fb\u53ef\u80fd\u4f1a\u7565\u5fae\u589e\u52a0\u4ea4\u6613\u91cf\uff0c\u4f46\u6574\u4f53\u6ce2\u52a8\u6027\u9884\u8ba1\u4e0d\u4f1a\u663e\u8457\u589e\u52a0\u3002\n*   **\u6280\u672f\u4f4d\u7684\u6f5c\u5728\u7a81\u7834\u6216\u652f\u6491\uff1a** \u5982\u679c\u80a1\u4ef7\u7a81\u7834208\u7f8e\u5143\u7684\u963b\u529b\u4f4d\uff0c\u53ef\u80fd\u4f1a\u5438\u5f15\u66f4\u591a\u4e70\u76d8\uff1b\u5982\u679c\u8dcc\u7834200\u7f8e\u5143\u7684\u652f\u6491\u4f4d\uff0c\u53ef\u80fd\u4f1a\u5f15\u53d1\u629b\u552e\u3002\n\n**4. \u957f\u671f\u5f71\u54cd\u5206\u6790**\n\n*   **\u5bf9\u516c\u53f8\u57fa\u672c\u9762\u7684\u6301\u7eed\u5f71\u54cd\uff1a** \u4e9a\u9a6c\u900a\u5728AI\u9886\u57df\u7684\u6295\u8d44\u548cAWS\u7684\u589e\u957f\u5c06\u957f\u671f\u63d0\u5347\u5176\u76c8\u5229\u80fd\u529b\u548c\u5e02\u573a\u4f30\u503c\u3002\n*   **\u7ade\u4e89\u5730\u4f4d\u53d8\u5316\uff1a** \u5982\u679c\u4e9a\u9a6c\u900a\u80fd\u591f\u5728AI\u9886\u57df\u4fdd\u6301\u9886\u5148\u5730\u4f4d\uff0c\u5c06\u8fdb\u4e00\u6b65\u5de9\u56fa\u5176\u5728\u4e91\u8ba1\u7b97\u548c\u7535\u5546\u9886\u57df\u7684\u7ade\u4e89\u4f18\u52bf\u3002\n*   **\u4f30\u503c\u5f71\u54cd\u548c\u76ee\u6807\u4ef7\u8c03\u6574\uff1a** \u957f\u671f\u6765\u770b\uff0c\u5982\u679cAI\u4e1a\u52a1\u8868\u73b0\u51fa\u8272\uff0c\u5206\u6790\u5e08\u53ef\u80fd\u4f1a\u4e0a\u8c03\u4e9a\u9a6c\u900a\u7684\u76ee\u6807\u4ef7\u3002\n\n**5. \u98ce\u9669\u56e0\u5b50\u8bc6\u522b**\n\n*   **\u5173\u952e\u98ce\u9669\u548c\u4e0d\u786e\u5b9a\u6027\uff1a**\n    *   AI\u6280\u672f\u53d1\u5c55\u7684\u4e0d\u786e\u5b9a\u6027\uff1aAI\u6280\u672f\u4ecd\u5728\u5feb\u901f\u53d1\u5c55\uff0c\u7ade\u4e89\u683c\u5c40\u53ef\u80fd\u53d1\u751f\u53d8\u5316\u3002\n    *   \u5b8f\u89c2\u7ecf\u6d4e\u4e0b\u884c\u98ce\u9669\uff1a\u5168\u7403\u7ecf\u6d4e\u653e\u7f13\u53ef\u80fd\u5f71\u54cd\u6d88\u8d39\u8005\u7684\u8d2d\u4e70\u529b\uff0c\u4ece\u800c\u5f71\u54cd\u4e9a\u9a6c\u900a\u7684\u7535\u5546\u4e1a\u52a1\u3002\n*   **\u76d1\u7ba1\u6216\u6cd5\u5f8b\u98ce\u9669\uff1a** \u53cd\u5784\u65ad\u76d1\u7ba1\u53ef\u80fd\u9650\u5236\u4e9a\u9a6c\u900a\u7684\u4e1a\u52a1\u6269\u5f20\u3002\n*   **\u8fd0\u8425\u548c\u8d22\u52a1\u98ce\u9669\uff1a** \u9ad8\u989d\u7684\u7814\u53d1\u6295\u5165\u548c\u8fd0\u8425\u6210\u672c\u53ef\u80fd\u5f71\u54cd\u5229\u6da6\u7387\u3002\n\n**6. \u6295\u8d44\u8005\u60c5\u7eea\u6307\u6807**\n\n*   **\u673a\u6784vs\u6563\u6237\u60c5\u7eea\uff1a** \u9884\u8ba1\u673a\u6784\u6295\u8d44\u8005\u5bf9\u4e9a\u9a6c\u900a\u7684\u957f\u671f\u524d\u666f\u4fdd\u6301\u4e50\u89c2\uff0c\u800c\u6563\u6237\u6295\u8d44\u8005\u53ef\u80fd\u4f1a\u66f4\u52a0\u5173\u6ce8\u77ed\u671f\u80a1\u4ef7\u6ce2\u52a8\u3002\n*   **\u5206\u6790\u5e08\u8bc4\u7ea7\u53d8\u5316\u9884\u671f\uff1a** \u5982\u679c\u4e9a\u9a6c\u900a\u5728AI\u9886\u57df\u53d6\u5f97\u7a81\u7834\uff0c\u5206\u6790\u5e08\u53ef\u80fd\u4f1a\u4e0a\u8c03\u5176\u8bc4\u7ea7\u3002\n*   **\u793e\u4ea4\u5a92\u4f53\u60c5\u7eea\u8d8b\u52bf\uff1a** \u793e\u4ea4\u5a92\u4f53\u60c5\u7eea\u53ef\u80fd\u53d7\u5230AI\u76f8\u5173\u65b0\u95fb\u7684\u5f71\u54cd\uff0c\u6b63\u9762\u60c5\u7eea\u53ef\u80fd\u4f1a\u589e\u52a0\u3002\n\n**\u60c5\u611f\u8bc4\u5206\uff1a**\n\n*   **\u603b\u4f53\u60c5\u611f\u8bc4\u5206\uff1a** 6/10\n\n**\u6295\u8d44\u5efa\u8bae\uff1a**\n\n*   **\u77ed\u671f\uff1a** \u5efa\u8bae\u6301\u6709\u6216\u5c0f\u5e45\u589e\u6301\u3002AI\u76f8\u5173\u65b0\u95fb\u53ef\u80fd\u5e26\u6765\u77ed\u671f\u4e0a\u6da8\u673a\u4f1a\uff0c\u4f46\u9700\u8981\u5173\u6ce8\u5b8f\u89c2\u7ecf\u6d4e\u548c\u884c\u4e1a\u7ade\u4e89\u7684\u98ce\u9669\u3002\n*   **\u957f\u671f\uff1a** \u5efa\u8bae\u957f\u671f\u6301\u6709\u3002\u4e9a\u9a6c\u900a\u5728AI\u3001\u4e91\u8ba1\u7b97\u548c\u7535\u5546\u9886\u57df\u5177\u6709\u5f3a\u5927\u7684\u7ade\u4e89\u4f18\u52bf\uff0c\u957f\u671f\u589e\u957f\u6f5c\u529b\u5de8\u5927\u3002\n*   **\u98ce\u9669\u7ba1\u7406\uff1a** \u5bc6\u5207\u5173\u6ce8\u5b8f\u89c2\u7ecf\u6d4e\u5f62\u52bf\u548c\u76d1\u7ba1\u653f\u7b56\u53d8\u5316\uff0c\u5408\u7406\u63a7\u5236\u4ed3\u4f4d\u3002\n\n**\u514d\u8d23\u58f0\u660e\uff1a**\n\n\u672c\u5206\u6790\u4ec5\u4f9b\u53c2\u8003\uff0c\u4e0d\u6784\u6210\u6295\u8d44\u5efa\u8bae\u3002\u6295\u8d44\u8005\u5e94\u6839\u636e\u81ea\u8eab\u98ce\u9669\u627f\u53d7\u80fd\u529b\u548c\u6295\u8d44\u76ee\u6807\u505a\u51fa\u51b3\u7b56\u3002\n"
+  },
+  "recommendation": {
+    "full_analysis": "\u597d\u7684\uff0c\u6211\u5c06\u7ed3\u5408\u60a8\u63d0\u4f9b\u7684\u6280\u672f\u5206\u6790\u3001\u57fa\u672c\u9762\u5206\u6790\u548c\u65b0\u95fb\u60c5\u611f\u5206\u6790\uff0c\u4e3aAMZN (Amazon.com, Inc.) \u63d0\u4f9b\u4e00\u4efd\u7efc\u5408\u6295\u8d44\u5efa\u8bae\uff0c\u5305\u542b\u60a8\u8981\u6c42\u7684\u5404\u9879\u5185\u5bb9\u3002\n\n**1. \u6295\u8d44\u5efa\u8bae\uff1a\u6301\u6709 (\u8c28\u614e\u4e50\u89c2)**\n\n*   **\u5efa\u8bae\u7406\u7531\u548c\u5173\u952e\u652f\u6491\u56e0\u7d20\uff1a** \u7efc\u5408\u8003\u8651\uff0cAMZN\u7684\u957f\u671f\u589e\u957f\u6f5c\u529b\u4ecd\u7136\u53ef\u89c2\uff0c\u7279\u522b\u662f\u5728\u4e91\u8ba1\u7b97\uff08AWS\uff09\u548c\u4eba\u5de5\u667a\u80fd\uff08AI\uff09\u9886\u57df\u3002\u57fa\u672c\u9762\u663e\u793a\u8425\u6536\u548c\u76c8\u5229\u589e\u957f\u5f3a\u52b2\uff0c\u65b0\u95fb\u60c5\u611f\u504f\u5411\u6b63\u9762\uff0c\u7a81\u51fa\u4e86\u516c\u53f8\u5728AI\u9886\u57df\u7684\u5e03\u5c40\u3002\u5c3d\u7ba1\u4f30\u503c\u8f83\u9ad8\uff0c\u6280\u672f\u9762\u4fe1\u53f7\u8f83\u4e3a\u6df7\u6742\uff0c\u4f46\u957f\u671f\u8d8b\u52bf\u4f9d\u7136\u770b\u6da8\u3002\n*   **\u98ce\u9669\u8c03\u6574\u540e\u7684\u9884\u671f\u56de\u62a5\uff1a** \u57fa\u4e8e\u5f53\u524d\u5e02\u573a\u73af\u5883\u548cAMZN\u7684\u589e\u957f\u9884\u671f\uff0c\u9884\u8ba1\u672a\u676512\u4e2a\u6708\u98ce\u9669\u8c03\u6574\u540e\u7684\u56de\u62a5\u57288%-12%\u4e4b\u95f4\u3002\u8fd9\u4e2a\u56de\u62a5\u7387\u8003\u8651\u4e86\u5e02\u573a\u6ce2\u52a8\u3001\u884c\u4e1a\u7ade\u4e89\u4ee5\u53ca\u6f5c\u5728\u7684\u76d1\u7ba1\u98ce\u9669\u3002\n\n**2. \u76ee\u6807\u4ef7\u4f4d\u548c\u65f6\u95f4\u6846\u67b6\uff1a**\n\n*   **6\u4e2a\u6708\u76ee\u6807\u4ef7\uff1a** $220\n*   **12\u4e2a\u6708\u76ee\u6807\u4ef7\uff1a** $235\n*   **\u4e0a\u884c/\u4e0b\u884c\u98ce\u9669\u6bd4\u7387\uff1a** 2:1 (\u610f\u5473\u7740\u4e0a\u884c\u6f5c\u529b\u662f\u4e0b\u884c\u98ce\u9669\u7684\u4e24\u500d)\n*   **\u6b62\u635f\u5efa\u8bae\u4f4d\uff1a** $195 (\u8dcc\u7834\u6b64\u4ef7\u4f4d\u8868\u660e\u77ed\u671f\u8d8b\u52bf\u53ef\u80fd\u53cd\u8f6c\uff0c\u5efa\u8bae\u6b62\u635f\u4ee5\u63a7\u5236\u98ce\u9669)\n\n**3. \u6295\u8d44\u903b\u8f91\u603b\u7ed3\uff1a**\n\n*   **\u6280\u672f\u9762\u3001\u57fa\u672c\u9762\u3001\u60c5\u611f\u9762\u7684\u6743\u91cd\u5206\u914d\uff1a**\n    *   \u57fa\u672c\u9762: 50% (\u57fa\u4e8e\u8425\u6536\u589e\u957f\u3001\u76c8\u5229\u80fd\u529b\u548c\u957f\u671f\u589e\u957f\u6f5c\u529b)\n    *   \u60c5\u611f\u9762: 30% (\u57fa\u4e8e\u65b0\u95fb\u60c5\u611f\u5206\u6790\uff0c\u53cd\u6620\u5e02\u573a\u5bf9AMZN\u7684\u6574\u4f53\u60c5\u7eea)\n    *   \u6280\u672f\u9762: 20% (\u7528\u4e8e\u5bfb\u627e\u5165\u573a\u548c\u51fa\u573a\u70b9\u4f4d\uff0c\u4ee5\u53ca\u98ce\u9669\u7ba1\u7406)\n*   **\u4e3b\u8981\u9a71\u52a8\u56e0\u7d20\u4f18\u5148\u7ea7\uff1a**\n    1.  AWS\u4e91\u670d\u52a1\u589e\u957f\uff1a\u6301\u7eed\u7684\u4e91\u670d\u52a1\u9700\u6c42\u662fAMZN\u589e\u957f\u7684\u4e3b\u8981\u5f15\u64ce\u3002\n    2.  AI\u9886\u57df\u53d1\u5c55\uff1a\u5728AI\u9886\u57df\u7684\u6295\u8d44\u548c\u7a81\u7834\u5c06\u63a8\u52a8\u65b0\u7684\u589e\u957f\u3002\n    3.  \u7535\u5546\u4e1a\u52a1\u97e7\u6027\uff1a\u5728\u5b8f\u89c2\u7ecf\u6d4e\u6311\u6218\u4e0b\uff0c\u7535\u5546\u4e1a\u52a1\u7684\u7a33\u5b9a\u8868\u73b0\u81f3\u5173\u91cd\u8981\u3002\n*   **\u5173\u952e\u50ac\u5316\u5242\u548c\u98ce\u9669\u56e0\u7d20\uff1a**\n    *   **\u50ac\u5316\u5242\uff1a**\n        *   AWS\u8425\u6536\u8d85\u9884\u671f\u589e\u957f\u3002\n        *   AI\u6280\u672f\u5728\u5546\u4e1a\u5e94\u7528\u4e2d\u53d6\u5f97\u7a81\u7834\u3002\n        *   \u5b8f\u89c2\u7ecf\u6d4e\u73af\u5883\u6539\u5584\uff0c\u6d88\u8d39\u8005\u652f\u51fa\u589e\u52a0\u3002\n    *   **\u98ce\u9669\u56e0\u7d20\uff1a**\n        *   \u53cd\u5784\u65ad\u76d1\u7ba1\u52a0\u5f3a\u3002\n        *   \u4e91\u8ba1\u7b97\u5e02\u573a\u7ade\u4e89\u52a0\u5267\u3002\n        *   \u5b8f\u89c2\u7ecf\u6d4e\u8870\u9000\uff0c\u5f71\u54cd\u7535\u5546\u9500\u552e\u3002\n\n**4. \u4ed3\u4f4d\u5efa\u8bae\uff1a**\n\n*   **\u5efa\u8bae\u7684\u6295\u8d44\u7ec4\u5408\u6743\u91cd\uff1a** \u5efa\u8bae\u5c06AMZN\u914d\u7f6e\u5728\u6295\u8d44\u7ec4\u5408\u76845%-8%\u4e4b\u95f4\u3002\n*   **\u5206\u6279\u5efa\u4ed3\u7b56\u7565\uff1a**\n    *   \u5982\u679c\u5df2\u7ecf\u6301\u6709AMZN\uff0c\u5efa\u8bae\u7ef4\u6301\u73b0\u6709\u4ed3\u4f4d\u3002\n    *   \u5982\u679c\u5c1a\u672a\u6301\u6709\uff0c\u53ef\u4ee5\u8003\u8651\u5206\u6279\u5efa\u4ed3\uff1a\n        *   \u5728$200 - $205\u533a\u95f4\u5efa\u7acb\u521d\u59cb\u4ed3\u4f4d (30% of planned allocation)\u3002\n        *   \u5982\u679c\u80a1\u4ef7\u56de\u8c03\u81f3$195 - $200\u533a\u95f4\uff0c\u589e\u52a0\u4ed3\u4f4d (30% of planned allocation)\u3002\n        *   \u5982\u679c\u80a1\u4ef7\u7a81\u7834$210\u963b\u529b\u4f4d\uff0c\u786e\u8ba4\u8d8b\u52bf\u540e\uff0c\u589e\u52a0\u4ed3\u4f4d (40% of planned allocation)\u3002\n*   **\u98ce\u9669\u7ba1\u7406\u6307\u5bfc\uff1a**\n    *   \u4e25\u683c\u6267\u884c\u6b62\u635f\u7b56\u7565\uff0c\u907f\u514d\u60c5\u7eea\u5316\u4ea4\u6613\u3002\n    *   \u5b9a\u671f\u8bc4\u4f30\u6295\u8d44\u7ec4\u5408\uff0c\u6839\u636e\u5e02\u573a\u53d8\u5316\u8fdb\u884c\u8c03\u6574\u3002\n    *   \u4e0d\u8981\u5c06\u6240\u6709\u8d44\u91d1\u96c6\u4e2d\u6295\u8d44\u4e8e\u5355\u4e00\u80a1\u7968\uff0c\u4fdd\u6301\u6295\u8d44\u7ec4\u5408\u591a\u5143\u5316\u3002\n\n**5. \u76d1\u63a7\u6307\u6807\uff1a**\n\n*   **\u9700\u8981\u5bc6\u5207\u5173\u6ce8\u7684\u5173\u952e\u6307\u6807\uff1a**\n    *   AWS\u8425\u6536\u589e\u957f\u7387\u3002\n    *   AI\u7814\u53d1\u6295\u5165\u548c\u5546\u4e1a\u5316\u8fdb\u5c55\u3002\n    *   \u7535\u5546\u4e1a\u52a1\u7684GMV\uff08\u5546\u54c1\u4ea4\u6613\u603b\u989d\uff09\u589e\u957f\u3002\n    *   \u5b8f\u89c2\u7ecf\u6d4e\u6570\u636e\uff08GDP\u589e\u957f\u3001\u6d88\u8d39\u8005\u4fe1\u5fc3\u6307\u6570\uff09\u3002\n*   **\u6539\u53d8\u6295\u8d44\u89c2\u70b9\u7684\u89e6\u53d1\u6761\u4ef6\uff1a**\n    *   AWS\u8425\u6536\u589e\u957f\u663e\u8457\u653e\u7f13\u3002\n    *   AI\u7ade\u4e89\u683c\u5c40\u6076\u5316\uff0cAMZN\u5931\u53bb\u9886\u5148\u5730\u4f4d\u3002\n    *   \u5b8f\u89c2\u7ecf\u6d4e\u6570\u636e\u6301\u7eed\u75b2\u8f6f\uff0c\u7535\u5546\u9500\u552e\u5927\u5e45\u4e0b\u6ed1\u3002\n    *   \u51fa\u73b0\u91cd\u5927\u8d1f\u9762\u65b0\u95fb\u6216\u76d1\u7ba1\u4e8b\u4ef6\u3002\n*   **\u91cd\u8981\u7684\u8d22\u62a5\u548c\u4e8b\u4ef6\u65e5\u671f\uff1a**\n    *   \u6bcf\u5b63\u5ea6\u8d22\u62a5\u53d1\u5e03\u3002\n    *   AWS re:Invent (\u5e74\u5ea6\u4e91\u8ba1\u7b97\u5927\u4f1a)\u3002\n    *   Prime Day (\u5e74\u5ea6\u4fc3\u9500\u6d3b\u52a8)\u3002\n\n**6. \u98ce\u9669\u62ab\u9732\uff1a**\n\n*   **\u4e3b\u8981\u6295\u8d44\u98ce\u9669\uff1a**\n    *   **\u4f30\u503c\u98ce\u9669\uff1a** AMZN\u7684\u4f30\u503c\u76f8\u5bf9\u8f83\u9ad8\uff0c\u5b58\u5728\u56de\u8c03\u98ce\u9669\u3002\n    *   **\u7ade\u4e89\u98ce\u9669\uff1a** \u5728\u4e91\u8ba1\u7b97\u548c\u7535\u5546\u9886\u57df\u9762\u4e34\u6fc0\u70c8\u7684\u7ade\u4e89\u3002\n    *   **\u76d1\u7ba1\u98ce\u9669\uff1a** \u53cd\u5784\u65ad\u76d1\u7ba1\u53ef\u80fd\u9650\u5236\u5176\u4e1a\u52a1\u6269\u5f20\u3002\n    *   **\u5b8f\u89c2\u7ecf\u6d4e\u98ce\u9669\uff1a** \u5b8f\u89c2\u7ecf\u6d4e\u4e0b\u884c\u53ef\u80fd\u5f71\u54cd\u6d88\u8d39\u8005\u652f\u51fa\u3002\n*   **\u60c5\u666f\u5206\u6790\uff1a**\n    *   **\u4e50\u89c2\u60c5\u666f\uff1a** AWS\u548cAI\u4e1a\u52a1\u9ad8\u901f\u589e\u957f\uff0c\u4f30\u503c\u6301\u7eed\u63d0\u5347\uff0c\u80a1\u4ef7\u7a81\u7834$250\u3002\n    *   **\u57fa\u51c6\u60c5\u666f\uff1a** AWS\u548cAI\u4e1a\u52a1\u7a33\u5065\u589e\u957f\uff0c\u7ef4\u6301\u73b0\u6709\u4f30\u503c\u6c34\u5e73\uff0c\u80a1\u4ef7\u8fbe\u5230$235\u3002\n    *   **\u60b2\u89c2\u60c5\u666f\uff1a** \u5b8f\u89c2\u7ecf\u6d4e\u8870\u9000\uff0c\u76d1\u7ba1\u538b\u529b\u52a0\u5927\uff0cAWS\u7ade\u4e89\u52a0\u5267\uff0c\u80a1\u4ef7\u8dcc\u7834$180\u3002\n*   **\u9002\u5408\u7684\u6295\u8d44\u8005\u7c7b\u578b\uff1a**\n    *   \u957f\u671f\u6295\u8d44\u8005\uff0c\u80fd\u591f\u627f\u53d7\u4e00\u5b9a\u7684\u6ce2\u52a8\u6027\u3002\n    *   \u5bf9\u4e91\u8ba1\u7b97\u548c\u4eba\u5de5\u667a\u80fd\u884c\u4e1a\u6709\u4fe1\u5fc3\u7684\u6295\u8d44\u8005\u3002\n    *   \u613f\u610f\u627f\u62c5\u4e00\u5b9a\u98ce\u9669\u4ee5\u8ffd\u6c42\u957f\u671f\u589e\u957f\u7684\u6295\u8d44\u8005\u3002\n\n**\u514d\u8d23\u58f0\u660e\uff1a** \u672c\u6295\u8d44\u5efa\u8bae\u57fa\u4e8e\u73b0\u6709\u4fe1\u606f\u548c\u5206\u6790\uff0c\u4ec5\u4f9b\u53c2\u8003\u3002\u6295\u8d44\u6709\u98ce\u9669\uff0c\u8bf7\u60a8\u5728\u505a\u51fa\u6295\u8d44\u51b3\u7b56\u524d\uff0c\u8fdb\u884c\u5145\u5206\u7684\u5c3d\u804c\u8c03\u67e5\uff0c\u5e76\u54a8\u8be2\u4e13\u4e1a\u7684\u8d22\u52a1\u987e\u95ee\u3002 \u8fc7\u53bb\u7684\u8868\u73b0\u5e76\u4e0d\u4ee3\u8868\u672a\u6765\u7684\u7ed3\u679c\u3002\n"
+  },
+  "summary": {
+    "executive_summary": "**\u6267\u884c\u6458\u8981\uff1aAMZN (Amazon.com, Inc.)**\n\n**1. \u4e00\u53e5\u8bdd\u6295\u8d44\u89c2\u70b9\uff1a** \u6301\u6709\uff0c\u957f\u671f\u589e\u957f\u6f5c\u529b\u652f\u6491\uff0c\u4f46\u9700\u8c28\u614e\u5bf9\u5f85\u4f30\u503c\u98ce\u9669\u3002\n\n**2. \u4e09\u5927\u5173\u952e\u8981\u70b9\uff1a**\n\n1.  **AWS\u4e91\u670d\u52a1\u589e\u957f\uff1a** \u6301\u7eed\u589e\u957f\u662f\u4e3b\u8981\u5f15\u64ce\uff0c\u5de9\u56fa\u5e02\u573a\u9886\u5bfc\u5730\u4f4d\u3002\n2.  **AI\u9886\u57df\u53d1\u5c55\uff1a** \u6295\u8d44\u548c\u7a81\u7834\u9a71\u52a8\u65b0\u589e\u957f\uff0c\u63d0\u5347\u7ade\u4e89\u4f18\u52bf\u3002\n3.  **\u7535\u5546\u4e1a\u52a1\u97e7\u6027\uff1a** \u5728\u5b8f\u89c2\u7ecf\u6d4e\u6311\u6218\u4e0b\u4fdd\u6301\u7a33\u5b9a\u8868\u73b0\u81f3\u5173\u91cd\u8981\u3002\n\n**3. \u98ce\u9669\u56de\u62a5\u6982\u8981\uff1a**\n\n*   **\u9884\u671f\u56de\u62a5\u6f5c\u529b\uff1a** \u672a\u676512\u4e2a\u6708\uff0c\u98ce\u9669\u8c03\u6574\u540e\u56de\u62a58%-12%\u3002\n*   **\u4e3b\u8981\u98ce\u9669\u56e0\u7d20\uff1a** \u4f30\u503c\u8f83\u9ad8\uff0c\u76d1\u7ba1\u98ce\u9669\uff0c\u4e91\u8ba1\u7b97\u7ade\u4e89\u3002\n*   **\u98ce\u9669\u8c03\u6574\u8bc4\u7ea7\uff1a** \u4e2d\u6027\u504f\u4e50\u89c2\u3002\n\n**4. \u5373\u523b\u884c\u52a8\u8981\u6c42\uff1a**\n\n*   **\u7acb\u5373\u5173\u6ce8\u4e8b\u9879\uff1a** \u5bc6\u5207\u5173\u6ce8AWS\u8425\u6536\u589e\u957f\u548cAI\u5546\u4e1a\u5316\u8fdb\u5c55\u3002\n*   **\u65f6\u95f4\u654f\u611f\u50ac\u5316\u5242\uff1a** \u4e0b\u5b63\u5ea6\u8d22\u62a5\u53d1\u5e03\uff0cAWS re:Invent\u4f1a\u8bae\u7ed3\u679c\u3002\n"
+  },
+  "charts": {
+    "technical_analysis": "./stock-analysis-viewer/public/charts/AMZN_technical_analysis_20250530_180743.png",
+    "correlation": "charts/AMZN_correlation_20250530_180744.png"
+  }
+}
