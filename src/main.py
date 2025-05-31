@@ -846,7 +846,9 @@ class StockAnalyzer:
             plt.close()
 
             # Return web-accessible path for frontend usage
-            chart_filename = f"charts/{ticker}_technical_analysis_{timestamp}.png"
+            # Add basePath for production deployment (GitHub Pages)
+            base_path = "/stock-analyzer" if os.getenv('NODE_ENV') == 'production' else ""
+            chart_filename = f"{base_path}/charts/{ticker}_technical_analysis_{timestamp}.png"
             return chart_filename
 
         except Exception as e:
@@ -967,7 +969,9 @@ class StockAnalyzer:
             plt.close()
 
             # Return web-accessible path for frontend usage
-            chart_filename = f"charts/{results['ticker']}_correlation_{timestamp}.png"
+            # Add basePath for production deployment (GitHub Pages)
+            base_path = "/stock-analyzer" if os.getenv('NODE_ENV') == 'production' else ""
+            chart_filename = f"{base_path}/charts/{results['ticker']}_correlation_{timestamp}.png"
             return chart_filename
 
         except Exception as e:

@@ -53,14 +53,13 @@ jobs:
           FUNDAMENTAL_ANALYSIS_ENABLED: "true"
           LOG_LEVEL: "INFO"
           NEWS_ANALYSIS_ENABLED: "true"
+          NODE_ENV: "production"
           SAVE_REPORTS: "true"
           SENTIMENT_ANALYSIS_ENABLED: "true"
           SINA_FINANCE_ENABLED: "true"
           TECHNICAL_ANALYSIS_PERIOD: "252"
           USE_CACHE: "true"
           YAHOO_FINANCE_ENABLED: "true"
-
-
 
         continue-on-error: true
       

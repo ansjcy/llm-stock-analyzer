@@ -27,10 +27,16 @@ function HomeContent() {
   const [selectedReport, setSelectedReport] = useState<string>('');
   const [loadingReports, setLoadingReports] = useState(true);
 
+  // Helper function to get correct API URL with basePath
+  const getApiUrl = (path: string) => {
+    const basePath = process.env.NODE_ENV === 'production' ? '/stock-analyzer' : '';
+    return `${basePath}${path}`;
+  };
+
   const loadAvailableReports = async () => {
     try {
       setLoadingReports(true);
-      const response = await fetch('/api/reports');
+      const response = await fetch(getApiUrl('/api/reports'));
       const data = await response.json();
       
       if (data.reports) {

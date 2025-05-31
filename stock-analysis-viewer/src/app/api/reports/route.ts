@@ -19,6 +19,9 @@ export async function GET() {
     const files = await fs.readdir(reportsDir);
     const jsonFiles = files.filter(file => file.endsWith('.json'));
     
+    // Get basePath for production builds
+    const basePath = process.env.NODE_ENV === 'production' ? '/stock-analyzer' : '';
+    
     const reports = jsonFiles.map(file => {
       const match = file.match(/^([A-Z]+)_analysis_(\d+)_(\d+)\.json$/);
       if (match) {
@@ -30,7 +33,7 @@ export async function GET() {
           ticker,
           date,
           time,
-          fullPath: `/reports/${file}`
+          fullPath: `${basePath}/reports/${file}`
         };
       }
       return {
@@ -38,7 +41,7 @@ export async function GET() {
         ticker: file.split('_')[0] || 'UNKNOWN',
         date: 'unknown',
         time: 'unknown',
-        fullPath: `/reports/${file}`
+        fullPath: `${basePath}/reports/${file}`
       };
     });
     
