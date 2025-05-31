@@ -66,10 +66,36 @@ jobs:
       
       - name: List generated files
         run: |
-          echo "Reports directory:"
-          ls -la reports/ || echo "No reports directory"
-          echo "Charts directory:"
-          ls -la charts/ || echo "No charts directory"
+          echo "Reports directory (root):"
+          ls -la reports/ || echo "No root reports directory"
+          echo "Charts directory (root):"
+          ls -la charts/ || echo "No root charts directory"
+          echo "Frontend reports directory:"
+          ls -la stock-analysis-viewer/public/reports/ || echo "No frontend reports directory"
+          echo "Frontend charts directory:"
+          ls -la stock-analysis-viewer/public/charts/ || echo "No frontend charts directory"
+          
+      - name: Copy generated files to root directories for git tracking
+        run: |
+          # Copy reports from frontend public directory to root for git tracking
+          if [ -d "stock-analysis-viewer/public/reports" ] && [ "$(ls -A stock-analysis-viewer/public/reports/ 2>/dev/null)" ]; then
+            echo "Copying reports from frontend to root directory..."
+            cp -r stock-analysis-viewer/public/reports/* reports/ 2>/dev/null || true
+            echo "Reports copied successfully"
+          fi
+          
+          # Copy charts from frontend public directory to root for git tracking  
+          if [ -d "stock-analysis-viewer/public/charts" ] && [ "$(ls -A stock-analysis-viewer/public/charts/ 2>/dev/null)" ]; then
+            echo "Copying charts from frontend to root directory..."
+            cp -r stock-analysis-viewer/public/charts/* charts/ 2>/dev/null || true
+            echo "Charts copied successfully"
+          fi
+          
+          # List what we now have in root directories
+          echo "Root reports after copy:"
+          ls -la reports/ || echo "No reports found"
+          echo "Root charts after copy:"
+          ls -la charts/ || echo "No charts found"
       
       - name: Create placeholder files if analysis failed
         run: |
@@ -87,7 +113,8 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add reports/ charts/ || true
+          # Add both root directories and frontend public directories
+          git add reports/ charts/ stock-analysis-viewer/public/reports/ stock-analysis-viewer/public/charts/ || true
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
@@ -102,6 +129,8 @@ jobs:
           path: |
             reports/
             charts/
+            stock-analysis-viewer/public/reports/
+            stock-analysis-viewer/public/charts/
           if-no-files-found: warn
 
   deploy-github-pages:
@@ -127,21 +156,30 @@ jobs:
       
       - name: Sync reports to frontend
         run: |
-          # Copy reports and charts to the frontend's public directory
+          # Ensure frontend directories exist
           mkdir -p stock-analysis-viewer/public/reports
           mkdir -p stock-analysis-viewer/public/charts
           
-          # Copy reports
-          if [ -d "reports" ] && [ "$(ls -A reports/)" ]; then
+          # Copy from downloaded artifacts (if any) to frontend
+          if [ -d "reports" ] && [ "$(ls -A reports/ 2>/dev/null)" ]; then
             cp -r reports/* stock-analysis-viewer/public/reports/ 2>/dev/null || true
-            echo "Copied reports to frontend"
+            echo "Copied reports from artifacts to frontend"
+          else
+            echo "No reports in artifacts to copy"
           fi
           
-          # Copy charts  
-          if [ -d "charts" ] && [ "$(ls -A charts/)" ]; then
+          if [ -d "charts" ] && [ "$(ls -A charts/ 2>/dev/null)" ]; then
             cp -r charts/* stock-analysis-viewer/public/charts/ 2>/dev/null || true
-            echo "Copied charts to frontend"
+            echo "Copied charts from artifacts to frontend"
+          else
+            echo "No charts in artifacts to copy"
           fi
+          
+          # List final frontend directory contents
+          echo "Final frontend reports:"
+          ls -la stock-analysis-viewer/public/reports/ || echo "No frontend reports"
+          echo "Final frontend charts:"
+          ls -la stock-analysis-viewer/public/charts/ || echo "No frontend charts"
           
           # Create a data manifest for the frontend
           echo "Creating data manifest..."

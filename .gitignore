@@ -164,13 +164,12 @@ Temporary Items
 
 # Project specific
 logs/
-reports/
-charts/
-*.png
-*.jpg
-*.jpeg
-*.svg
-*.pdf
+
+# Allow all files in reports and charts directories
+!reports/
+!reports/**
+!charts/
+!charts/**
 
 # Frontend build artifacts
 stock-analysis-viewer/node_modules/
