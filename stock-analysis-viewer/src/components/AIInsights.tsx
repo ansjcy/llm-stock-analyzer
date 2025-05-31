@@ -53,20 +53,20 @@ export default function AIInsights({ llmInsights, recommendation, summary }: AII
       }} />
       <ReactMarkdown
         components={{
-          h1: ({node, ...props}) => <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3 mt-4" {...props} />,
-          h2: ({node, ...props}) => <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 mt-4" {...props} />,
-          h3: ({node, ...props}) => <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2 mt-3" {...props} />,
-          h4: ({node, ...props}) => <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2 mt-2" {...props} />,
-          p: ({node, ...props}) => <p className="text-gray-800 dark:text-gray-300 leading-relaxed mb-3" {...props} />,
-          ul: ({node, ...props}) => <ul className="list-disc" {...props} />,
-          ol: ({node, ...props}) => <ol className="list-decimal" {...props} />,
-          li: ({node, ...props}) => <li className="text-gray-800 dark:text-gray-300 leading-relaxed" {...props} />,
-          strong: ({node, ...props}) => <strong className="font-semibold text-gray-900 dark:text-gray-100" {...props} />,
-          em: ({node, ...props}) => <em className="italic text-gray-700 dark:text-gray-400" {...props} />,
-          code: ({node, ...props}) => (
+          h1: ({...props}) => <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3 mt-4" {...props} />,
+          h2: ({...props}) => <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 mt-4" {...props} />,
+          h3: ({...props}) => <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2 mt-3" {...props} />,
+          h4: ({...props}) => <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2 mt-2" {...props} />,
+          p: ({...props}) => <p className="text-gray-800 dark:text-gray-300 leading-relaxed mb-3" {...props} />,
+          ul: ({...props}) => <ul className="list-disc" {...props} />,
+          ol: ({...props}) => <ol className="list-decimal" {...props} />,
+          li: ({...props}) => <li className="text-gray-800 dark:text-gray-300 leading-relaxed" {...props} />,
+          strong: ({...props}) => <strong className="font-semibold text-gray-900 dark:text-gray-100" {...props} />,
+          em: ({...props}) => <em className="italic text-gray-700 dark:text-gray-400" {...props} />,
+          code: ({...props}) => (
             <code className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-200 px-1 py-0.5 rounded text-sm font-mono" {...props} />
           ),
-          blockquote: ({node, ...props}) => (
+          blockquote: ({...props}) => (
             <blockquote className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic text-gray-700 dark:text-gray-400 my-4" {...props} />
           )
         }}

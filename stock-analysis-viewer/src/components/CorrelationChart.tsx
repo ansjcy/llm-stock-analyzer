@@ -1,6 +1,6 @@
 import { CorrelationAnalysis } from '@/types/analysis';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { TrendingUp, Activity, Target, Clock, BarChart3 } from 'lucide-react';
+import { Activity, Clock, BarChart3 } from 'lucide-react';
 import { useState } from 'react';
 import HelpTooltip from './HelpTooltip';
 
@@ -10,22 +10,6 @@ interface CorrelationChartProps {
 
 export default function CorrelationChart({ correlationAnalysis }: CorrelationChartProps) {
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>('medium_term');
-
-  // Extract beta value from potentially nested structure
-  const extractBeta = (beta: any) => {
-    if (typeof beta === 'number' && !isNaN(beta)) {
-      return beta;
-    }
-    if (beta && typeof beta === 'object') {
-      // Try to find a numeric beta value in nested structure
-      for (const key of Object.keys(beta)) {
-        if (typeof beta[key] === 'number' && !isNaN(beta[key])) {
-          return beta[key];
-        }
-      }
-    }
-    return null;
-  };
 
   // Get symbol display name
   const getSymbolDisplayName = (symbol: string) => {
@@ -85,8 +69,6 @@ export default function CorrelationChart({ correlationAnalysis }: CorrelationCha
     return categories[symbol] || 'Other';
   };
 
-  const betaValue = extractBeta(correlationAnalysis.beta);
-  
   // Extract correlations for the selected timeframe
   const getTimeframeData = (timeframe: string) => {
     const correlations = correlationAnalysis.correlations;
@@ -97,7 +79,7 @@ export default function CorrelationChart({ correlationAnalysis }: CorrelationCha
     if (!timeframeData || typeof timeframeData !== 'object') return [];
 
     return Object.entries(timeframeData)
-      .filter(([_, correlation]) => typeof correlation === 'number' && !isNaN(correlation as number))
+      .filter(([, correlation]) => typeof correlation === 'number' && !isNaN(correlation as number))
       .map(([symbol, correlation]) => ({
         symbol,
         displayName: getSymbolDisplayName(symbol),
@@ -122,21 +104,6 @@ export default function CorrelationChart({ correlationAnalysis }: CorrelationCha
     if (absCorr >= 70) return 'Strong';
     if (absCorr >= 40) return 'Moderate';
     return 'Weak';
-  };
-
-  const getBetaRisk = (beta?: number | null) => {
-    if (!beta || isNaN(beta)) return 'Unknown';
-    if (beta > 1.2) return 'High Risk';
-    if (beta > 0.8) return 'Moderate Risk';
-    return 'Low Risk';
-  };
-
-  const getDiversificationLevel = (score?: number) => {
-    if (!score) return 'Unknown';
-    if (score >= 80) return 'Excellent';
-    if (score >= 60) return 'Good';
-    if (score >= 40) return 'Fair';
-    return 'Poor';
   };
 
   // Check if we have any valid correlation data
@@ -277,12 +244,27 @@ export default function CorrelationChart({ correlationAnalysis }: CorrelationCha
                     domain={[-100, 100]}
                   />
                   <Tooltip 
-                    formatter={(value: any) => [`${value}%`, 'Correlation']}
-                    labelFormatter={(label) => label}
-                    contentStyle={{
-                      backgroundColor: '#f9fafb',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px'
+                    content={({ active, payload }) => {
+                      if (active && payload && payload[0]) {
+                        const data = payload[0].payload as {
+                          displayName: string;
+                          correlation: number;
+                          category: string;
+                        };
+                        return (
+                          <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg">
+                            <p className="font-semibold text-gray-900 dark:text-white">{data.displayName}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{data.category}</p>
+                            <p className="text-sm">
+                              相关性: <span className="font-bold">{data.correlation}%</span>
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {getCorrelationStrength(data.correlation)}
+                            </p>
+                          </div>
+                        );
+                      }
+                      return null;
                     }}
                   />
                   <Bar dataKey="correlation" radius={[4, 4, 0, 0]}>

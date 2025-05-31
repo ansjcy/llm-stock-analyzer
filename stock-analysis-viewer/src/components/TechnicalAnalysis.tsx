@@ -1,5 +1,6 @@
 import { TechnicalAnalysis as TechnicalAnalysisType, Charts } from '@/types/analysis';
 import { TrendingUp, TrendingDown, Activity, Target, Gauge, BarChart3 } from 'lucide-react';
+import Image from 'next/image';
 import HelpTooltip from './HelpTooltip';
 
 interface TechnicalAnalysisProps {
@@ -36,33 +37,6 @@ export default function TechnicalAnalysis({ technicalAnalysis, charts }: Technic
         }`}
         style={{ width: `${confidence}%` }}
       />
-    </div>
-  );
-
-  const RSIGauge = ({ rsi }: { rsi: number }) => (
-    <div className="relative w-12 h-12">
-      <svg className="transform -rotate-90 w-12 h-12" viewBox="0 0 36 36">
-        <path
-          d="M18 2.0845
-            a 15.9155 15.9155 0 0 1 0 31.831
-            a 15.9155 15.9155 0 0 1 0 -31.831"
-          fill="none"
-          stroke="#e5e5e5"
-          strokeWidth="3"
-        />
-        <path
-          d="M18 2.0845
-            a 15.9155 15.9155 0 0 1 0 31.831
-            a 15.9155 15.9155 0 0 1 0 -31.831"
-          fill="none"
-          stroke={rsi > 70 ? "#ef4444" : rsi < 30 ? "#22c55e" : "#3b82f6"}
-          strokeWidth="3"
-          strokeDasharray={`${rsi}, 100`}
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-xs font-bold text-gray-900 dark:text-white">{typeof rsi === 'number' ? rsi.toFixed(0) : 'N/A'}</span>
-      </div>
     </div>
   );
 
@@ -180,10 +154,12 @@ export default function TechnicalAnalysis({ technicalAnalysis, charts }: Technic
             />
           </div>
           <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-            <img 
+            <Image 
               src={charts.technical_analysis}
               alt="Technical Analysis Chart"
               className="w-full h-auto rounded-lg shadow-sm"
+              width={800}
+              height={400}
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';

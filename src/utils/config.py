@@ -24,7 +24,7 @@ class Config:
     FINNHUB_API_KEY: Optional[str] = os.getenv("FINNHUB_API_KEY")
     
     # Configuration
-    DEFAULT_LLM_PROVIDER: str = os.getenv("DEFAULT_LLM_PROVIDER", "openai")
+    DEFAULT_LLM_PROVIDER: str = os.getenv("DEFAULT_LLM_PROVIDER", "gemini")
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
     CACHE_DURATION: int = int(os.getenv("CACHE_DURATION", "3600"))
     

@@ -1,5 +1,5 @@
 import { NewsAnalysis } from '@/types/analysis';
-import { Newspaper, Clock, ExternalLink } from 'lucide-react';
+import { Newspaper, ExternalLink } from 'lucide-react';
 import HelpTooltip from './HelpTooltip';
 
 interface NewsSectionProps {
@@ -94,7 +94,7 @@ export default function NewsSection({ newsAnalysis }: NewsSectionProps) {
                   {article.title}
                 </h3>
                 <div className="text-sm text-gray-500 dark:text-gray-400 ml-4 flex-shrink-0">
-                  {formatDate((article as any).publish_time || article.published)}
+                  {formatDate((article as { publish_time?: string; published?: string }).publish_time || article.published)}
                 </div>
               </div>
               

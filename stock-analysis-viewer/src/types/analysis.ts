@@ -35,7 +35,7 @@ export interface StockInfo {
   industry?: string;
   dividend_yield?: number;
   pe_history?: PEHistory;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface TechnicalIndicator {
@@ -69,7 +69,7 @@ export interface TechnicalAnalysis {
     price_vs_sma_50?: number;
     price_vs_sma_200?: number;
   };
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface CorrelationAnalysis {
@@ -118,7 +118,7 @@ export interface StockAnalysisResult {
   stock_info: StockInfo;
   technical_analysis: TechnicalAnalysis;
   correlation_analysis: CorrelationAnalysis;
-  fundamental_analysis: any;
+  fundamental_analysis: Record<string, unknown>;
   news_analysis: NewsAnalysis;
   llm_insights: LLMInsights;
   recommendation: Recommendation;
