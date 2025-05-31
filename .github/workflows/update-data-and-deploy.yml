@@ -1,0 +1,216 @@
+name: Update Stock Analysis and Deploy to GitHub Pages
+
+on:
+  schedule:
+    # Run at 1:00 PM (13:00 UTC) Monday to Friday
+    - cron: '0 13 * * 1-5'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  update-stock-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Create necessary directories
+        run: |
+          mkdir -p reports
+          mkdir -p charts
+          mkdir -p logs
+      
+      - name: Run stock analysis
+        run: |
+          python src/main.py --ticker AMZN --chinese --charts --save-report --format json
+        env:
+          # Add any environment variables you might need
+          PYTHONPATH: ${{ github.workspace }}
+      
+      - name: List generated files
+        run: |
+          echo "Reports directory:"
+          ls -la reports/ || echo "No reports directory"
+          echo "Charts directory:"
+          ls -la charts/ || echo "No charts directory"
+      
+      # Commit the updated data back to the repository
+      - name: Commit updated data
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add reports/ charts/ || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-update stock analysis data [skip ci]"
+            git push
+          fi
+      
+      - name: Upload analysis artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: stock-analysis-data
+          path: |
+            reports/
+            charts/
+
+  deploy-github-pages:
+    needs: update-stock-analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Download analysis artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: stock-analysis-data
+          path: ./
+      
+      - name: Create GitHub Pages content
+        run: |
+          mkdir -p docs
+          
+          # Create a simple index.html
+          cat > docs/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Stock Analysis Reports</title>
+              <style>
+                  body {
+                      font-family: Arial, sans-serif;
+                      margin: 40px;
+                      background-color: #f5f5f5;
+                  }
+                  .container {
+                      max-width: 1200px;
+                      margin: 0 auto;
+                      background: white;
+                      padding: 20px;
+                      border-radius: 8px;
+                      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                  }
+                  h1 {
+                      color: #333;
+                      text-align: center;
+                  }
+                  .report-section {
+                      margin: 20px 0;
+                  }
+                  .file-list {
+                      list-style-type: none;
+                      padding: 0;
+                  }
+                  .file-list li {
+                      margin: 10px 0;
+                      padding: 10px;
+                      background: #f8f9fa;
+                      border-radius: 4px;
+                  }
+                  .file-list a {
+                      text-decoration: none;
+                      color: #007bff;
+                  }
+                  .file-list a:hover {
+                      text-decoration: underline;
+                  }
+                  .timestamp {
+                      color: #666;
+                      font-size: 0.9em;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <h1>Stock Analysis Reports</h1>
+                  <p class="timestamp">Last updated: $(date)</p>
+                  
+                  <div class="report-section">
+                      <h2>Reports</h2>
+                      <ul class="file-list" id="reports-list">
+                      </ul>
+                  </div>
+                  
+                  <div class="report-section">
+                      <h2>Charts</h2>
+                      <ul class="file-list" id="charts-list">
+                      </ul>
+                  </div>
+              </div>
+              
+              <script>
+                  // Function to populate file lists
+                  function populateFileList(directory, listId) {
+                      const list = document.getElementById(listId);
+                      // This would need to be populated by the build process
+                      // For now, we'll show a placeholder
+                      const li = document.createElement('li');
+                      li.textContent = 'Files will be listed here after analysis runs';
+                      list.appendChild(li);
+                  }
+                  
+                  populateFileList('reports', 'reports-list');
+                  populateFileList('charts', 'charts-list');
+              </script>
+          </body>
+          </html>
+          EOF
+          
+          # Copy reports and charts to docs directory
+          cp -r reports/* docs/ 2>/dev/null || echo "No reports to copy"
+          cp -r charts/* docs/ 2>/dev/null || echo "No charts to copy"
+          
+          # Create a file listing for better navigation
+          echo "Creating file listings..."
+          if [ -d "reports" ]; then
+            find reports -type f -name "*.json" -o -name "*.html" > docs/reports-list.txt
+          fi
+          if [ -d "charts" ]; then
+            find charts -type f -name "*.png" -o -name "*.jpg" -o -name "*.svg" > docs/charts-list.txt
+          fi
+      
+      - name: Add .nojekyll to output directory  
+        run: touch docs/.nojekyll
+
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs
+      - id: deployment
+        uses: actions/deploy-pages@v4 

@@ -1,0 +1,56 @@
+# Core Python packages
+pandas>=2.0.0
+numpy>=1.24.0,<2.0.0
+requests>=2.31.0
+python-dotenv>=1.0.0
+scipy>=1.10.0
+
+# Data fetching and processing
+yfinance>=0.2.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+feedparser>=6.0.0
+
+# Technical analysis (optional - install separately if needed)
+# ta-lib>=0.4.0
+# TA-Lib (Technical Analysis Library) requires manual installation of C dependencies
+# For macOS: brew install ta-lib
+# For Ubuntu: sudo apt-get install ta-lib
+# Then: pip install ta-lib
+
+# Alternative technical analysis libraries
+pandas-ta>=0.3.14b
+
+# LLM integrations
+openai>=1.0.0
+anthropic>=0.25.0
+groq>=0.4.0
+ollama>=0.1.0
+google-generativeai>=0.3.0
+
+# Data analysis and visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.17.0
+
+# Date handling
+python-dateutil>=2.8.0
+
+# CLI and utilities
+click>=8.1.0
+rich>=13.0.0
+tabulate>=0.9.0
+colorama>=0.4.6
+
+# Async support
+aiohttp>=3.8.0
+
+# Caching
+diskcache>=5.6.0
+
+# Testing (optional)
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+
+# Logging
+loguru>=0.7.0 
