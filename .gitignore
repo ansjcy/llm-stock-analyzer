@@ -172,6 +172,12 @@ charts/
 *.svg
 *.pdf
 
+# Frontend build artifacts
+stock-analysis-viewer/node_modules/
+stock-analysis-viewer/.next/
+stock-analysis-viewer/out/
+stock-analysis-viewer/.git/
+
 # Temporary files
 *.tmp
 *.temp 

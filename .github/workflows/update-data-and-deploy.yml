@@ -6,6 +6,7 @@ on:
     - cron: '0 13 * * 1-5'
   push:
     branches: [main]
+    paths: ['src/**', 'requirements.txt', 'stock-analysis-viewer/**']
   workflow_dispatch:
 
 permissions:
@@ -59,7 +60,7 @@ jobs:
         run: |
           # Create placeholder files if directories are empty
           if [ ! "$(ls -A reports/)" ]; then
-            echo '{"error": "Analysis failed", "timestamp": "'$(date)'"}' > reports/placeholder.json
+            echo '{"error": "Analysis failed", "timestamp": "'$(date)'", "message": "Stock analysis could not be completed. Please check the logs."}' > reports/placeholder.json
           fi
           if [ ! "$(ls -A charts/)" ]; then
             touch charts/placeholder.txt
@@ -97,21 +98,10 @@ jobs:
         with:
           ref: main
       
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          python-version: '3.10'
-      
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-      
-      - name: Create base directories
-        run: |
-          mkdir -p docs
-          mkdir -p reports
-          mkdir -p charts
+          node-version: '20'
       
       - name: Download analysis artifacts
         uses: actions/download-artifact@v4
@@ -120,247 +110,54 @@ jobs:
           path: ./
         continue-on-error: true
       
-      - name: Create GitHub Pages content
+      - name: Sync reports to frontend
         run: |
-          # Ensure docs directory exists
-          mkdir -p docs
+          # Copy reports and charts to the frontend's public directory
+          mkdir -p stock-analysis-viewer/public/data
+          mkdir -p stock-analysis-viewer/public/charts
           
-          # Get current timestamp
-          CURRENT_TIME=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
-          
-          # Create a comprehensive index.html
-          cat > docs/index.html << EOF
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Stock Analysis Reports - AMZN</title>
-              <style>
-                  body {
-                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                      margin: 0;
-                      padding: 20px;
-                      background-color: #f8f9fa;
-                      color: #333;
-                  }
-                  .container {
-                      max-width: 1200px;
-                      margin: 0 auto;
-                      background: white;
-                      padding: 30px;
-                      border-radius: 12px;
-                      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-                  }
-                  .header {
-                      text-align: center;
-                      margin-bottom: 40px;
-                      padding-bottom: 20px;
-                      border-bottom: 2px solid #e9ecef;
-                  }
-                  .header h1 {
-                      color: #2c3e50;
-                      margin: 0;
-                      font-size: 2.5rem;
-                  }
-                  .header .subtitle {
-                      color: #6c757d;
-                      margin-top: 10px;
-                      font-size: 1.1rem;
-                  }
-                  .status-badge {
-                      display: inline-block;
-                      padding: 8px 16px;
-                      border-radius: 20px;
-                      font-size: 0.9rem;
-                      font-weight: 500;
-                      margin: 10px 5px;
-                  }
-                  .status-success {
-                      background-color: #d4edda;
-                      color: #155724;
-                      border: 1px solid #c3e6cb;
-                  }
-                  .status-warning {
-                      background-color: #fff3cd;
-                      color: #856404;
-                      border: 1px solid #ffeaa7;
-                  }
-                  .section {
-                      margin: 30px 0;
-                      padding: 20px;
-                      border: 1px solid #e9ecef;
-                      border-radius: 8px;
-                      background-color: #fff;
-                  }
-                  .section h2 {
-                      color: #495057;
-                      margin-top: 0;
-                      margin-bottom: 20px;
-                      font-size: 1.5rem;
-                  }
-                  .file-grid {
-                      display: grid;
-                      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                      gap: 15px;
-                      margin-top: 15px;
-                  }
-                  .file-card {
-                      padding: 15px;
-                      border: 1px solid #dee2e6;
-                      border-radius: 6px;
-                      background-color: #f8f9fa;
-                      transition: all 0.3s ease;
-                  }
-                  .file-card:hover {
-                      background-color: #e9ecef;
-                      transform: translateY(-2px);
-                      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                  }
-                  .file-card a {
-                      text-decoration: none;
-                      color: #007bff;
-                      font-weight: 500;
-                  }
-                  .file-card a:hover {
-                      color: #0056b3;
-                  }
-                  .file-meta {
-                      color: #6c757d;
-                      font-size: 0.85rem;
-                      margin-top: 5px;
-                  }
-                  .timestamp {
-                      color: #6c757d;
-                      font-size: 0.9rem;
-                      text-align: center;
-                      margin-top: 30px;
-                      padding-top: 20px;
-                      border-top: 1px solid #e9ecef;
-                  }
-                  .info-box {
-                      background-color: #e7f3ff;
-                      border: 1px solid #b8daff;
-                      border-radius: 6px;
-                      padding: 15px;
-                      margin: 20px 0;
-                  }
-                  .info-box h3 {
-                      color: #004085;
-                      margin-top: 0;
-                  }
-                  .workflow-info {
-                      background-color: #f8f9fa;
-                      border-left: 4px solid #007bff;
-                      padding: 15px;
-                      margin: 20px 0;
-                  }
-              </style>
-          </head>
-          <body>
-              <div class="container">
-                  <div class="header">
-                      <h1>📈 Stock Analysis Dashboard</h1>
-                      <div class="subtitle">Amazon (AMZN) - Automated Analysis Reports</div>
-                      <div class="status-badges">
-                          <span class="status-badge status-success">✅ Auto-Generated</span>
-                          <span class="status-badge status-success">🔄 Daily Updates</span>
-                          <span class="status-badge status-warning">🤖 AI-Powered</span>
-                      </div>
-                  </div>
-                  
-                  <div class="workflow-info">
-                      <strong>🤖 Automated Workflow:</strong> This analysis runs automatically at 1:00 PM UTC (Monday-Friday) and on every push to the main branch.
-                  </div>
-          
-                  <div class="section">
-                      <h2>📊 Latest Reports</h2>
-                      <div class="file-grid" id="reports-grid">
-                          <!-- Reports will be populated by JavaScript -->
-                      </div>
-                  </div>
-                  
-                  <div class="section">
-                      <h2>📈 Charts & Visualizations</h2>
-                      <div class="file-grid" id="charts-grid">
-                          <!-- Charts will be populated by JavaScript -->
-                      </div>
-                  </div>
-                  
-                  <div class="info-box">
-                      <h3>🔍 About This Analysis</h3>
-                      <p>This comprehensive stock analysis includes:</p>
-                      <ul>
-                          <li><strong>Technical Analysis:</strong> Moving averages, RSI, MACD, Bollinger Bands</li>
-                          <li><strong>Fundamental Analysis:</strong> P/E ratios, financial metrics, valuation</li>
-                          <li><strong>AI Insights:</strong> LLM-powered market analysis and recommendations</li>
-                          <li><strong>Bilingual Support:</strong> Analysis available in English and Chinese</li>
-                      </ul>
-                  </div>
-                  
-                  <div class="timestamp">
-                      📅 Last Updated: ${CURRENT_TIME}<br>
-                      🔄 Next Update: Scheduled daily at 1:00 PM UTC (Mon-Fri)<br>
-                      📍 Repository: <a href="https://github.com/ansjcy/stock-analyzer" target="_blank">GitHub</a>
-                  </div>
-              </div>
-              
-              <script>
-                  // Populate reports
-                  const reportsGrid = document.getElementById('reports-grid');
-                  const chartsGrid = document.getElementById('charts-grid');
-                  
-                  // This would be populated dynamically in a real implementation
-                  // For now, show placeholders
-                  function addPlaceholder(grid, type) {
-                      const card = document.createElement('div');
-                      card.className = 'file-card';
-                      card.innerHTML = \`
-                          <div style="text-align: center; color: #6c757d;">
-                              <div style="font-size: 2rem; margin-bottom: 10px;">⏳</div>
-                              <div>Analysis in progress...</div>
-                              <div class="file-meta">Check back soon for \${type}</div>
-                          </div>
-                      \`;
-                      grid.appendChild(card);
-                  }
-                  
-                  addPlaceholder(reportsGrid, 'detailed reports');
-                  addPlaceholder(chartsGrid, 'interactive charts');
-              </script>
-          </body>
-          </html>
-          EOF
-          
-          # Copy any existing reports and charts
+          # Copy reports
           if [ -d "reports" ] && [ "$(ls -A reports/)" ]; then
-            cp -r reports/* docs/ 2>/dev/null || true
-            echo "Copied reports to docs directory"
+            cp -r reports/* stock-analysis-viewer/public/data/ 2>/dev/null || true
+            echo "Copied reports to frontend"
           fi
           
+          # Copy charts  
           if [ -d "charts" ] && [ "$(ls -A charts/)" ]; then
-            cp -r charts/* docs/ 2>/dev/null || true
-            echo "Copied charts to docs directory"
+            cp -r charts/* stock-analysis-viewer/public/charts/ 2>/dev/null || true
+            echo "Copied charts to frontend"
           fi
           
-          # Create file listings for better navigation
-          echo "Creating navigation files..."
-          if [ -d "reports" ]; then
-            find reports -type f \( -name "*.json" -o -name "*.html" \) > docs/reports-list.txt 2>/dev/null || echo "" > docs/reports-list.txt
-          fi
-          
-          if [ -d "charts" ]; then
-            find charts -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.svg" \) > docs/charts-list.txt 2>/dev/null || echo "" > docs/charts-list.txt
-          fi
-          
-          echo "Generated GitHub Pages content successfully"
+          # Create a data manifest for the frontend
+          echo "Creating data manifest..."
+          cat > stock-analysis-viewer/public/data/manifest.json << EOF
+          {
+            "lastUpdated": "$(date -u '+%Y-%m-%dT%H:%M:%S.%3NZ')",
+            "ticker": "AMZN",
+            "reports": $(find stock-analysis-viewer/public/data -name "*.json" -not -name "manifest.json" 2>/dev/null | jq -R -s -c 'split("\n")[:-1] | map(gsub("stock-analysis-viewer/public/data/"; ""))' || echo '[]'),
+            "charts": $(find stock-analysis-viewer/public/charts -type f 2>/dev/null | jq -R -s -c 'split("\n")[:-1] | map(gsub("stock-analysis-viewer/public/charts/"; ""))' || echo '[]'),
+            "status": "$([ -f "reports/placeholder.json" ] && echo "failed" || echo "success")"
+          }
+          EOF
+      
+      - name: Install frontend dependencies
+        working-directory: ./stock-analysis-viewer
+        run: npm install
+      
+      - name: Build frontend
+        working-directory: ./stock-analysis-viewer
+        run: |
+          npm run build
+        env:
+          NODE_ENV: production
+          NEXT_OUTPUT: export
       
       - name: Add .nojekyll to output directory  
-        run: touch docs/.nojekyll
+        run: touch stock-analysis-viewer/out/.nojekyll
 
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs
+          path: ./stock-analysis-viewer/out
       - id: deployment
         uses: actions/deploy-pages@v4 
