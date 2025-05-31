@@ -1,0 +1,980 @@
+{
+  "ticker": "AAPL",
+  "analysis_date": "2025-05-30T17:55:13.059957",
+  "stock_info": {
+    "symbol": "AAPL",
+    "name": "Apple Inc.",
+    "sector": "Technology",
+    "industry": "Consumer Electronics",
+    "country": "United States",
+    "currency": "USD",
+    "market_cap": 2999855611904,
+    "current_price": 200.85,
+    "previous_close": 199.95,
+    "open": 199.405,
+    "day_high": 201.95,
+    "day_low": 196.78,
+    "volume": 69799163,
+    "avg_volume": 62042516,
+    "pe_ratio": 31.139536,
+    "forward_pe": 24.169674,
+    "peg_ratio": null,
+    "price_to_book": 44.922836,
+    "price_to_sales": 7.492783,
+    "dividend_yield": 0.52,
+    "beta": 1.275,
+    "trailing_eps": 6.45,
+    "forward_eps": 8.31,
+    "book_value": 4.471,
+    "return_on_equity": 1.38015,
+    "return_on_assets": 0.23809999,
+    "debt_to_equity": 146.994,
+    "current_ratio": 0.821,
+    "quick_ratio": 0.68,
+    "gross_margins": 0.46632,
+    "operating_margins": 0.31028998,
+    "profit_margins": 0.24301,
+    "revenue_growth": 0.051,
+    "earnings_growth": 0.078,
+    "52_week_high": 260.1,
+    "52_week_low": 169.21,
+    "analyst_target_price": 228.75928,
+    "recommendation": 2.08696,
+    "recommendation_key": "buy",
+    "number_of_analyst_opinions": 41,
+    "pe_history": {
+      "historical_data": [
+        {
+          "Close": 243.26319885253906,
+          "TTM_EPS": 6.437552808420716,
+          "PE_Ratio": 37.78814808856182
+        },
+        {
+          "Close": 236.28004455566406,
+          "TTM_EPS": 6.437552808420716,
+          "PE_Ratio": 36.70339515453686
+        },
+        {
+          "Close": 229.4265594482422,
+          "TTM_EPS": 6.437552808420716,
+          "PE_Ratio": 35.638784841988105
+        },
+        {
+          "Close": 229.30685424804688,
+          "TTM_EPS": 6.437552808420716,
+          "PE_Ratio": 35.62019001197153
+        },
+        {
+          "Close": 227.46128845214844,
+          "TTM_EPS": 6.437552808420716,
+          "PE_Ratio": 35.333502531367984
+        },
+        {
+          "Close": 227.3518524169922,
+          "TTM_EPS": 6.437552808420716,
+          "PE_Ratio": 35.31650289836876
+        },
+        {
+          "Close": 244.14984130859375,
+          "TTM_EPS": 6.437552808420716,
+          "PE_Ratio": 37.92587782569033
+        },
+        {
+          "Close": 246.71646118164062,
+          "TTM_EPS": 6.437552808420716,
+          "PE_Ratio": 38.32457278780226
+        },
+        {
+          "Close": 235.6210174560547,
+          "TTM_EPS": 6.437552808420716,
+          "PE_Ratio": 36.60102285263553
+        },
+        {
+          "Close": 220.55078125,
+          "TTM_EPS": 6.437552808420716,
+          "PE_Ratio": 34.26003449035882
+        },
+        {
+          "Close": 212.4114532470703,
+          "TTM_EPS": 6.437552808420716,
+          "PE_Ratio": 32.995683230625005
+        },
+        {
+          "Close": 223.45697021484375,
+          "TTM_EPS": 6.437552808420716,
+          "PE_Ratio": 34.711477616548365
+        },
+        {
+          "Close": 222.897705078125,
+          "TTM_EPS": 6.514147300493866,
+          "PE_Ratio": 34.217480016337085
+        },
+        {
+          "Close": 172.19419860839844,
+          "TTM_EPS": 6.514147300493866,
+          "PE_Ratio": 26.433881621826952
+        },
+        {
+          "Close": 201.87527465820312,
+          "TTM_EPS": 6.514147300493866,
+          "PE_Ratio": 30.99028396900053
+        },
+        {
+          "Close": 204.33206176757812,
+          "TTM_EPS": 6.514147300493866,
+          "PE_Ratio": 31.367430354558735
+        },
+        {
+          "Close": 212.22171020507812,
+          "TTM_EPS": 6.514147300493866,
+          "PE_Ratio": 32.578586331474064
+        },
+        {
+          "Close": 195.99298095703125,
+          "TTM_EPS": 6.514147300493866,
+          "PE_Ratio": 30.087281100040855
+        },
+        {
+          "Close": 212.3300018310547,
+          "TTM_EPS": 6.514147300493866,
+          "PE_Ratio": 32.59521039921173
+        },
+        {
+          "Close": 202.08999633789062,
+          "TTM_EPS": 6.514147300493866,
+          "PE_Ratio": 31.02324633073147
+        },
+        {
+          "Close": 199.9499969482422,
+          "TTM_EPS": 6.514147300493866,
+          "PE_Ratio": 30.694730672283555
+        }
+      ],
+      "current_pe": 30.694730672283555,
+      "avg_pe_1y": 33.86701538694859,
+      "avg_pe_6m": 33.86701538694859,
+      "avg_pe_3m": 33.86701538694859,
+      "min_pe_1y": 26.433881621826952,
+      "max_pe_1y": 38.32457278780226,
+      "median_pe_1y": 34.26003449035882,
+      "pe_percentile": 90.47619047619048
+    }
+  },
+  "technical_analysis": {
+    "overall_signal": "bearish",
+    "confidence": 45.8,
+    "bullish_signals": 0,
+    "bearish_signals": 5.5,
+    "total_weighted_signals": 12.0,
+    "moving_averages": {
+      "sma_20": 203.40024795532227,
+      "sma_50": 205.2064944458008,
+      "sma_200": 225.14395759582519,
+      "ema_8": 201.47304606952093,
+      "ema_21": 203.3895376552294,
+      "ema_55": 208.6052801330581,
+      "price_vs_sma_20": -1.2538046917065837,
+      "price_vs_sma_50": -2.122977810254345,
+      "price_vs_sma_200": -10.790407946866454,
+      "sma_trend": "bearish",
+      "golden_cross": false,
+      "death_cross": false
+    },
+    "momentum": {
+      "rsi": 45.832348708506764,
+      "rsi_signal": "neutral",
+      "stochrsi_k": 35.580847104798096,
+      "stochrsi_signal": "neutral",
+      "stoch_k": 33.91924711370657,
+      "stoch_d": 31.239147701817085,
+      "stoch_signal": "neutral",
+      "williams_r": -63.91601107752554,
+      "williams_signal": "neutral",
+      "roc": -5.013001181230181,
+      "roc_signal": "bearish",
+      "mfi": 35.441872488138046,
+      "mfi_signal": "neutral",
+      "cci": -47.77201656307487,
+      "cci_signal": "neutral"
+    },
+    "trend": {
+      "macd": -1.6180935198553925,
+      "macd_signal": -1.0545489323848984,
+      "macd_histogram": -0.5635445874704941,
+      "macd_trend": "bearish",
+      "adx": 15.962782129602385,
+      "adx_strength": "weak",
+      "plus_di": 19.28439213232122,
+      "minus_di": 29.825424871957328,
+      "di_trend": "bearish",
+      "sar": 0.0,
+      "sar_signal": "bullish"
+    },
+    "volatility": {
+      "bb_upper": 215.00585129690668,
+      "bb_middle": 203.40024795532227,
+      "bb_lower": 191.79464461373786,
+      "bb_position": 39.0128855142378,
+      "bb_signal": "neutral",
+      "atr": 5.916488934985293,
+      "atr_percent": 2.9457250461501143,
+      "volatility": "low",
+      "stddev": 11.411592127590358
+    },
+    "volume": {
+      "obv": 822646363.0,
+      "obv_trend": "bullish",
+      "volume_sma": 56871143.15,
+      "volume_ratio": 1.2273212587955513,
+      "volume_signal": "normal",
+      "ad_line": 1021339896.8896291,
+      "cmf": 0.07195207026960773,
+      "cmf_signal": "neutral"
+    },
+    "ichimoku": {
+      "tenkan_sen": 197.43359930070562,
+      "kijun_sen": 209.33050114778746,
+      "senkou_span_a": 201.47000122070312,
+      "senkou_span_b": 203.63795517750307,
+      "chikou_span": 0.0,
+      "cloud_color": "bearish",
+      "price_vs_cloud": "below",
+      "tk_cross_signal": "bearish",
+      "ichimoku_signal": "bearish"
+    },
+    "patterns": {
+      "doji": "False",
+      "hammer": "False",
+      "hanging_man": "False",
+      "bullish_engulfing": "False",
+      "bearish_engulfing": "False",
+      "pattern_signal": "neutral",
+      "gaps": {
+        "gap_up": "False",
+        "gap_down": "False",
+        "gap_size": -0.2725672304393119,
+        "gap_signal": "no_gap"
+      }
+    },
+    "support_resistance": {
+      "pivot_point": 200.75666300455728,
+      "resistance_1": 203.00333150227863,
+      "resistance_2": 206.0566660563151,
+      "resistance_3": 208.30333455403644,
+      "support_1": 197.70332845052081,
+      "support_2": 195.45665995279947,
+      "support_3": 192.403325398763,
+      "nearest_resistance": 203.00333150227863,
+      "nearest_support": 197.70332845052081,
+      "distance_to_resistance": 1.0721062152486092,
+      "distance_to_support": 1.5666803870411892
+    },
+    "strategic_combinations": {
+      "rsi_macd_strategy": {
+        "signal": "neutral",
+        "confidence": 40,
+        "score": 4.0,
+        "reasoning": "Mixed or neutral RSI/MACD signals"
+      },
+      "bb_rsi_macd_strategy": {
+        "signal": "neutral",
+        "confidence": 45,
+        "score": 4.5,
+        "reasoning": "No clear BB/RSI/MACD convergence"
+      },
+      "ma_rsi_volume_strategy": {
+        "signal": "trend_sell",
+        "confidence": 70,
+        "score": 7.0,
+        "reasoning": "Bearish trend with unfavorable RSI and volume"
+      },
+      "overall_strategic_signal": {
+        "signal": "neutral",
+        "confidence": 51.666666666666664,
+        "score": 5.166666666666666,
+        "signal_strength": 23.333333333333332,
+        "strategies_analyzed": 3,
+        "reasoning": "Consensus from 3 strategic combinations"
+      }
+    },
+    "correlation_analysis": {
+      "correlations": {
+        "short_term": {
+          "^GSPC": 0.6807375882061105,
+          "^DJI": 0.5556491561467629,
+          "^IXIC": 0.7412478009225117,
+          "^RUT": 0.5431808757770473,
+          "EFA": 0.0020296938218783817,
+          "EEM": 0.0356691114080161,
+          "VTI": 0.6652877209911261,
+          "QQQ": 0.729958371412011,
+          "XLF": 0.4675766759476886,
+          "XLE": 0.5475823606491457,
+          "XLK": 0.7128008986133982,
+          "XLV": 0.21653187972408067,
+          "XLI": 0.5541185624891702,
+          "XLP": 0.01933562373367065,
+          "XLY": 0.7417967461092301,
+          "XLU": -0.10640323623524765,
+          "XLRE": 0.12063246778216338,
+          "XLB": 0.4705133744586847,
+          "GLD": -0.6077089315064683,
+          "TLT": 0.1539793513804507,
+          "HYG": 0.6611023410562874,
+          "VNQ": 0.1899590200269397
+        },
+        "medium_term": {
+          "^GSPC": 0.9110195376628132,
+          "^DJI": 0.8763490193124912,
+          "^IXIC": 0.9108391772626685,
+          "^RUT": 0.8652432183297227,
+          "EFA": 0.7759728056781668,
+          "EEM": 0.7835604425239082,
+          "VTI": 0.9086063356772941,
+          "QQQ": 0.9055856578734813,
+          "XLF": 0.8483868281473775,
+          "XLE": 0.8031655710635002,
+          "XLK": 0.899800867509716,
+          "XLV": 0.6078626652989384,
+          "XLI": 0.8785403471723153,
+          "XLP": 0.5713816287692031,
+          "XLY": 0.8994947091274252,
+          "XLU": 0.5674803719711747,
+          "XLRE": 0.7605429605970961,
+          "XLB": 0.8799735382509287,
+          "GLD": 0.03563873207543312,
+          "TLT": 0.23869567974729902,
+          "HYG": 0.8561426425269978,
+          "VNQ": 0.7801767317783891
+        },
+        "long_term": {
+          "^GSPC": 0.7802221888239395,
+          "^DJI": 0.723270003860431,
+          "^IXIC": 0.7692865576629738,
+          "^RUT": 0.6345952778682058,
+          "EFA": 0.6202177795884869,
+          "EEM": 0.5279949099188445,
+          "VTI": 0.7725322236455681,
+          "QQQ": 0.7588250856150982,
+          "XLF": 0.6099275357794791,
+          "XLE": 0.5052943450121424,
+          "XLK": 0.7300479146396172,
+          "XLV": 0.47283865162051986,
+          "XLI": 0.6424608313781608,
+          "XLP": 0.4138822365122424,
+          "XLY": 0.7332126204658316,
+          "XLU": 0.24890413117573565,
+          "XLRE": 0.48401777762702936,
+          "XLB": 0.6731509793090201,
+          "GLD": 0.026424623392879508,
+          "TLT": 0.11249498122209939,
+          "HYG": 0.7112605615508781,
+          "VNQ": 0.5171628408568827
+        }
+      },
+      "beta": {
+        "sp500_beta": 1.2560846159181531
+      },
+      "correlation_signal": "moderate_market_correlation",
+      "diversification_score": 24.707002416562098,
+      "correlation_summary": {
+        "short_term": {
+          "broad_market": {
+            "avg_correlation": 0.6745761275357045,
+            "max_correlation": 0.7412478009225117,
+            "min_correlation": 0.5556491561467629,
+            "count": 5
+          },
+          "small_cap": {
+            "avg_correlation": 0.5431808757770473,
+            "max_correlation": 0.5431808757770473,
+            "min_correlation": 0.5431808757770473,
+            "count": 1
+          },
+          "international": {
+            "avg_correlation": 0.018849402614947244,
+            "max_correlation": 0.0356691114080161,
+            "min_correlation": 0.0020296938218783817,
+            "count": 2
+          },
+          "sectors": {
+            "avg_correlation": 0.3744485353271984,
+            "max_correlation": 0.7417967461092301,
+            "min_correlation": -0.10640323623524765,
+            "count": 10
+          },
+          "fixed_income": {
+            "avg_correlation": 0.40754084621836906,
+            "max_correlation": 0.6611023410562874,
+            "min_correlation": 0.1539793513804507,
+            "count": 2
+          },
+          "alternatives": {
+            "avg_correlation": -0.2088749557397643,
+            "max_correlation": 0.1899590200269397,
+            "min_correlation": -0.6077089315064683,
+            "count": 2
+          }
+        },
+        "medium_term": {
+          "broad_market": {
+            "avg_correlation": 0.9024799455577497,
+            "max_correlation": 0.9110195376628132,
+            "min_correlation": 0.8763490193124912,
+            "count": 5
+          },
+          "small_cap": {
+            "avg_correlation": 0.8652432183297227,
+            "max_correlation": 0.8652432183297227,
+            "min_correlation": 0.8652432183297227,
+            "count": 1
+          },
+          "international": {
+            "avg_correlation": 0.7797666241010375,
+            "max_correlation": 0.7835604425239082,
+            "min_correlation": 0.7759728056781668,
+            "count": 2
+          },
+          "sectors": {
+            "avg_correlation": 0.7716629487907676,
+            "max_correlation": 0.899800867509716,
+            "min_correlation": 0.5674803719711747,
+            "count": 10
+          },
+          "fixed_income": {
+            "avg_correlation": 0.5474191611371484,
+            "max_correlation": 0.8561426425269978,
+            "min_correlation": 0.23869567974729902,
+            "count": 2
+          },
+          "alternatives": {
+            "avg_correlation": 0.4079077319269111,
+            "max_correlation": 0.7801767317783891,
+            "min_correlation": 0.03563873207543312,
+            "count": 2
+          }
+        },
+        "long_term": {
+          "broad_market": {
+            "avg_correlation": 0.7608272119216022,
+            "max_correlation": 0.7802221888239395,
+            "min_correlation": 0.723270003860431,
+            "count": 5
+          },
+          "small_cap": {
+            "avg_correlation": 0.6345952778682058,
+            "max_correlation": 0.6345952778682058,
+            "min_correlation": 0.6345952778682058,
+            "count": 1
+          },
+          "international": {
+            "avg_correlation": 0.5741063447536656,
+            "max_correlation": 0.6202177795884869,
+            "min_correlation": 0.5279949099188445,
+            "count": 2
+          },
+          "sectors": {
+            "avg_correlation": 0.5513737023519778,
+            "max_correlation": 0.7332126204658316,
+            "min_correlation": 0.24890413117573565,
+            "count": 10
+          },
+          "fixed_income": {
+            "avg_correlation": 0.41187777138648873,
+            "max_correlation": 0.7112605615508781,
+            "min_correlation": 0.11249498122209939,
+            "count": 2
+          },
+          "alternatives": {
+            "avg_correlation": 0.2717937321248811,
+            "max_correlation": 0.5171628408568827,
+            "min_correlation": 0.026424623392879508,
+            "count": 2
+          }
+        }
+      },
+      "top_correlations": {
+        "short_term": {
+          "highest_positive": [
+            [
+              "XLY",
+              0.7417967461092301
+            ],
+            [
+              "^IXIC",
+              0.7412478009225117
+            ],
+            [
+              "QQQ",
+              0.729958371412011
+            ]
+          ],
+          "lowest_positive": [
+            [
+              "EFA",
+              0.0020296938218783817
+            ],
+            [
+              "XLU",
+              -0.10640323623524765
+            ],
+            [
+              "GLD",
+              -0.6077089315064683
+            ]
+          ]
+        },
+        "medium_term": {
+          "highest_positive": [
+            [
+              "^GSPC",
+              0.9110195376628132
+            ],
+            [
+              "^IXIC",
+              0.9108391772626685
+            ],
+            [
+              "VTI",
+              0.9086063356772941
+            ]
+          ],
+          "lowest_positive": [
+            [
+              "XLU",
+              0.5674803719711747
+            ],
+            [
+              "TLT",
+              0.23869567974729902
+            ],
+            [
+              "GLD",
+              0.03563873207543312
+            ]
+          ]
+        },
+        "long_term": {
+          "highest_positive": [
+            [
+              "^GSPC",
+              0.7802221888239395
+            ],
+            [
+              "VTI",
+              0.7725322236455681
+            ],
+            [
+              "^IXIC",
+              0.7692865576629738
+            ]
+          ],
+          "lowest_positive": [
+            [
+              "XLU",
+              0.24890413117573565
+            ],
+            [
+              "TLT",
+              0.11249498122209939
+            ],
+            [
+              "GLD",
+              0.026424623392879508
+            ]
+          ]
+        }
+      },
+      "diversification_recommendations": [
+        "Low correlation assets for diversification: GLD, TLT",
+        "Alternative investments (Gold, REITs) offer diversification benefits"
+      ]
+    }
+  },
+  "correlation_analysis": {
+    "correlations": {
+      "short_term": {
+        "^GSPC": 0.6807375882061105,
+        "^DJI": 0.5556491561467629,
+        "^IXIC": 0.7412478009225117,
+        "^RUT": 0.5431808757770473,
+        "EFA": 0.0020296938218783817,
+        "EEM": 0.0356691114080161,
+        "VTI": 0.6652877209911261,
+        "QQQ": 0.729958371412011,
+        "XLF": 0.4675766759476886,
+        "XLE": 0.5475823606491457,
+        "XLK": 0.7128008986133982,
+        "XLV": 0.21653187972408067,
+        "XLI": 0.5541185624891702,
+        "XLP": 0.01933562373367065,
+        "XLY": 0.7417967461092301,
+        "XLU": -0.10640323623524765,
+        "XLRE": 0.12063246778216338,
+        "XLB": 0.4705133744586847,
+        "GLD": -0.6077089315064683,
+        "TLT": 0.1539793513804507,
+        "HYG": 0.6611023410562874,
+        "VNQ": 0.1899590200269397
+      },
+      "medium_term": {
+        "^GSPC": 0.9110195376628132,
+        "^DJI": 0.8763490193124912,
+        "^IXIC": 0.9108391772626685,
+        "^RUT": 0.8652432183297227,
+        "EFA": 0.7759728056781668,
+        "EEM": 0.7835604425239082,
+        "VTI": 0.9086063356772941,
+        "QQQ": 0.9055856578734813,
+        "XLF": 0.8483868281473775,
+        "XLE": 0.8031655710635002,
+        "XLK": 0.899800867509716,
+        "XLV": 0.6078626652989384,
+        "XLI": 0.8785403471723153,
+        "XLP": 0.5713816287692031,
+        "XLY": 0.8994947091274252,
+        "XLU": 0.5674803719711747,
+        "XLRE": 0.7605429605970961,
+        "XLB": 0.8799735382509287,
+        "GLD": 0.03563873207543312,
+        "TLT": 0.23869567974729902,
+        "HYG": 0.8561426425269978,
+        "VNQ": 0.7801767317783891
+      },
+      "long_term": {
+        "^GSPC": 0.7802221888239395,
+        "^DJI": 0.723270003860431,
+        "^IXIC": 0.7692865576629738,
+        "^RUT": 0.6345952778682058,
+        "EFA": 0.6202177795884869,
+        "EEM": 0.5279949099188445,
+        "VTI": 0.7725322236455681,
+        "QQQ": 0.7588250856150982,
+        "XLF": 0.6099275357794791,
+        "XLE": 0.5052943450121424,
+        "XLK": 0.7300479146396172,
+        "XLV": 0.47283865162051986,
+        "XLI": 0.6424608313781608,
+        "XLP": 0.4138822365122424,
+        "XLY": 0.7332126204658316,
+        "XLU": 0.24890413117573565,
+        "XLRE": 0.48401777762702936,
+        "XLB": 0.6731509793090201,
+        "GLD": 0.026424623392879508,
+        "TLT": 0.11249498122209939,
+        "HYG": 0.7112605615508781,
+        "VNQ": 0.5171628408568827
+      }
+    },
+    "beta": {
+      "sp500_beta": 1.2560846159181531
+    },
+    "correlation_signal": "moderate_market_correlation",
+    "diversification_score": 24.707002416562098,
+    "correlation_summary": {
+      "short_term": {
+        "broad_market": {
+          "avg_correlation": 0.6745761275357045,
+          "max_correlation": 0.7412478009225117,
+          "min_correlation": 0.5556491561467629,
+          "count": 5
+        },
+        "small_cap": {
+          "avg_correlation": 0.5431808757770473,
+          "max_correlation": 0.5431808757770473,
+          "min_correlation": 0.5431808757770473,
+          "count": 1
+        },
+        "international": {
+          "avg_correlation": 0.018849402614947244,
+          "max_correlation": 0.0356691114080161,
+          "min_correlation": 0.0020296938218783817,
+          "count": 2
+        },
+        "sectors": {
+          "avg_correlation": 0.3744485353271984,
+          "max_correlation": 0.7417967461092301,
+          "min_correlation": -0.10640323623524765,
+          "count": 10
+        },
+        "fixed_income": {
+          "avg_correlation": 0.40754084621836906,
+          "max_correlation": 0.6611023410562874,
+          "min_correlation": 0.1539793513804507,
+          "count": 2
+        },
+        "alternatives": {
+          "avg_correlation": -0.2088749557397643,
+          "max_correlation": 0.1899590200269397,
+          "min_correlation": -0.6077089315064683,
+          "count": 2
+        }
+      },
+      "medium_term": {
+        "broad_market": {
+          "avg_correlation": 0.9024799455577497,
+          "max_correlation": 0.9110195376628132,
+          "min_correlation": 0.8763490193124912,
+          "count": 5
+        },
+        "small_cap": {
+          "avg_correlation": 0.8652432183297227,
+          "max_correlation": 0.8652432183297227,
+          "min_correlation": 0.8652432183297227,
+          "count": 1
+        },
+        "international": {
+          "avg_correlation": 0.7797666241010375,
+          "max_correlation": 0.7835604425239082,
+          "min_correlation": 0.7759728056781668,
+          "count": 2
+        },
+        "sectors": {
+          "avg_correlation": 0.7716629487907676,
+          "max_correlation": 0.899800867509716,
+          "min_correlation": 0.5674803719711747,
+          "count": 10
+        },
+        "fixed_income": {
+          "avg_correlation": 0.5474191611371484,
+          "max_correlation": 0.8561426425269978,
+          "min_correlation": 0.23869567974729902,
+          "count": 2
+        },
+        "alternatives": {
+          "avg_correlation": 0.4079077319269111,
+          "max_correlation": 0.7801767317783891,
+          "min_correlation": 0.03563873207543312,
+          "count": 2
+        }
+      },
+      "long_term": {
+        "broad_market": {
+          "avg_correlation": 0.7608272119216022,
+          "max_correlation": 0.7802221888239395,
+          "min_correlation": 0.723270003860431,
+          "count": 5
+        },
+        "small_cap": {
+          "avg_correlation": 0.6345952778682058,
+          "max_correlation": 0.6345952778682058,
+          "min_correlation": 0.6345952778682058,
+          "count": 1
+        },
+        "international": {
+          "avg_correlation": 0.5741063447536656,
+          "max_correlation": 0.6202177795884869,
+          "min_correlation": 0.5279949099188445,
+          "count": 2
+        },
+        "sectors": {
+          "avg_correlation": 0.5513737023519778,
+          "max_correlation": 0.7332126204658316,
+          "min_correlation": 0.24890413117573565,
+          "count": 10
+        },
+        "fixed_income": {
+          "avg_correlation": 0.41187777138648873,
+          "max_correlation": 0.7112605615508781,
+          "min_correlation": 0.11249498122209939,
+          "count": 2
+        },
+        "alternatives": {
+          "avg_correlation": 0.2717937321248811,
+          "max_correlation": 0.5171628408568827,
+          "min_correlation": 0.026424623392879508,
+          "count": 2
+        }
+      }
+    },
+    "top_correlations": {
+      "short_term": {
+        "highest_positive": [
+          [
+            "XLY",
+            0.7417967461092301
+          ],
+          [
+            "^IXIC",
+            0.7412478009225117
+          ],
+          [
+            "QQQ",
+            0.729958371412011
+          ]
+        ],
+        "lowest_positive": [
+          [
+            "EFA",
+            0.0020296938218783817
+          ],
+          [
+            "XLU",
+            -0.10640323623524765
+          ],
+          [
+            "GLD",
+            -0.6077089315064683
+          ]
+        ]
+      },
+      "medium_term": {
+        "highest_positive": [
+          [
+            "^GSPC",
+            0.9110195376628132
+          ],
+          [
+            "^IXIC",
+            0.9108391772626685
+          ],
+          [
+            "VTI",
+            0.9086063356772941
+          ]
+        ],
+        "lowest_positive": [
+          [
+            "XLU",
+            0.5674803719711747
+          ],
+          [
+            "TLT",
+            0.23869567974729902
+          ],
+          [
+            "GLD",
+            0.03563873207543312
+          ]
+        ]
+      },
+      "long_term": {
+        "highest_positive": [
+          [
+            "^GSPC",
+            0.7802221888239395
+          ],
+          [
+            "VTI",
+            0.7725322236455681
+          ],
+          [
+            "^IXIC",
+            0.7692865576629738
+          ]
+        ],
+        "lowest_positive": [
+          [
+            "XLU",
+            0.24890413117573565
+          ],
+          [
+            "TLT",
+            0.11249498122209939
+          ],
+          [
+            "GLD",
+            0.026424623392879508
+          ]
+        ]
+      }
+    },
+    "diversification_recommendations": [
+      "Low correlation assets for diversification: GLD, TLT",
+      "Alternative investments (Gold, REITs) offer diversification benefits"
+    ]
+  },
+  "fundamental_analysis": {
+    "financial_statements_available": true,
+    "key_metrics": {
+      "valuation_metrics": {
+        "pe_ratio": 31.139536,
+        "forward_pe": 24.169674,
+        "peg_ratio": null,
+        "price_to_book": 44.922836,
+        "price_to_sales": 7.492783
+      },
+      "financial_health": {
+        "debt_to_equity": 146.994,
+        "current_ratio": 0.821,
+        "quick_ratio": 0.68
+      },
+      "profitability": {
+        "return_on_equity": 1.38015,
+        "return_on_assets": 0.23809999,
+        "gross_margins": 0.46632,
+        "operating_margins": 0.31028998,
+        "profit_margins": 0.24301
+      },
+      "growth": {
+        "revenue_growth": 0.051,
+        "earnings_growth": 0.078
+      }
+    }
+  },
+  "news_analysis": {
+    "articles_found": 10,
+    "recent_articles": [
+      {
+        "title": "Elon Musk's renewed 'laser focus' on Tesla is his 'redemption arc'",
+        "publisher": "Yahoo Finance Video",
+        "link": "https://finance.yahoo.com/video/elon-musks-renewed-laser-focus-204438323.html",
+        "publish_time": "2025-05-30 20:44:38",
+        "type": "VIDEO",
+        "thumbnail": "",
+        "summary": "<p>Elon Musk is back at Tesla (<a data-i13n=\"cpos:1;pos:1\" href=\"https://finance.yahoo.com/quote/TSLA\">TSLA</a>) after serving as a special government employee leading US President Trump's Department of Government Efficiency (DOGE).</p>\n<p>Intelligent Alpha founder and CEO Doug Clinton joins Market Domination with <a data-i13n=\"cpos:2;pos:1\" href=\"https://finance.yahoo.com/author/josh-lipton/\">Josh Lipton</a>, <a data-i13n=\"cpos:3;pos:1\" href=\"https://finance.yahoo.com/author/josh-schafer/\">Josh Schafer</a>, and Macro Talk News founder Hope King to compare Musk's place at Tesla with the other innovative drives seen from other historic tech executives.</p>\n<p>To watch more expert insights and analysis on the latest market action, check out more Market Domination <a data-i13n=\"cpos:4;pos:1\" href=\"https://finance.yahoo.com/videos/series/market-domination/\">here</a>.</p>"
+      },
+      {
+        "title": "Judge Weighs Big Changes to Google, Including Breakup, AI Limits",
+        "publisher": "Bloomberg",
+        "link": "https://finance.yahoo.com/news/google-search-judge-zeroes-ai-175909734.html",
+        "publish_time": "2025-05-30 21:35:17",
+        "type": "STORY",
+        "thumbnail": "",
+        "summary": ""
+      },
+      {
+        "title": "US Smartphone Manufacturing Is a 'Dream': IDC's Popal",
+        "publisher": "Bloomberg",
+        "link": "https://finance.yahoo.com/video/us-smartphone-manufacturing-dream-idcs-205859445.html",
+        "publish_time": "2025-05-30 20:58:59",
+        "type": "VIDEO",
+        "thumbnail": "",
+        "summary": "Smartphone manufacturing in the US is a \"dream,\" says Nabila Popal, IDC senior research director. She discusses her research with Ed Ludlow on \"Bloomberg Technology.\""
+      },
+      {
+        "title": "Apple Rebound Likely as Court Blocks Tariff Sell-Off Catalyst",
+        "publisher": "GuruFocus.com",
+        "link": "https://finance.yahoo.com/news/apple-rebound-likely-court-blocks-193450855.html",
+        "publish_time": "2025-05-30 19:34:50",
+        "type": "STORY",
+        "thumbnail": "",
+        "summary": ""
+      },
+      {
+        "title": "4 Dividend-Paying Dow Jones Growth Stocks to Buy in June and Hold for Decades",
+        "publisher": "Motley Fool",
+        "link": "https://finance.yahoo.com/news/4-dividend-paying-dow-jones-150200571.html",
+        "publish_time": "2025-05-30 15:02:00",
+        "type": "STORY",
+        "thumbnail": "",
+        "summary": ""
+      }
+    ]
+  },
+  "llm_insights": {
+    "technical": "Okay, here is a comprehensive technical analysis for AAPL (Apple Inc.), incorporating the provided data and addressing the requested analysis points.\n\n### **AAPL (Apple Inc.) - Comprehensive Technical Analysis**\n\n**Date:** October 26, 2024\n**Current Price:** $200.85\n**Overall Signal:** Bearish (Confidence: 45.8%)\n\n**1. STRATEGIC SIGNAL ANALYSIS (High Priority):**\n\n*   **RSI+MACD Strategy:** Neutral (Score: 4.0) - This suggests a lack of clear directional conviction. The RSI and MACD are not strongly aligned, indicating potential indecision in the market for AAPL.\n*   **BB+RSI+MACD Strategy:** Neutral (Score: 4.5) - The Bollinger Bands, RSI, and MACD are also not showing strong convergence, indicating that this strategy yields a neutral signal.\n*   **MA+RSI+Volume Strategy:** Trend Sell (Score: 7.0) - This is the strongest strategic signal. It combines bearish moving average trends (price below SMA 20/50/200), unfavorable RSI readings (below 50), and volume considerations. This suggests that the current price action is likely unsustainable and further downside is probable.\n\n    *   **Significance of Weighted Consensus Signal:** The overall signal is bearish, but the low confidence (45.8%) suggests that the bears are not in complete control. The individual strategy scores highlight the MA+RSI+Volume as the most impactful bearish signal.\n    *   **Signal Convergence/Divergence and Reliability:** There is significant divergence. The neutral RSI+MACD contrasts with the bearish MA+RSI+Volume. The MA+RSI+Volume carries more weight due to its higher score and the fact that it incorporates trend, momentum, and volume, making it a more robust signal in this context.\n\n**2. COMPREHENSIVE MOMENTUM ANALYSIS:**\n\n*   **RSI:** 45.83 (Neutral) - Not in overbought or oversold territory. However, a sustained break below 40 could indicate further downside.\n*   **Stochastic Oscillator (%K, %D):** %K (33.92), %D (31.24) (Neutral) - These indicators are below 50, suggesting weak momentum, but not yet oversold.\n*   **Williams %R:** -63.92 (Neutral) - Not indicating overbought or oversold conditions.\n*   **Rate of Change (ROC):** -5.01 (Bearish) - Negative ROC suggests a deceleration in price growth, confirming the bearish trend.\n*   **Money Flow Index (MFI):** 35.44 (Neutral) - Below 50 suggests selling pressure is slightly dominating.\n*   **Commodity Channel Index (CCI):** -47.77 (Neutral) - Indicates that the price is deviating from its statistical mean but not significantly enough to trigger a strong signal.\n\n**3. ADVANCED TREND ANALYSIS:**\n\n*   **MACD:** MACD (-1.62), Signal Line (-1.05), Histogram (-0.56) (Bearish) - MACD below the signal line confirms the downtrend. The negative histogram indicates increasing negative momentum.\n*   **Moving Averages (SMA/EMA):**\n    *   Price below SMA 20 ($203.40), SMA 50 ($205.21), and SMA 200 ($225.14) \u2013 Bearish.\n    *   No Golden/Death Cross \u2013 Indicates a lack of strong long-term trend change signals.\n*   **Average Directional Index (ADX):** 15.96 (Weak) - Weak trend strength.\n*   **Ichimoku Cloud Analysis:**\n    *   Price below the cloud \u2013 Bearish.\n    *   TK Cross Bearish \u2013 Confirms short-term downward pressure.\n    *   Cloud Color Bearish \u2013 Indicates a negative long-term trend.\n*   **Parabolic SAR:** Bullish SAR Signal - This signal is considered less reliable when other trend indicators are bearish.\n\n**4. VOLATILITY & RISK ASSESSMENT:**\n\n*   **Bollinger Bands:** BB Position (39.01%) - Price is closer to the lower band, indicating bearish pressure.\n*   **Average True Range (ATR):** 5.92 - Indicates moderate volatility.\n*   **Volatility Regime:** Low \u2013 AAPL is currently experiencing relatively low volatility.\n\n**5. VOLUME & SMART MONEY ANALYSIS:**\n\n*   **On-Balance Volume (OBV):** 822646363.0 (Bullish) - OBV is trending up, which is contradictory to other bearish signals. This could indicate underlying accumulation or a lag in volume response.\n*   **Accumulation/Distribution Line:** N/A\n*   **Chaikin Money Flow (CMF):** 0.07 (Neutral) - Slightly positive but not strong enough to counter the bearish price action.\n*   **Volume Ratio:** 1.23 (Normal) - Volume is slightly above average but doesn't indicate extreme buying or selling pressure.\n\n**6. PATTERN RECOGNITION:**\n\n*   **Candlestick Patterns:** No significant candlestick patterns detected.\n*   **Gap Analysis:** No significant gaps.\n*   **Support and Resistance:**\n    *   Nearest Resistance: $203.00\n    *   Nearest Support: $197.70\n\n**7. CORRELATION & MARKET CONTEXT:**\n\n*   **Correlation with Major Indices:** High positive correlation with S&P 500 (0.68 short-term, 0.91 medium-term, 0.78 long-term) and NASDAQ (0.74 short-term, 0.91 medium-term, 0.77 long-term). AAPL's movement is significantly influenced by the overall market.\n*   **Beta:** 1.26 - AAPL is slightly more volatile than the S&P 500.\n*   **Diversification:** Diversification Score (24.71) - Suggests that AAPL is not a strong diversifier for a portfolio.\n*   **Diversification Recommendations:** GLD, TLT offer diversification benefits.\n\n**8. RISK-ADJUSTED SIGNALS:**\n\n*   The bearish signal is tempered by the low confidence level and mixed volume signals.\n*   Volatility-adjusted position sizing should be conservative due to the moderate ATR.\n*   **Stop-Loss Levels:**\n    *   Conservative: $203.00 (just above the nearest resistance)\n    *   Aggressive: $201.50 (just above the EMA 8)\n\n**9. ACTIONABLE TRADING RECOMMENDATIONS:**\n\n*   **Overall Stance:** Cautiously Bearish.\n*   **Entry Point:** Consider a short entry around $201.50, near the EMA 8, to confirm the bearish signal.\n*   **Price Targets:**\n    *   Target 1: $197.70 (Nearest Support)\n    *   Target 2: $195.46 (Support 2)\n*   **Time Horizon:** Short to Medium Term (1-4 weeks)\n*   **Risk Management:**\n    *   Stop-loss at $203.00.\n    *   Position size should be adjusted based on risk tolerance and portfolio allocation.\n*   **Key Levels to Monitor:**\n    *   $203.00 (Resistance): A break above this level would invalidate the bearish thesis.\n    *   $197.70 (Support): A break below this level would confirm the bearish trend and open the door for further downside.\n\n**10. MULTI-TIMEFRAME PERSPECTIVE:**\n\n*   **Short-Term:** Tactical bearish signals suggest potential for a short-term decline.\n*   **Long-Term:** The overall trend is still questionable, as indicated by the mixed signals. The price is below the 200-day SMA, which is a bearish indicator.\n*   **Warning Signs:** The bullish OBV and neutral RSI+MACD strategy suggest potential for a reversal. Monitor volume closely for signs of accumulation.\n\n**Summary and Conclusion:**\n\nAAPL is currently showing a cautiously bearish outlook. The strongest signal is the MA+RSI+Volume combination, which indicates a trend sell. While the MACD and moving averages confirm the bearish trend, the low confidence in the overall signal and the bullish OBV suggest that caution is warranted. Traders should monitor key support and resistance levels, manage risk carefully, and be prepared to adjust their positions based on new information. The diversification score suggests the portfolio can be further diversified.\n",
+    "fundamental": "Okay, here's a comprehensive fundamental analysis of Apple Inc. (AAPL) based on the information you provided. Please remember that this analysis is based solely on the data provided and may not reflect all factors influencing Apple's stock price. A complete analysis would incorporate deeper dives into qualitative aspects, macroeconomic considerations, and real-time data.\n\n**Executive Summary:**\n\nBased on the provided metrics, Apple appears to be **moderately overvalued**. While its profitability is strong, growth is relatively slow, and valuation multiples are high compared to historical averages and potentially some peers. The company's strong brand, loyal customer base, and ecosystem provide a significant competitive advantage. However, the high debt-to-equity ratio and relatively low liquidity metrics raise some concerns. A **Hold** recommendation is appropriate, with a target price range of **$175-$190**, reflecting the potential for multiple compression and limited near-term growth catalysts.\n\n**1. VALUATION ASSESSMENT:**\n\n*   **Overvalued/Undervalued**: Based on the provided metrics, AAPL appears **moderately overvalued**.\n*   **P/E Ratio**: The current P/E of 31.14 is high, suggesting investors are paying a premium for each dollar of earnings. Compared to the historical average P/E for the S&P 500 (around 15-16), and considering Apple's mature stage, this is a rich valuation. Without industry comparables, it's hard to pinpoint the exact overvaluation, but it warrants caution.\n*   **Forward P/E**: The forward P/E of 24.17 suggests that analysts expect earnings to grow, but the multiple is still elevated.\n*   **PEG Ratio**: Since the PEG ratio is unavailable, it's difficult to assess the valuation relative to expected growth. A PEG ratio above 1 generally indicates overvaluation.\n*   **Price to Book**: A P/B ratio of 44.92 is very high, indicating that the market is valuing Apple's assets significantly higher than their book value. This could be justified by strong brand value, intangible assets, and high returns on equity, but it also implies a high level of investor expectation.\n*   **Price to Sales**: A P/S ratio of 7.49 is high, especially considering the relatively low revenue growth. It suggests investors are paying a premium for each dollar of sales, which might be difficult to sustain if revenue growth doesn't accelerate.\n*   **Enterprise Value/EBITDA**: The absence of this metric is a significant limitation, as it provides a clearer picture of valuation relative to operating cash flow.\n*   **Discounted Cash Flow (DCF) Considerations**: A DCF analysis would be essential for a more accurate valuation. Given the slowing growth, a conservative growth rate assumption is necessary. The high valuation multiples suggest that the market is already pricing in significant future growth, which may be challenging to achieve.\n\n**2. FINANCIAL HEALTH & LIQUIDITY:**\n\n*   **Balance Sheet Strength & Debt Management**: The debt-to-equity ratio of 146.99% is relatively high, indicating that Apple is heavily leveraged. This could increase financial risk, especially in an economic downturn.\n*   **Current & Quick Ratio**: The current ratio of 0.82 and quick ratio of 0.68 are below 1, suggesting that Apple may face challenges in meeting its short-term liabilities with its current assets. This needs further investigation to determine if the company relies heavily on efficient working capital management or faces liquidity issues.\n*   **Cash Flow Stability & Free Cash Flow Generation**: While the Free Cash Flow is missing, it is a crucial metric for Apple. Strong and consistent free cash flow generation is vital to support dividends, share buybacks, and investments in growth.\n*   **Working Capital Management Efficiency**: The low current and quick ratios suggest that Apple might be very efficient in managing its working capital. However, it also increases vulnerability to unexpected disruptions.\n\n**3. PROFITABILITY METRICS & TRENDS:**\n\n*   **ROE & ROA Analysis**: ROE of 1.38% and ROA of 0.24% are very low. These figures are concerning and suggest that Apple is not efficiently utilizing equity or assets to generate profit. This may be due to the way these ratios are calculated, given Apple's enormous market capitalization. Further investigation is needed to ensure that the data provided is accurate, since these values are significantly below what would be expected for a company like Apple.\n*   **Margin Analysis**: Gross margin of 46.63%, operating margin of 31.03%, and profit margin of 24.30% are strong, indicating Apple's pricing power and efficient operations. However, it's important to understand the trends in these margins. Are they stable, increasing, or decreasing?\n*   **Asset Utilization & Operational Efficiency**: The low ROA suggests that Apple is not efficiently utilizing its assets to generate profit, but this could be due to the low ROE data.\n*   **Earnings Quality Assessment**: A deeper analysis of Apple's earnings quality is necessary. Look for any unusual items or accounting practices that might be inflating earnings.\n\n**4. GROWTH PROSPECTS & SUSTAINABILITY:**\n\n*   **Revenue & Earnings Growth Sustainability**: Revenue growth of 0.051% and earnings growth of 0.078% are very low for a technology company. This raises concerns about the sustainability of future growth.\n*   **Market Expansion Opportunities**: Apple needs to explore new markets and product categories to reignite growth. Services are a key area for growth, but competition is intense.\n*   **Competitive Advantages & Moat Analysis**: Apple's strong brand, loyal customer base, and integrated ecosystem create a significant competitive advantage. However, these advantages are constantly being challenged by competitors.\n*   **Management Execution & Capital Allocation**: Management's ability to innovate, execute, and allocate capital effectively is crucial for future growth.\n\n**5. CAPITAL STRUCTURE & SHAREHOLDER RETURNS:**\n\n*   **Debt Levels & Capital Structure Optimization**: The high debt-to-equity ratio raises concerns about capital structure optimization. Apple needs to manage its debt levels carefully to maintain financial flexibility.\n*   **Dividend Policy Sustainability & Growth Potential**: The dividend yield of 0.52% is relatively low, but the dividend is likely sustainable given Apple's strong cash flow (assuming the missing FCF data is positive).\n*   **Share Buyback Programs & Shareholder Value Creation**: Share buybacks can enhance shareholder value, but they should be balanced with investments in growth.\n*   **Interest Coverage & Financial Flexibility**: A high debt level can reduce financial flexibility, especially if interest rates rise.\n\n**6. COMPETITIVE POSITION & INDUSTRY ANALYSIS:**\n\n*   **Market Share & Competitive Advantages**: Apple has a strong market share in its key product categories, but competition is intense.\n*   **Industry Growth Trends & Cyclicality**: The consumer electronics industry is cyclical and subject to rapid technological changes.\n*   **Regulatory Environment & Risks**: Regulatory scrutiny, especially regarding antitrust and privacy, poses a significant risk to Apple.\n*   **Technological Disruption Threats/Opportunities**: Apple needs to stay ahead of technological disruption to maintain its competitive edge.\n\n**Technical Signals (Correlation):**\n\nWithout specific technical signals, it's difficult to correlate. However, if the stock price is showing signs of overbought conditions (e.g., high RSI, negative divergence) while fundamental valuation is also stretched, it strengthens the case for caution. Conversely, if the price is declining due to market-wide factors while fundamentals remain relatively solid, it might present a buying opportunity.\n\n**Recommendation & Target Price:**\n\nBased on the data provided, a **Hold** recommendation is appropriate. The high valuation multiples, slowing growth, and relatively high debt levels suggest limited upside potential.\n\n**Target Price Range: $175 - $190**. This range reflects the potential for multiple compression and the need for Apple to demonstrate stronger growth to justify its current valuation. The target price range may need to be revised once the data discrepancies are corrected and more information is available.\n\n**Disclaimer:** This analysis is based solely on the provided data and should not be considered financial advice. Consult with a qualified financial advisor before making any investment decisions.\n",
+    "news": "Okay, here's a detailed sentiment analysis of the recent news affecting Apple (AAPL), considering both short-term and long-term implications.\n\n**1. OVERALL SENTIMENT ASSESSMENT:**\n\n*   **Sentiment:** Slightly Positive to Neutral.\n*   **Sentiment Intensity:** 5/10 (Moderate). The news is a mixed bag, with some positive signals offset by broader industry concerns and potential risks.\n*   **Expected Market Reaction:** Mildly positive. The \"Apple Rebound Likely\" and \"Apple Sees Small Rebound in China Shipments\" news could provide a short-term boost. However, the overall market uncertainty and tariff concerns might limit the upside.\n\n**2. KEY THEMES ANALYSIS:**\n\n*   **Theme 1: Tariff Impact and Trade Uncertainty:**\n    *   **Importance:** High. The \"Apple Rebound Likely as Court Blocks Tariff Sell-Off Catalyst\" and \"Smartphone Sales Growth Hit by Tariff \u2018Whirlwind of Uncertainty\u2019\" headlines highlight the significant impact of trade policies on Apple's business.\n    *   **Potential Impact:** Negative in the long term if tariffs are implemented or trade tensions escalate. Increased costs, reduced demand, and supply chain disruptions are all possible.\n    *   **Industry Relevance:** This is a major concern for the entire tech industry, especially companies heavily reliant on global supply chains and international sales.\n*   **Theme 2: China Market Performance:**\n    *   **Importance:** High. \"Apple Sees Small Rebound in China Shipments\" and \"Foreign-branded mobile phone sales in China edge up in April\" are relevant.\n    *   **Potential Impact:** Positive, but cautiously optimistic. China is a crucial market for Apple, and any sign of recovery is encouraging. However, competition from local brands remains intense.\n    *   **Industry Relevance:** China is a key battleground for smartphone manufacturers. Apple's performance in China is closely watched by investors.\n*   **Theme 3: Broader Industry Trends (AI, US Manufacturing):**\n    *   **Importance:** Moderate. \"Latest News In Cloud AI - AI Market Transformation Drives Growth and Innovation\" and \"US Smartphone Manufacturing Is a 'Dream'\" are relevant.\n    *   **Potential Impact:** Neutral to slightly positive. Apple's investments in AI are crucial for future growth. The feasibility of US manufacturing is more of a long-term, aspirational goal.\n    *   **Industry Relevance:** AI is transforming the tech landscape, and companies need to innovate to stay competitive. The discussion about US manufacturing highlights the ongoing debate about supply chain resilience.\n*   **Theme 4: General Market and Competitor News:**\n    *   **Importance:** Low to Moderate. The articles about Tesla, Google, and dividend stocks have indirect relevance.\n    *   **Potential Impact:** Mostly neutral. News about competitors can influence investor sentiment, but the direct impact on Apple is limited unless there are significant market share shifts.\n    *   **Industry Relevance:** Staying informed about competitor strategies and industry trends is essential for Apple's long-term planning.\n\n**3. SHORT-TERM IMPACT ASSESSMENT:**\n\n*   **Expected Stock Price Reaction:** Slightly positive. The news of a potential tariff reprieve and a rebound in China could provide a temporary boost. Expect a possible gap up at the open.\n*   **Volume and Volatility Implications:** Increased volume is likely, especially if the market reacts strongly to the China shipment data. Volatility could increase due to the uncertainty surrounding trade policies.\n*   **Potential Technical Level Breaks or Support:**\n    *   **Resistance:** A break above $202.00 could signal further upside.\n    *   **Support:** $200.00 will likely act as initial support, with $198.50 as a stronger support level.\n\n**4. LONG-TERM IMPACT ANALYSIS:**\n\n*   **Lasting Effects on Company Fundamentals:** The impact of tariffs and trade tensions will be the most significant factor. A prolonged trade war could negatively impact Apple's profitability and growth.\n*   **Competitive Position Changes:** Apple needs to continue innovating and adapting to changing consumer preferences to maintain its competitive edge. Its success in China will be crucial.\n*   **Valuation Impact and Price Target Adjustments:** Analyst price targets could be revised depending on the outcome of trade negotiations and Apple's performance in key markets like China and India. A negative trade scenario could lead to price target reductions.\n\n**5. RISK FACTOR IDENTIFICATION:**\n\n*   **Key Risks and Uncertainties:**\n    *   **Trade War:** Escalation of trade tensions between the US and China.\n    *   **Competition:** Increasing competition from Chinese smartphone brands.\n    *   **Innovation:** Failure to introduce innovative products and services.\n    *   **Supply Chain Disruptions:** Potential disruptions to Apple's global supply chain.\n*   **Regulatory or Legal Risks:** Antitrust scrutiny and potential regulatory changes.\n*   **Operational and Financial Risks:** Currency fluctuations and economic slowdowns in key markets.\n\n**6. INVESTOR SENTIMENT INDICATORS:**\n\n*   **Institutional vs. Retail Sentiment:** Institutional investors are likely to be more cautious due to the macroeconomic uncertainties. Retail investors might be more optimistic based on the brand's popularity.\n*   **Expected Analyst Rating Changes:** Analyst ratings are likely to remain mixed, with some analysts maintaining a \"Buy\" rating based on Apple's long-term potential, while others might adopt a more cautious \"Hold\" or \"Neutral\" rating.\n*   **Social Media Sentiment Trends:** Social media sentiment is likely to be volatile, influenced by news headlines and product reviews.\n\n**Investment Implications:**\n\nGiven the current news landscape, a **cautiously optimistic** approach is warranted.\n\n*   **Short-Term:** A small, tactical long position might be considered if the stock shows positive momentum.\n*   **Long-Term:** Monitor trade negotiations and Apple's performance in China closely. Consider accumulating shares on dips, but be prepared for potential volatility.\n*   **Risk Management:** Implement stop-loss orders to protect against downside risk. Diversify your portfolio to reduce exposure to Apple.\n\n**Sentiment Score: 5/10**\n"
+  },
+  "recommendation": {
+    "full_analysis": "Okay, here is a comprehensive investment recommendation for Apple Inc. (AAPL), integrating technical, fundamental, and news sentiment analyses, and addressing all requested points.\n\n**1. INVESTMENT RECOMMENDATION (Clear Choice):**\n\n*   **Recommendation:** **Hold**\n*   **Rationale and Key Supporting Factors:**\n    *   **Mixed Signals:** The analysis presents a mixed picture. Technical analysis suggests a cautiously bearish short-term outlook, while fundamental analysis indicates moderate overvaluation, but with strong profitability. News sentiment is slightly positive to neutral.\n    *   **Counterbalancing Factors:** The potential for a short-term technical decline is counterbalanced by Apple's strong brand, ecosystem, and consistent profitability. The news of a potential tariff reprieve and rebound in China provides some optimism.\n    *   **Valuation Concerns:** High valuation multiples limit immediate upside, despite strong margins.\n*   **Risk-Adjusted Expected Returns:** Given the uncertainties, a risk-adjusted expected return is conservative, estimated at **3-5% over the next 12 months.**\n\n**2. PRICE TARGETS & TIMEFRAMES:**\n\n*   **6-Month Price Target:** $195\n*   **12-Month Price Target:** $205\n*   **Upside/Downside Risk Ratio:** Approximately 1:1 (Symmetrical Risk Profile)\n*   **Stop-Loss Recommendations:**\n    *   **Conservative:** $193 (Slightly below the nearest support of $197.70)\n    *   **Aggressive:** $197 (Right below the key support level)\n\n**3. INVESTMENT THESIS SUMMARY:**\n\n*   **Weighting of Factors:**\n    *   **Fundamental Analysis:** 40% (Focus on valuation, profitability, and growth)\n    *   **Technical Analysis:** 30% (Short-term trend identification and entry/exit points)\n    *   **News Sentiment:** 30% (Tariffs, China market, and broader industry trends)\n*   **Primary Catalyst Priorities:**\n    *   **Clear Resolution of Trade Tensions:** Positive resolution would significantly improve the outlook.\n    *   **Stronger-than-Expected Earnings:** Outperformance in key segments (Services, Wearables) would boost investor confidence.\n*   **Key Catalysts and Risk Factors:**\n    *   **Catalysts:**\n        *   Successful new product launches (e.g., AR/VR headset).\n        *   Accelerated growth in Services revenue.\n        *   Favorable trade agreements.\n    *   **Risk Factors:**\n        *   Escalation of trade war.\n        *   Increased competition in key markets.\n        *   Slower-than-expected growth in Services.\n        *   Regulatory scrutiny.\n\n**4. POSITION SIZING RECOMMENDATIONS:**\n\n*   **Suggested Portfolio Weight:** 3-5% (Given the moderate risk profile and diversification score)\n*   **Dollar-Cost Averaging Strategy:**\n    *   **If already holding:** Continue to hold. Consider adding to the position if the price drops below $190, using a dollar-cost averaging approach to mitigate risk.\n    *   **If not holding:** Initiate a small position (1-2%) and gradually increase it if the stock price declines and fundamentals remain intact.\n*   **Risk Management Guidelines:**\n    *   Adhere to stop-loss levels.\n    *   Re-evaluate the position if there are significant changes in the macroeconomic environment or Apple's competitive landscape.\n\n**5. MONITORING METRICS:**\n\n*   **Key Indicators to Watch Closely:**\n    *   **Revenue Growth:** Track overall revenue growth and segment-specific growth (Services, iPhone, etc.).\n    *   **Gross Margin:** Monitor for any signs of margin erosion due to increased costs or pricing pressures.\n    *   **China Market Share:** Closely watch Apple's market share in China.\n    *   **Trade War Developments:** Stay informed about trade negotiations and potential tariff implementations.\n    *   **MACD and RSI:** Monitor these indicators for potential trend reversals.\n*   **Triggers for Changing Investment View:**\n    *   **Upgrade to Buy:** If Apple demonstrates significant revenue growth acceleration, improved profit margins, and a resolution of trade tensions.\n    *   **Downgrade to Sell:** If Apple experiences a sustained decline in revenue, increased competition, and a worsening trade environment.\n*   **Important Earnings and Event Dates:**\n    *   Next Earnings Release Date (Typically Late January): Monitor earnings announcements for revenue, EPS, and guidance.\n    *   Apple Product Announcements (WWDC in June, September Event)\n\n**6. RISK DISCLOSURES:**\n\n*   **Primary Investment Risks:**\n    *   **Macroeconomic Risks:** Global economic slowdown, trade tensions.\n    *   **Company-Specific Risks:** Increased competition, slower innovation, product recalls, supply chain disruptions.\n    *   **Valuation Risks:** Potential multiple compression if growth doesn't meet expectations.\n*   **Scenario Analysis:**\n    *   **Bull Case:** Resolution of trade tensions, successful new product launches, accelerated growth in Services (Price Target: $230)\n    *   **Base Case:** Moderate growth in revenue and earnings, stable margins, no significant changes in the competitive landscape (Price Target: $205)\n    *   **Bear Case:** Escalation of trade war, increased competition, slower growth in Services, margin erosion (Price Target: $175)\n*   **Suitable Investor Types:**\n    *   Long-term investors with a moderate risk tolerance.\n    *   Investors seeking a blend of growth and value.\n    *   Investors who are comfortable with the cyclical nature of the technology industry.\n\nThis comprehensive recommendation provides a balanced assessment of Apple, considering various factors. It is crucial to continuously monitor the situation and be prepared to adjust the investment strategy based on new information.\n"
+  },
+  "summary": {
+    "executive_summary": "Okay, here is your concise executive summary for AAPL (Apple Inc.):\n\n**AAPL - Executive Summary**\n\n1.  **ONE-LINE INVESTMENT VIEW:** **Hold** - Mixed signals from technicals, fundamentals, and news warrant caution despite Apple's brand strength and profitability.\n\n2.  **THREE KEY TAKEAWAYS:**\n    *   **China Market Performance (High):** Apple's success in China is critical and highly sensitive to trade tensions.\n    *   **Revenue Growth Sustainability (Medium):** Slow growth raises valuation concerns; Services and new products are key.\n    *   **Technical Bearish Signals (Medium):** Cautiously bearish signals suggest a short-term decline.\n\n3.  **RISK-RETURN SUMMARY:**\n    *   **Expected Return Potential:** 3-5% over 12 months.\n    *   **Primary Risk Factors:** Trade war escalation, competition, slower Services growth.\n    *   **Risk-Adjusted Rating:** Neutral (reflecting balanced risks and opportunities)\n\n4.  **IMMEDIATE ACTION ITEMS:**\n    *   **Monitor Trade Negotiations:** Track US-China trade developments for immediate impact.\n    *   **Watch Key Support Levels:** Monitor $197.70 support level; a break below signals further downside.\n    *   **Prepare for Earnings:** Next earnings release will be a key catalyst; focus on revenue growth and margin trends.\n"
+  },
+  "charts": {
+    "technical_analysis": "charts/AAPL_technical_analysis_20250530_175517.png",
+    "correlation": "charts/AAPL_correlation_20250530_175518.png"
+  }
+}
