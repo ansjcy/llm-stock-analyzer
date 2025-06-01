@@ -2,6 +2,7 @@ import { TechnicalAnalysis as TechnicalAnalysisType, Charts } from '@/types/anal
 import { TrendingUp, TrendingDown, Activity, Target, Gauge, BarChart3 } from 'lucide-react';
 import Image from 'next/image';
 import HelpTooltip from './HelpTooltip';
+import { resolveChartPath } from '@/utils/chartPath';
 
 interface TechnicalAnalysisProps {
   technicalAnalysis: TechnicalAnalysisType;
@@ -155,7 +156,7 @@ export default function TechnicalAnalysis({ technicalAnalysis, charts }: Technic
           </div>
           <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
             <Image 
-              src={charts.technical_analysis}
+              src={resolveChartPath(charts.technical_analysis)}
               alt="Technical Analysis Chart"
               className="w-full h-auto rounded-lg shadow-sm"
               width={800}

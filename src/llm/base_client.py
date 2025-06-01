@@ -37,6 +37,12 @@ class BaseLLMClient(ABC):
         pass
     
     @abstractmethod
+    def generate_peter_lynch_analysis(self, ticker: str, peter_lynch_data: Dict[str, Any], 
+                                    stock_info: Dict[str, Any]) -> str:
+        """Generate Peter Lynch style investment analysis using LLM"""
+        pass
+    
+    @abstractmethod
     def generate_investment_recommendation(self, ticker: str, stock_info: Dict[str, Any],
                                          technical_analysis: str, fundamental_analysis: str,
                                          news_analysis: str) -> str:

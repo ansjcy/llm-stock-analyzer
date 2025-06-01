@@ -33,6 +33,7 @@ from src.utils.translations import set_language, t
 from src.data.yahoo_finance import get_yahoo_finance_api
 from src.analysis.technical_indicators import get_technical_analyzer
 from src.analysis.warren_buffett import get_warren_buffett_analyzer
+from src.analysis.peter_lynch import get_peter_lynch_analyzer
 from src.llm.client_factory import create_llm_client, LLMClientFactory
 
 
@@ -53,6 +54,9 @@ class StockAnalyzer:
         
         # Initialize Warren Buffett analyzer
         self.warren_buffett_analyzer = get_warren_buffett_analyzer(language=language)
+        
+        # Initialize Peter Lynch analyzer
+        self.peter_lynch_analyzer = get_peter_lynch_analyzer(language=language)
 
         # Try to create LLM client with fallback to available providers
         self.llm_client = None
@@ -101,6 +105,7 @@ class StockAnalyzer:
             'correlation_analysis': {},
             'fundamental_analysis': {},
             'warren_buffett_analysis': {},
+            'peter_lynch_analysis': {},
             'news_analysis': {},
             'llm_insights': {},
             'recommendation': {},
@@ -172,6 +177,13 @@ class StockAnalyzer:
             results['warren_buffett_analysis'] = warren_buffett_analysis
             progress.update(task45, completed=1)
 
+            # Step 4.6: Peter Lynch Analysis
+            task46_desc = "Performing Peter Lynch growth analysis..." if self.language == 'en' else "执行彼得·林奇成长分析..."
+            task46 = progress.add_task(task46_desc, total=1)
+            peter_lynch_analysis = self.peter_lynch_analyzer.analyze_stock(ticker, stock_info, financial_data)
+            results['peter_lynch_analysis'] = peter_lynch_analysis
+            progress.update(task46, completed=1)
+
             # Step 5: Get news data
             task5_desc = "Fetching recent news..." if self.language == 'en' else "获取最新消息..."
             task5 = progress.add_task(task5_desc, total=1)
@@ -200,7 +212,7 @@ class StockAnalyzer:
             # Step 7: Generate LLM insights (if available)
             if self.llm_client:
                 task7_desc = "Generating AI insights..." if self.language == 'en' else "生成AI洞察..."
-                task7 = progress.add_task(task7_desc, total=5)
+                task7 = progress.add_task(task7_desc, total=6)
 
                 # Enhanced technical analysis insights with comprehensive data
                 if results['technical_analysis']:
@@ -228,6 +240,14 @@ class StockAnalyzer:
                         ticker, results['warren_buffett_analysis'], stock_info
                     )
                     results['llm_insights']['warren_buffett'] = warren_buffett_insights
+                    progress.advance(task7)
+
+                # Peter Lynch analysis insights
+                if results['peter_lynch_analysis']:
+                    peter_lynch_insights = self.llm_client.generate_peter_lynch_analysis(
+                        ticker, results['peter_lynch_analysis'], stock_info
+                    )
+                    results['llm_insights']['peter_lynch'] = peter_lynch_insights
                     progress.advance(task7)
 
                 # News sentiment analysis
@@ -525,6 +545,78 @@ class StockAnalyzer:
             
             console.print(Panel(wb_summary, title=wb_title))
 
+        # Peter Lynch Growth Analysis
+        peter_lynch_analysis = results.get('peter_lynch_analysis', {})
+        if peter_lynch_analysis:
+            pl_title = "Peter Lynch Growth Analysis" if self.language == 'en' else "彼得·林奇成长分析"
+            
+            # Get key metrics
+            overall_signal = peter_lynch_analysis.get('overall_signal', 'neutral')
+            confidence = peter_lynch_analysis.get('confidence', 0)
+            score_percentage = peter_lynch_analysis.get('score_percentage', 0)
+            garp_analysis = peter_lynch_analysis.get('garp_analysis', {})
+            garp_score = garp_analysis.get('score_percentage', 0)
+            
+            # Signal color mapping
+            signal_color = 'green' if overall_signal == 'bullish' else 'red' if overall_signal == 'bearish' else 'yellow'
+            
+            # Translate signal values
+            if self.language == 'zh':
+                signal_trans = {'bullish': '看涨', 'bearish': '看跌', 'neutral': '中性'}
+                overall_signal_display = signal_trans.get(overall_signal, overall_signal)
+                signal_label = "投资信号"
+                confidence_label = "置信度"
+                quality_score_label = "质量评分"
+                garp_score_label = "GARP评分"
+                principles_label = "林奇原则"
+            else:
+                overall_signal_display = overall_signal.upper()
+                signal_label = "Investment Signal"
+                confidence_label = "Confidence"
+                quality_score_label = "Quality Score"
+                garp_score_label = "GARP Score"
+                principles_label = "Lynch Principles"
+            
+            pl_summary = f"[bold]{pl_title}[/bold]\n"
+            pl_summary += f"{signal_label}: [{signal_color}]{overall_signal_display}[/] ({confidence_label}: {confidence:.1f}%)\n"
+            pl_summary += f"{quality_score_label}: {score_percentage:.1f}%\n"
+            pl_summary += f"{garp_score_label}: {garp_score:.1f}%\n"
+            
+            # Add key GARP metrics
+            garp_metrics = garp_analysis.get('metrics', {})
+            if garp_metrics:
+                peg_ratio = garp_metrics.get('peg_ratio') or garp_metrics.get('calculated_peg')
+                if peg_ratio is not None:
+                    peg_color = 'green' if peg_ratio < 1.0 else 'yellow' if peg_ratio < 1.5 else 'red'
+                    pl_summary += f"PEG Ratio: [{peg_color}]{peg_ratio:.2f}[/]\n"
+            
+            # Add Lynch principles evaluation
+            lynch_principles = peter_lynch_analysis.get('lynch_principles', {})
+            if lynch_principles:
+                adherence_percentage = lynch_principles.get('adherence_percentage', 0)
+                overall_assessment = lynch_principles.get('overall_assessment', 'N/A')
+                pl_summary += f"\n[bold]{principles_label}:[/bold]\n"
+                pl_summary += f"• Overall Assessment: {overall_assessment}\n"
+                pl_summary += f"• Principles Met: {lynch_principles.get('total_principles_met', 0)}/{lynch_principles.get('total_principles', 4)} ({adherence_percentage:.1f}%)\n"
+                
+                # Show individual principle status
+                individual_principles = lynch_principles.get('individual_principles', {})
+                if individual_principles:
+                    for principle_name, principle_data in individual_principles.items():
+                        if isinstance(principle_data, dict):
+                            meets_criteria = principle_data.get('meets_criteria', False)
+                            score = principle_data.get('score', 0)
+                            status_icon = "✅" if meets_criteria else "❌"
+                            principle_display = principle_name.replace('_', ' ').title()
+                            pl_summary += f"  {status_icon} {principle_display}: {score:.0f}%\n"
+            
+            # Add key reasoning if available
+            reasoning = peter_lynch_analysis.get('investment_reasoning', '')
+            if reasoning:
+                pl_summary += f"\n[bold]Key Analysis:[/bold]\n{reasoning}"
+            
+            console.print(Panel(pl_summary, title=pl_title))
+
         # Correlation Analysis
         correlation = results.get('correlation_analysis', {})
         if correlation and detailed:
@@ -614,6 +706,13 @@ class StockAnalyzer:
                 console.print(Panel(
                     Markdown(llm_insights['warren_buffett']),
                     title=f"[bold magenta]{wb_title}[/bold magenta]"
+                ))
+
+            if 'peter_lynch' in llm_insights:
+                pl_title = "Peter Lynch's Take" if self.language == 'en' else "彼得·林奇观点"
+                console.print(Panel(
+                    Markdown(llm_insights['peter_lynch']),
+                    title=f"[bold cyan]{pl_title}[/bold cyan]"
                 ))
 
             if 'news' in llm_insights and detailed:
@@ -894,6 +993,111 @@ class StockAnalyzer:
                     for limitation in limitations:
                         md_content += f"- {limitation}\n"
 
+        # Add Peter Lynch Analysis
+        peter_lynch_analysis = results.get('peter_lynch_analysis', {})
+        if peter_lynch_analysis:
+            overall_signal = peter_lynch_analysis.get('overall_signal', 'neutral')
+            confidence = peter_lynch_analysis.get('confidence', 0)
+            score_percentage = peter_lynch_analysis.get('score_percentage', 0)
+            garp_analysis = peter_lynch_analysis.get('garp_analysis', {})
+            garp_score = garp_analysis.get('score_percentage', 0)
+            reasoning = peter_lynch_analysis.get('investment_reasoning', '')
+            
+            md_content += f"""## Peter Lynch Growth Analysis
+
+**Investment Signal:** {overall_signal.upper()}  
+**Confidence:** {confidence:.1f}%  
+**Quality Score:** {score_percentage:.1f}%  
+**GARP Score:** {garp_score:.1f}%  
+
+### Key GARP Metrics
+"""
+            
+            # Add key GARP metrics
+            garp_metrics = garp_analysis.get('metrics', {})
+            if garp_metrics:
+                peg_ratio = garp_metrics.get('peg_ratio') or garp_metrics.get('calculated_peg')
+                pe_ratio = garp_metrics.get('pe_ratio')
+                
+                md_content += f"""
+| Metric | Value | Assessment |
+|--------|-------|------------|"""
+                
+                if peg_ratio is not None:
+                    peg_assessment = "Excellent" if peg_ratio < 1.0 else "Good" if peg_ratio < 1.5 else "High"
+                    md_content += f"\n| PEG Ratio | {peg_ratio:.2f} | {peg_assessment} |"
+                
+                if pe_ratio is not None:
+                    pe_assessment = "Ideal" if 10 <= pe_ratio <= 20 else "Low" if pe_ratio < 10 else "High"
+                    md_content += f"\n| P/E Ratio | {pe_ratio:.1f} | {pe_assessment} |"
+
+            # Add Lynch principles evaluation
+            lynch_principles = peter_lynch_analysis.get('lynch_principles', {})
+            if lynch_principles:
+                overall_assessment = lynch_principles.get('overall_assessment', 'N/A')
+                adherence_percentage = lynch_principles.get('adherence_percentage', 0)
+                total_met = lynch_principles.get('total_principles_met', 0)
+                total_principles = lynch_principles.get('total_principles', 4)
+                
+                md_content += f"""
+
+### Lynch Principles Evaluation
+
+**Overall Assessment:** {overall_assessment}  
+**Principles Met:** {total_met}/{total_principles} ({adherence_percentage:.1f}%)
+
+| Principle | Status | Score |
+|-----------|--------|-------|"""
+                
+                individual_principles = lynch_principles.get('individual_principles', {})
+                if individual_principles:
+                    for principle_name, principle_data in individual_principles.items():
+                        if isinstance(principle_data, dict):
+                            meets_criteria = principle_data.get('meets_criteria', False)
+                            score = principle_data.get('score', 0)
+                            status_icon = "✅" if meets_criteria else "❌"
+                            principle_display = principle_name.replace('_', ' ').title()
+                            md_content += f"\n| {principle_display} | {status_icon} | {score:.0f}% |"
+                            
+            if reasoning:
+                md_content += f"""
+
+### Investment Analysis
+{reasoning}
+
+"""
+            
+            # Add detailed analysis from each component
+            growth_analysis = peter_lynch_analysis.get('growth_analysis', {})
+            if growth_analysis:
+                details = growth_analysis.get('details', [])
+                if details:
+                    md_content += f"""
+### Growth Consistency Analysis
+"""
+                    for detail in details:
+                        md_content += f"- {detail}\n"
+            
+            business_quality_analysis = peter_lynch_analysis.get('business_quality_analysis', {})
+            if business_quality_analysis:
+                details = business_quality_analysis.get('details', [])
+                if details:
+                    md_content += f"""
+### Business Quality Analysis
+"""
+                    for detail in details:
+                        md_content += f"- {detail}\n"
+            
+            market_position_analysis = peter_lynch_analysis.get('market_position_analysis', {})
+            if market_position_analysis:
+                details = market_position_analysis.get('details', [])
+                if details:
+                    md_content += f"""
+### Market Position Analysis
+"""
+                    for detail in details:
+                        md_content += f"- {detail}\n"
+
         # Add LLM insights
         llm_insights = results.get('llm_insights', {})
         if llm_insights:
@@ -912,6 +1116,12 @@ class StockAnalyzer:
             if llm_insights.get('warren_buffett'):
                 md_content += f"""## Warren Buffett's Take
 {llm_insights['warren_buffett']}
+
+"""
+
+            if llm_insights.get('peter_lynch'):
+                md_content += f"""## Peter Lynch's Take
+{llm_insights['peter_lynch']}
 
 """
 

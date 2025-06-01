@@ -1,4 +1,4 @@
-import { CorrelationAnalysis } from '@/types/analysis';
+import { CorrelationAnalysis, StockInfo } from '@/types/analysis';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Activity, Clock, BarChart3 } from 'lucide-react';
 import { useState } from 'react';
@@ -6,9 +6,10 @@ import HelpTooltip from './HelpTooltip';
 
 interface CorrelationChartProps {
   correlationAnalysis: CorrelationAnalysis;
+  stockInfo?: StockInfo;
 }
 
-export default function CorrelationChart({ correlationAnalysis }: CorrelationChartProps) {
+export default function CorrelationChart({ correlationAnalysis, stockInfo }: CorrelationChartProps) {
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>('medium_term');
 
   // Get symbol display name
@@ -142,16 +143,16 @@ export default function CorrelationChart({ correlationAnalysis }: CorrelationCha
           </div>
           <div className="flex items-center space-x-2 mt-1">
             <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {typeof correlationAnalysis.beta === 'number' ? correlationAnalysis.beta.toFixed(3) : 'N/A'}
+              {typeof stockInfo?.beta === 'number' ? stockInfo.beta.toFixed(3) : 'N/A'}
             </div>
-            {typeof correlationAnalysis.beta === 'number' && (
+            {typeof stockInfo?.beta === 'number' && (
               <div className={`px-2 py-1 rounded-full text-xs font-bold ${
-                correlationAnalysis.beta > 1.2 ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300' :
-                correlationAnalysis.beta < 0.8 ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
+                stockInfo.beta > 1.2 ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300' :
+                stockInfo.beta < 0.8 ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
                 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300'
               }`}>
-                {correlationAnalysis.beta > 1.2 ? '高风险' :
-                 correlationAnalysis.beta < 0.8 ? '低风险' : '中等风险'}
+                {stockInfo.beta > 1.2 ? '高风险' :
+                 stockInfo.beta < 0.8 ? '低风险' : '中等风险'}
               </div>
             )}
           </div>

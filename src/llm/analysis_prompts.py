@@ -8,12 +8,12 @@ from typing import Dict, Any, List
 
 class AnalysisPrompts:
     """Centralized prompts for stock analysis"""
-    
+
     @staticmethod
-    def get_technical_analysis_prompt(ticker: str, technical_data: Dict[str, Any], 
+    def get_technical_analysis_prompt(ticker: str, technical_data: Dict[str, Any],
                                      stock_info: Dict[str, Any], language: str = 'en') -> Dict[str, str]:
         """Get enhanced technical analysis prompt with comprehensive indicators"""
-        
+
         if language == 'zh':
             system_prompt = """你是一位专业的技术分析师，精通高级股票市场技术分析。
             你可以访问25+技术指标、策略组合信号、相关性分析和机构级分析工具。
@@ -23,11 +23,16 @@ class AnalysisPrompts:
             You have access to 25+ technical indicators, strategic combination signals, correlation analysis, and institutional-quality analytics. 
             Provide detailed, actionable insights based on comprehensive technical data including momentum, trend, volatility, volume, 
             pattern recognition, and correlation metrics."""
-        
+
         # Extract key strategic signals for emphasis
         strategies = technical_data.get('strategic_combinations', {})
         correlation_data = technical_data.get('correlation_analysis', {})
-        
+
+        # Get beta from correlation_data or fallback to stock_info
+        beta_value =  stock_info.get('beta') or correlation_data.get('beta').get('sp500_beta')
+        beta_display = f"{beta_value:.3f}" if beta_value and isinstance(beta_value, (int, float)) else '无数据'
+        beta_display_en = f"{beta_value:.3f}" if beta_value and isinstance(beta_value, (int, float)) else 'N/A'
+
         if language == 'zh':
             user_prompt = f"""
             作为专业技术分析师，请为{ticker} ({stock_info.get('name', ticker)})提供全面的技术分析。
@@ -47,12 +52,14 @@ class AnalysisPrompts:
             
             策略组合信号：
             - RSI+MACD策略：{strategies.get('rsi_macd_strategy', {}).get('signal', '无数据')} (评分：{strategies.get('rsi_macd_strategy', {}).get('score', 0):.1f})
-            - 布林带+RSI+MACD：{strategies.get('bollinger_rsi_macd_strategy', {}).get('signal', '无数据')} (评分：{strategies.get('bollinger_rsi_macd_strategy', {}).get('score', 0):.1f})
+            - 布林带+RSI+MACD：{strategies.get('bb_rsi_macd_strategy', {}).get('signal', '无数据')} (评分：{strategies.get('bb_rsi_macd_strategy', {}).get('score', 0):.1f})
             - 移动平均+RSI+成交量：{strategies.get('ma_rsi_volume_strategy', {}).get('signal', '无数据')} (评分：{strategies.get('ma_rsi_volume_strategy', {}).get('score', 0):.1f})
             
             市场相关性分析：
-            - 标普500相关性：{correlation_data.get('correlations', {}).get('^GSPC', '无数据')}
-            - 贝塔系数（系统性风险）：{correlation_data.get('beta', '无数据')}
+            - 短期标普500相关性: {correlation_data.get('correlations', {}).get('short_term').get('^GSPC', 'N/A')}
+            - 中期标普500相关性：{correlation_data.get('correlations', {}).get('medium_term').get('^GSPC', 'N/A')}
+            - 长期标普500相关性: {correlation_data.get('correlations', {}).get('long_term').get('^GSPC', 'N/A')}
+            - 贝塔系数（系统性风险）：{beta_display}
             - 多元化评分：{correlation_data.get('diversification_score', '无数据')}
             
             请提供涵盖以下内容的详细分析：
@@ -142,12 +149,14 @@ class AnalysisPrompts:
             
             Strategic Combination Signals:
             - RSI+MACD Strategy: {strategies.get('rsi_macd_strategy', {}).get('signal', 'N/A')} (Score: {strategies.get('rsi_macd_strategy', {}).get('score', 0):.1f})
-            - Bollinger+RSI+MACD: {strategies.get('bollinger_rsi_macd_strategy', {}).get('signal', 'N/A')} (Score: {strategies.get('bollinger_rsi_macd_strategy', {}).get('score', 0):.1f})
+            - Bollinger+RSI+MACD: {strategies.get('bb_rsi_macd_strategy', {}).get('signal', 'N/A')} (Score: {strategies.get('bb_rsi_macd_strategy', {}).get('score', 0):.1f})
             - MA+RSI+Volume: {strategies.get('ma_rsi_volume_strategy', {}).get('signal', 'N/A')} (Score: {strategies.get('ma_rsi_volume_strategy', {}).get('score', 0):.1f})
             
             Market Correlation Analysis:
-            - S&P 500 Correlation: {correlation_data.get('correlations', {}).get('^GSPC', 'N/A')}
-            - Beta (Systematic Risk): {correlation_data.get('beta', 'N/A')}
+            - Short term S&P 500 Correlation: {correlation_data.get('correlations', {}).get('short_term').get('^GSPC', 'N/A')}
+            - Medium term S&P 500 Correlation: {correlation_data.get('correlations', {}).get('medium_term').get('^GSPC', 'N/A')}
+            - Long term S&P 500 Correlation: {correlation_data.get('correlations', {}).get('long_term').get('^GSPC', 'N/A')}
+            - Beta (Systematic Risk): {beta_display_en}
             - Diversification Score: {correlation_data.get('diversification_score', 'N/A')}
             
             Please provide a detailed analysis covering:
@@ -218,20 +227,20 @@ class AnalysisPrompts:
             Prioritize the strategic combination signals as they represent institutional-quality multi-factor analysis.
             Include confidence levels for each recommendation and explain the reasoning behind signal weights.
             """
-        
+
         return {
             "system": system_prompt,
             "user": user_prompt
         }
-    
+
     @staticmethod
-    def get_fundamental_analysis_prompt(ticker: str, stock_info: Dict[str, Any], 
+    def get_fundamental_analysis_prompt(ticker: str, stock_info: Dict[str, Any],
                                        financial_data: Dict[str, Any], language: str = 'en') -> Dict[str, str]:
         """Get fundamental analysis prompt"""
-        
+
         if language == 'zh':
             system_prompt = "你是一位专业的基本面分析师，精通财务报表分析和估值。请基于数据提供全面、客观的投资见解，并在相关时结合技术信号。"
-            
+
             user_prompt = f"""
             作为专业基本面分析师，请为{ticker} ({stock_info.get('name', ticker)})提供全面的基本面分析。
             
@@ -305,7 +314,7 @@ class AnalysisPrompts:
             """
         else:
             system_prompt = "You are a professional fundamental analyst with expertise in financial statement analysis and valuation. Provide thorough, data-driven investment insights with correlation to technical signals when relevant."
-            
+
             user_prompt = f"""
             As a professional fundamental analyst, provide a comprehensive fundamental analysis for {ticker} ({stock_info.get('name', ticker)}).
             
@@ -377,26 +386,26 @@ class AnalysisPrompts:
             
             Provide specific data-driven insights with clear buy/hold/sell recommendation and target price ranges.
             """
-        
+
         return {
             "system": system_prompt,
             "user": user_prompt
         }
-    
+
     @staticmethod
-    def get_news_analysis_prompt(ticker: str, news_articles: List[Dict[str, Any]], 
+    def get_news_analysis_prompt(ticker: str, news_articles: List[Dict[str, Any]],
                                 stock_info: Dict[str, Any], language: str = 'en') -> Dict[str, str]:
         """Get news analysis prompt"""
-        
+
         if language == 'zh':
             system_prompt = "你是一位专业的新闻情感分析师，专门分析新闻对股价的影响。请提供客观、平衡的分析，考虑短期和长期影响。"
-            
+
             articles_text = ""
             if news_articles:
                 articles_text = "\n".join([f"标题: {article.get('title', '无标题')}\n发布时间: {article.get('published', '无时间')}\n摘要: {article.get('summary', '无摘要')[:500]}...\n" for article in news_articles[:10]])
             else:
                 articles_text = "当前无可用新闻文章。"
-            
+
             user_prompt = f"""
             作为专业新闻情感分析师，请分析影响{ticker} ({stock_info.get('name', ticker)})的最新新闻。
             
@@ -444,13 +453,13 @@ class AnalysisPrompts:
             """
         else:
             system_prompt = "You are a professional news sentiment analyst specializing in the impact of news on stock prices. Provide objective, balanced analysis considering both short-term and long-term implications."
-            
+
             articles_text = ""
             if news_articles:
                 articles_text = "\n".join([f"Title: {article.get('title', 'No title')}\nPublished: {article.get('published', 'No date')}\nSummary: {article.get('summary', 'No summary')[:500]}...\n" for article in news_articles[:10]])
             else:
                 articles_text = "No news articles available."
-            
+
             user_prompt = f"""
             As a professional news sentiment analyst, analyze the recent news affecting {ticker} ({stock_info.get('name', ticker)}).
             
@@ -496,21 +505,21 @@ class AnalysisPrompts:
             
             Provide a clear sentiment score (1-10) and specific investment implications.
             """
-        
+
         return {
             "system": system_prompt,
             "user": user_prompt
         }
-    
+
     @staticmethod
     def get_investment_recommendation_prompt(ticker: str, stock_info: Dict[str, Any],
                                            technical_analysis: str, fundamental_analysis: str,
                                            news_analysis: str, language: str = 'en') -> Dict[str, str]:
         """Get investment recommendation prompt"""
-        
+
         if language == 'zh':
             system_prompt = "你是一位资深投资顾问，整合技术分析、基本面分析和新闻情感分析，为客户提供全面的投资建议。请基于多维度分析提供明确、可操作的投资建议。"
-            
+
             user_prompt = f"""
             作为资深投资顾问，请基于综合分析为{ticker} ({stock_info.get('name', ticker)})提供投资建议。
             
@@ -566,7 +575,7 @@ class AnalysisPrompts:
             """
         else:
             system_prompt = "You are a senior investment advisor who synthesizes technical analysis, fundamental analysis, and news sentiment to provide comprehensive investment recommendations. Provide clear, actionable investment advice based on multi-dimensional analysis."
-            
+
             user_prompt = f"""
             As a senior investment advisor, provide a comprehensive investment recommendation for {ticker} ({stock_info.get('name', ticker)}) based on the integrated analysis.
             
@@ -620,22 +629,22 @@ class AnalysisPrompts:
             
             Provide specific numerical targets and concrete actionable recommendations.
             """
-        
+
         return {
             "system": system_prompt,
             "user": user_prompt
         }
-    
+
     @staticmethod
     def get_summary_prompt(ticker: str, stock_info: Dict[str, Any],
                           technical_summary: str, fundamental_summary: str,
                           news_summary: str, recommendation: str, language: str = 'en') -> Dict[str, str]:
         """Get executive summary prompt"""
-        
+
         if language == 'zh':
             system_prompt = """你是一位经验丰富的投资顾问，能够将复杂的股票分析综合成清晰简洁的执行摘要。
             你的摘要应该平衡技术和基本面因素，同时考虑新闻情绪和市场条件。"""
-            
+
             user_prompt = f"""
             请为{ticker} ({stock_info.get('name', ticker)})提供执行摘要，基于以下分析：
             
@@ -663,7 +672,7 @@ class AnalysisPrompts:
             system_prompt = """You are an experienced investment advisor who synthesizes complex stock analysis into clear, 
             actionable executive summaries. Your summaries should balance technical and fundamental factors while considering 
             news sentiment and market conditions."""
-            
+
             user_prompt = f"""
             Please provide an executive summary for {ticker} ({stock_info.get('name', ticker)}) based on the following analysis:
             
@@ -687,17 +696,17 @@ class AnalysisPrompts:
             
             Keep the summary under 500 words and use bullet points for clarity.
             """
-        
+
         return {
             "system": system_prompt,
             "user": user_prompt
         }
 
     @staticmethod
-    def get_warren_buffett_analysis_prompt(ticker: str, warren_buffett_data: Dict[str, Any], 
+    def get_warren_buffett_analysis_prompt(ticker: str, warren_buffett_data: Dict[str, Any],
                                          stock_info: Dict[str, Any], language: str = 'en') -> Dict[str, str]:
         """Get Warren Buffett style analysis prompt"""
-        
+
         if language == 'zh':
             system_prompt = """你是沃伦·巴菲特，这位传奇的价值投资者。根据巴菲特的投资原则进行分析：
             - 能力圈：只投资于你理解的企业
@@ -719,15 +728,38 @@ class AnalysisPrompts:
             例如，如果看跌："资本回报率下降让我想起了伯克希尔的纺织业务，我们最终退出了，因为..."
 
             严格遵循这些准则。"""
-            
-            user_prompt = f"""基于以下数据，以沃伦·巴菲特的方式创建对{ticker}的投资分析：
 
-            股票信息：
+            user_prompt = f"""基于以下数据，以沃伦·巴菲特的方式创建对{ticker}的投资分析：
+            
+             公司信息：
             - 公司名称：{stock_info.get('name', ticker)}
-            - 当前价格：${stock_info.get('current_price', '无数据')}
+            - 行业板块：{stock_info.get('sector', '无数据')}
+            - 细分行业：{stock_info.get('industry', '无数据')}
             - 市值：${stock_info.get('market_cap', '无数据')}
-            - 行业：{stock_info.get('industry', '无数据')}
-            - 板块：{stock_info.get('sector', '无数据')}
+            - 当前价格：${stock_info.get('current_price', '无数据')}
+            - 员工数量：{stock_info.get('full_time_employees', '无数据')}
+            
+            关键财务指标：
+            - 市盈率：{stock_info.get('pe_ratio', '无数据')}
+            - 预期市盈率：{stock_info.get('forward_pe', '无数据')}
+            - PEG比率：{stock_info.get('peg_ratio', '无数据')}
+            - 市净率：{stock_info.get('price_to_book', '无数据')}
+            - 市销率：{stock_info.get('price_to_sales', '无数据')}
+            - 企业价值/EBITDA：{stock_info.get('enterprise_to_ebitda', '无数据')}
+            - 负债权益比：{stock_info.get('debt_to_equity', '无数据')}
+            - 流动比率：{stock_info.get('current_ratio', '无数据')}
+            - 速动比率：{stock_info.get('quick_ratio', '无数据')}
+            - 净资产收益率：{stock_info.get('return_on_equity', '无数据')}%
+            - 总资产收益率：{stock_info.get('return_on_assets', '无数据')}%
+            - 毛利率：{stock_info.get('gross_margins', '无数据')}%
+            - 营业利润率：{stock_info.get('operating_margins', '无数据')}%
+            - 净利润率：{stock_info.get('profit_margins', '无数据')}%
+            - 营收增长率：{stock_info.get('revenue_growth', '无数据')}%
+            - 盈利增长率：{stock_info.get('earnings_growth', '无数据')}%
+            - 自由现金流：{stock_info.get('free_cash_flow', '无数据')}
+            - 股息收益率：{stock_info.get('dividend_yield', '无数据')}%
+            - 派息比率：{stock_info.get('payout_ratio', '无数据')}%
+            - 贝塔系数：{stock_info.get('beta', '无数据')}
 
             沃伦·巴菲特分析数据：
             {json.dumps(warren_buffett_data, indent=2, ensure_ascii=False, default=str)}
@@ -785,15 +817,38 @@ class AnalysisPrompts:
             For example, if bearish: "The declining returns on capital remind me of the textile operations at Berkshire that we eventually exited because..."
 
             Follow these guidelines strictly."""
-            
-            user_prompt = f"""Based on the following data, create an investment analysis for {ticker} as Warren Buffett would:
 
-            Stock Information:
+            user_prompt = f"""Based on the following data, create an investment analysis for {ticker} as Warren Buffett would:
+            
+            Company Information:
             - Company Name: {stock_info.get('name', ticker)}
-            - Current Price: ${stock_info.get('current_price', 'N/A')}
-            - Market Cap: ${stock_info.get('market_cap', 'N/A')}
-            - Industry: {stock_info.get('industry', 'N/A')}
             - Sector: {stock_info.get('sector', 'N/A')}
+            - Industry: {stock_info.get('industry', 'N/A')}
+            - Market Cap: ${stock_info.get('market_cap', 'N/A')}
+            - Current Price: ${stock_info.get('current_price', 'N/A')}
+            - Employee Count: {stock_info.get('full_time_employees', 'N/A')}
+            
+            Key Financial Metrics:
+            - P/E Ratio: {stock_info.get('pe_ratio', 'N/A')}
+            - Forward P/E: {stock_info.get('forward_pe', 'N/A')}
+            - PEG Ratio: {stock_info.get('peg_ratio', 'N/A')}
+            - Price to Book: {stock_info.get('price_to_book', 'N/A')}
+            - Price to Sales: {stock_info.get('price_to_sales', 'N/A')}
+            - Enterprise Value/EBITDA: {stock_info.get('enterprise_to_ebitda', 'N/A')}
+            - Debt to Equity: {stock_info.get('debt_to_equity', 'N/A')}
+            - Current Ratio: {stock_info.get('current_ratio', 'N/A')}
+            - Quick Ratio: {stock_info.get('quick_ratio', 'N/A')}
+            - ROE: {stock_info.get('return_on_equity', 'N/A')}%
+            - ROA: {stock_info.get('return_on_assets', 'N/A')}%
+            - Gross Margin: {stock_info.get('gross_margins', 'N/A')}%
+            - Operating Margin: {stock_info.get('operating_margins', 'N/A')}%
+            - Profit Margin: {stock_info.get('profit_margins', 'N/A')}%
+            - Revenue Growth: {stock_info.get('revenue_growth', 'N/A')}%
+            - Earnings Growth: {stock_info.get('earnings_growth', 'N/A')}%
+            - Free Cash Flow: {stock_info.get('free_cash_flow', 'N/A')}
+            - Dividend Yield: {stock_info.get('dividend_yield', 'N/A')}%
+            - Payout Ratio: {stock_info.get('payout_ratio', 'N/A')}%
+            - Beta: {stock_info.get('beta', 'N/A')}
 
             Warren Buffett Analysis Data:
             {json.dumps(warren_buffett_data, indent=2, default=str)}
@@ -830,8 +885,211 @@ class AnalysisPrompts:
                - Include specific reasoning and analogies to his past investments
 
             Please use Buffett's signature wisdom, clarity, and practical approach. Include specific numbers and clear reasoning."""
-        
+
         return {
             "system": system_prompt,
             "user": user_prompt
-        } 
+        }
+
+    @staticmethod
+    def get_peter_lynch_analysis_prompt(ticker: str, peter_lynch_data: Dict[str, Any],
+                                      stock_info: Dict[str, Any], language: str = 'en') -> Dict[str, str]:
+        """Get Peter Lynch style analysis prompt"""
+
+        if language == 'zh':
+            system_prompt = """你是彼得·林奇，传奇的成长型投资者和前富达麦哲伦基金经理。根据林奇的投资原则进行分析：
+            - 投资你了解的公司：专注于你能理解的企业和产品
+            - 合理价格增长(GARP)：PEG比率 < 1.0 是关键指标
+            - 盈利增长：寻找15-30%的年盈利增长率
+            - 简单的商业模式：避免复杂的金融工程或难以理解的业务
+            - 中型股偏好：$2B-$50B市值范围内的公司
+            - 一致的增长：稳定、可预测的收入和盈利增长
+            - 强劲的基本面：良好的ROE、可管理的债务、正现金流
+            - 盈利加速：寻找盈利增长加速的迹象
+
+            当提供推理时，要详细和具体：
+            1. 强调PEG比率和增长指标作为主要决策因素
+            2. 解释公司如何符合或违背GARP原则
+            3. 评估业务的可理解性和简单性
+            4. 提供具体的增长数据和趋势分析
+            5. 使用彼得·林奇的直接、实用和投资者友好的语调
+
+            例如，如果看涨："这家公司让我想起了我在富达时发现的那些优秀的增长股。PEG比率0.8显示了以合理价格获得增长的经典机会，而连续的盈利加速表明..."
+            例如，如果看跌："虽然这是一个有趣的故事，但PEG比率2.5表明投资者为增长付出了过高的价格。我更愿意等待更好的入场点或寻找..."
+
+            严格遵循这些准则。"""
+
+            user_prompt = f"""基于以下数据，以彼得·林奇的方式创建对{ticker}的投资分析：
+            
+            公司信息：
+            - 公司名称：{stock_info.get('name', ticker)}
+            - 行业板块：{stock_info.get('sector', '无数据')}
+            - 细分行业：{stock_info.get('industry', '无数据')}
+            - 市值：${stock_info.get('market_cap', '无数据')}
+            - 当前价格：${stock_info.get('current_price', '无数据')}
+            - 员工数量：{stock_info.get('full_time_employees', '无数据')}
+            
+            关键财务指标：
+            - 市盈率：{stock_info.get('pe_ratio', '无数据')}
+            - 预期市盈率：{stock_info.get('forward_pe', '无数据')}
+            - PEG比率：{stock_info.get('peg_ratio', '无数据')}
+            - 市净率：{stock_info.get('price_to_book', '无数据')}
+            - 市销率：{stock_info.get('price_to_sales', '无数据')}
+            - 企业价值/EBITDA：{stock_info.get('enterprise_to_ebitda', '无数据')}
+            - 负债权益比：{stock_info.get('debt_to_equity', '无数据')}
+            - 流动比率：{stock_info.get('current_ratio', '无数据')}
+            - 速动比率：{stock_info.get('quick_ratio', '无数据')}
+            - 净资产收益率：{stock_info.get('return_on_equity', '无数据')}%
+            - 总资产收益率：{stock_info.get('return_on_assets', '无数据')}%
+            - 毛利率：{stock_info.get('gross_margins', '无数据')}%
+            - 营业利润率：{stock_info.get('operating_margins', '无数据')}%
+            - 净利润率：{stock_info.get('profit_margins', '无数据')}%
+            - 营收增长率：{stock_info.get('revenue_growth', '无数据')}%
+            - 盈利增长率：{stock_info.get('earnings_growth', '无数据')}%
+            - 自由现金流：{stock_info.get('free_cash_flow', '无数据')}
+            - 股息收益率：{stock_info.get('dividend_yield', '无数据')}%
+            - 派息比率：{stock_info.get('payout_ratio', '无数据')}%
+            - 贝塔系数：{stock_info.get('beta', '无数据')}
+
+            彼得·林奇分析数据：
+            {json.dumps(peter_lynch_data, indent=2, ensure_ascii=False, default=str)}
+
+            请提供一个深入的林奇式分析，涵盖：
+
+            1. **投资信号总结**
+               - 总体投资决定：{peter_lynch_data.get('overall_signal', '中性')} (置信度：{peter_lynch_data.get('confidence', 0):.1f}%)
+               - 质量评分：{peter_lynch_data.get('score_percentage', 0):.1f}%
+               - GARP评分：{peter_lynch_data.get('garp_analysis', {}).get('score_percentage', 0):.1f}%
+
+            2. **GARP分析 (合理价格增长)**
+               - 深入分析PEG比率和林奇的核心GARP指标
+               - 评估市盈率相对于增长率的合理性
+               - 讨论价格相对于增长潜力的吸引力
+
+            3. **增长一致性评估**
+               - 分析收入和盈利增长的质量和可持续性
+               - 评估增长加速或减速的迹象
+               - 讨论盈利预测的可靠性
+
+            4. **业务质量和可理解性**
+               - 评估商业模式的简单性和可理解性
+               - 分析竞争地位和行业动态
+               - 讨论财务健康状况和资本效率
+
+            5. **市场定位和规模**
+               - 评估公司规模是否在林奇的偏好范围内
+               - 分析行业和市场增长潜力
+               - 讨论扩张机会和市场份额增长
+
+            6. **林奇原则符合度**
+               - 评估公司如何符合林奇的四个核心原则
+               - 突出显示任何红旗或关注领域
+               - 提供原则遵循的整体评估
+
+            7. **林奇式的最终判断**
+               - 用林奇的声音和风格提供最终的投资论点
+               - 包括具体的推理和现实世界的类比
+               - 提供明确的行动建议和价格目标
+
+            请使用林奇标志性的平易近人、实用和以增长为重点的方法。包括具体的数字和明确的推理。"""
+        else:
+            system_prompt = """You are Peter Lynch, the legendary growth investor and former manager of Fidelity's Magellan Fund. Analyze based on Lynch's investment principles:
+            - Invest in what you know: Focus on companies and products you can understand
+            - Growth at Reasonable Price (GARP): PEG ratio <1.0 is the key metric
+            - Earnings Growth: Look for 15-30% annual earnings growth rates
+            - Simple Business Models: Avoid complex financial engineering or hard-to-understand businesses
+            - Mid-cap preference: Companies in the $2B-$50B market cap range
+            - Consistent Growth: Steady, predictable revenue and earnings growth
+            - Strong Fundamentals: Good ROE, manageable debt, positive cash flow
+            - Earnings Acceleration: Look for signs of accelerating earnings growth
+
+            When providing your reasoning, be thorough and specific by:
+            1. Emphasizing PEG ratio and growth metrics as primary decision factors
+            2. Explaining how the company aligns with or violates GARP principles
+            3. Assessing the understandability and simplicity of the business
+            4. Providing specific growth data and trend analysis
+            5. Using Peter Lynch's straightforward, practical, and investor-friendly tone
+
+            For example, if bullish: "This company reminds me of those great growth stories I discovered at Fidelity. The PEG ratio of 0.8 shows a classic growth-at-a-reasonable-price opportunity, and the consecutive earnings acceleration suggests..."
+            For example, if bearish: "While this is an interesting story, the PEG ratio of 2.5 shows investors are paying too much for growth. I'd rather wait for a better entry point or look for..."
+
+            Follow these guidelines strictly."""
+
+            user_prompt = f"""Based on the following data, create an investment analysis for {ticker} as Peter Lynch would:
+            
+            Company Information:
+            - Company Name: {stock_info.get('name', ticker)}
+            - Sector: {stock_info.get('sector', 'N/A')}
+            - Industry: {stock_info.get('industry', 'N/A')}
+            - Market Cap: ${stock_info.get('market_cap', 'N/A')}
+            - Current Price: ${stock_info.get('current_price', 'N/A')}
+            - Employee Count: {stock_info.get('full_time_employees', 'N/A')}
+            
+            Key Financial Metrics:
+            - P/E Ratio: {stock_info.get('pe_ratio', 'N/A')}
+            - Forward P/E: {stock_info.get('forward_pe', 'N/A')}
+            - PEG Ratio: {stock_info.get('peg_ratio', 'N/A')}
+            - Price to Book: {stock_info.get('price_to_book', 'N/A')}
+            - Price to Sales: {stock_info.get('price_to_sales', 'N/A')}
+            - Enterprise Value/EBITDA: {stock_info.get('enterprise_to_ebitda', 'N/A')}
+            - Debt to Equity: {stock_info.get('debt_to_equity', 'N/A')}
+            - Current Ratio: {stock_info.get('current_ratio', 'N/A')}
+            - Quick Ratio: {stock_info.get('quick_ratio', 'N/A')}
+            - ROE: {stock_info.get('return_on_equity', 'N/A')}%
+            - ROA: {stock_info.get('return_on_assets', 'N/A')}%
+            - Gross Margin: {stock_info.get('gross_margins', 'N/A')}%
+            - Operating Margin: {stock_info.get('operating_margins', 'N/A')}%
+            - Profit Margin: {stock_info.get('profit_margins', 'N/A')}%
+            - Revenue Growth: {stock_info.get('revenue_growth', 'N/A')}%
+            - Earnings Growth: {stock_info.get('earnings_growth', 'N/A')}%
+            - Free Cash Flow: {stock_info.get('free_cash_flow', 'N/A')}
+            - Dividend Yield: {stock_info.get('dividend_yield', 'N/A')}%
+            - Payout Ratio: {stock_info.get('payout_ratio', 'N/A')}%
+            - Beta: {stock_info.get('beta', 'N/A')}
+
+            Peter Lynch Analysis Data:
+            {json.dumps(peter_lynch_data, indent=2, default=str)}
+
+            Please provide an in-depth Lynch-style analysis covering:
+
+            1. **Investment Signal Summary**
+               - Overall investment decision: {peter_lynch_data.get('overall_signal', 'neutral')} (Confidence: {peter_lynch_data.get('confidence', 0):.1f}%)
+               - Quality Score: {peter_lynch_data.get('score_percentage', 0):.1f}%
+               - GARP Score: {peter_lynch_data.get('garp_analysis', {}).get('score_percentage', 0):.1f}%
+
+            2. **GARP Analysis (Growth at Reasonable Price)**
+               - Deep dive into PEG ratio and Lynch's core GARP metrics
+               - Assess the reasonableness of P/E relative to growth rate
+               - Discuss price attractiveness relative to growth potential
+
+            3. **Growth Consistency Assessment**
+               - Analyze the quality and sustainability of revenue and earnings growth
+               - Evaluate signs of growth acceleration or deceleration
+               - Discuss reliability of earnings projections
+
+            4. **Business Quality and Understandability**
+               - Assess the simplicity and understandability of the business model
+               - Analyze competitive position and industry dynamics
+               - Discuss financial health and capital efficiency
+
+            5. **Market Position and Size**
+               - Evaluate whether company size falls within Lynch's preferred range
+               - Analyze industry and market growth potential
+               - Discuss expansion opportunities and market share growth
+
+            6. **Lynch Principles Adherence**
+               - Evaluate how well the company meets Lynch's four core principles
+               - Highlight any red flags or areas of concern
+               - Provide overall assessment of principle adherence
+
+            7. **Lynch-Style Final Verdict**
+               - Provide your final investment thesis in Lynch's voice and style
+               - Include specific reasoning and real-world analogies
+               - Offer clear actionable recommendations and price targets
+
+            Please use Lynch's signature approachable, practical, and growth-focused approach. Include specific numbers and clear reasoning."""
+
+        return {
+            "system": system_prompt,
+            "user": user_prompt
+        }

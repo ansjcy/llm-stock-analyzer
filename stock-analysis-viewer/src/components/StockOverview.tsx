@@ -13,13 +13,11 @@ interface StockOverviewProps {
 const PriceRangeChart = ({ 
   low, 
   high, 
-  current, 
-  label 
+  current
 }: { 
   low: number; 
   high: number; 
   current: number; 
-  label: string; 
 }) => {
   const range = high - low;
   const currentPosition = range > 0 ? ((current - low) / range) * 100 : 50;
@@ -51,7 +49,7 @@ const PriceRangeChart = ({
       </div>
       <div className="text-center mt-1">
         <span className="text-xs text-gray-600 dark:text-gray-400">
-          {currentPosition.toFixed(1)}% of {label}
+          {currentPosition.toFixed(1)}% of {high - low}
         </span>
       </div>
     </div>
@@ -72,23 +70,23 @@ const PERatioChart = ({ peHistory }: { peHistory: PEHistory }) => {
   const chartData = peHistory.historical_data
     .slice(-90)
     .map(item => ({
-      date: new Date(item.Date).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' }),
+      date: new Date(item.timestamp * 1000).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' }),
+      fullDate: new Date(item.timestamp * 1000).toLocaleDateString('zh-CN'),
       pe: item.PE_Ratio,
       price: item.Close
     }));
 
-  const CustomTooltip = ({ active, payload, label }: {
+  const CustomTooltip = ({ active, payload }: {
     active?: boolean;
     payload?: Array<{
       value: number;
-      payload: { price: number };
+      payload: { price: number; fullDate: string };
     }>;
-    label?: string;
   }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-3 shadow-lg">
-          <p className="text-gray-600 dark:text-gray-300">{`日期: ${label}`}</p>
+          <p className="text-gray-600 dark:text-gray-300">{`日期: ${payload[0].payload.fullDate}`}</p>
           <p className="text-blue-600 dark:text-blue-400">{`市盈率: ${payload[0].value.toFixed(2)}`}</p>
           <p className="text-green-600 dark:text-green-400">{`股价: $${payload[0].payload.price.toFixed(2)}`}</p>
         </div>
@@ -279,7 +277,6 @@ export default function StockOverview({ ticker, stockInfo, analysisDate }: Stock
               low={stockInfo.day_low}
               high={stockInfo.day_high}
               current={stockInfo.current_price}
-              label="daily range"
             />
           ) : (
             <div className="text-lg font-bold text-gray-900 dark:text-white">
@@ -303,7 +300,6 @@ export default function StockOverview({ ticker, stockInfo, analysisDate }: Stock
               low={week52Low}
               high={week52High}
               current={stockInfo.current_price}
-              label="52-week range"
             />
           ) : (
             <div className="text-lg font-bold text-gray-900 dark:text-white">

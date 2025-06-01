@@ -6,10 +6,7 @@ import StockOverview from '@/components/StockOverview';
 import TechnicalAnalysis from '@/components/TechnicalAnalysis';
 import CorrelationChart from '@/components/CorrelationChart';
 import NewsSection from '@/components/NewsSection';
-import AIInsights from '@/components/AIInsights';
-import ExecutiveSummary from '@/components/ExecutiveSummary';
-import InvestmentRecommendation from '@/components/InvestmentRecommendation';
-import WarrenBuffettAnalysis from '@/components/WarrenBuffettAnalysis';
+import InsightsSummaryTable from '@/components/InsightsSummaryTable';
 import { Upload, FileText, TrendingUp, AlertCircle, ChevronDown, Moon, Sun } from 'lucide-react';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 
@@ -73,6 +70,8 @@ function HomeContent() {
       }
       
       setAnalysisData(data);
+      // Store the loaded report path in sessionStorage for restoration
+      sessionStorage.setItem('currentSelectedReport', reportPath);
     } catch (err) {
       console.error('Error loading report:', err);
       setError('加载分析报告时出错。请尝试其他报告。');
@@ -104,6 +103,8 @@ function HomeContent() {
       
       setAnalysisData(data);
       setSelectedReport(''); // Clear selected report when uploading custom file
+      // Clear current selected report from sessionStorage since we're using custom file
+      sessionStorage.removeItem('currentSelectedReport');
     } catch (err) {
       console.error('Error parsing file:', err);
       setError('解析分析文件时出错。请确保这是股票分析工具生成的有效JSON文件。');
@@ -336,6 +337,8 @@ function HomeContent() {
     
     setAnalysisData(demoData);
     setSelectedReport(''); // Clear selected report when using demo data
+    // Clear current selected report from sessionStorage since we're using demo data
+    sessionStorage.removeItem('currentSelectedReport');
   };
 
   // Load available reports on component mount
@@ -343,13 +346,49 @@ function HomeContent() {
     loadAvailableReports();
   }, [loadAvailableReports]);
 
-  // Auto-select first report when reports are loaded
+  // Handle restoration from detail pages - separate useEffect to ensure reports are loaded first
   useEffect(() => {
-    if (availableReports.length > 0 && !selectedReport) {
-      setSelectedReport(availableReports[0].fullPath);
-      loadReport(availableReports[0].fullPath);
+    // Check if returning from a detail page and reports are available
+    const shouldReturnToAnalysis = sessionStorage.getItem('returnToAnalysis');
+    
+    if (shouldReturnToAnalysis && availableReports.length > 0) {
+      console.log('Returning from detail page, attempting to restore selection');
+      // Clear the flag
+      sessionStorage.removeItem('returnToAnalysis');
+      
+      // Try to restore the previous selected report
+      const previousSelectedReport = sessionStorage.getItem('previousSelectedReport');
+      console.log('Previous selected report:', previousSelectedReport);
+      
+      if (previousSelectedReport && availableReports.some(report => report.fullPath === previousSelectedReport)) {
+        console.log('Restoring previous selection:', previousSelectedReport);
+        
+        // Use setTimeout to ensure the state update happens after current render cycle
+        setTimeout(() => {
+          console.log('Setting selectedReport to:', previousSelectedReport);
+          setSelectedReport(previousSelectedReport);
+          loadReport(previousSelectedReport);
+        }, 100);
+        
+        // Clean up the previous selection storage
+        sessionStorage.removeItem('previousSelectedReport');
+        return;
+      }
+      
+      // If no valid previous selection, don't auto-select, keep current state
+      console.log('No valid previous selection found');
+      return;
     }
-  }, [availableReports, selectedReport]);
+  }, [availableReports]);
+
+  // Auto-select first report when reports are loaded (only on fresh load)
+  useEffect(() => {
+    if (availableReports.length > 0 && !selectedReport && !analysisData && !sessionStorage.getItem('returnToAnalysis')) {
+      const firstReportPath = availableReports[0].fullPath;
+      setSelectedReport(firstReportPath);
+      loadReport(firstReportPath);
+    }
+  }, [availableReports, selectedReport, analysisData]);
 
   // Don't render until theme is mounted to prevent hydration mismatch
   if (!mounted) {
@@ -499,6 +538,8 @@ function HomeContent() {
                       .then(data => {
                         setAnalysisData(data);
                         setSelectedReport('');
+                        // Clear current selected report from sessionStorage since we're using demo data
+                        sessionStorage.removeItem('currentSelectedReport');
                       })
                       .catch(() => setError('无法加载示例数据'));
                   }}
@@ -578,16 +619,14 @@ function HomeContent() {
             analysisDate={analysisData.analysis_date}
           />
         </div>
-        
+
         <div className="mb-6">
-          <ExecutiveSummary 
+          <InsightsSummaryTable 
+            llmInsights={analysisData.llm_insights}
+            warrenBuffettAnalysis={analysisData.warren_buffett_analysis}
             summary={analysisData.summary}
-          />
-        </div>
-        
-        <div className="mb-6">
-          <InvestmentRecommendation 
             recommendation={analysisData.recommendation}
+            analysisData={analysisData}
           />
         </div>
         
@@ -598,18 +637,10 @@ function HomeContent() {
           />
         </div>
         
-        {analysisData.warren_buffett_analysis && (
-          <div className="mb-6">
-            <WarrenBuffettAnalysis 
-              warrenBuffettAnalysis={analysisData.warren_buffett_analysis}
-              llmInsights={analysisData.llm_insights?.warren_buffett}
-            />
-          </div>
-        )}
-        
         <div className="mb-6">
           <CorrelationChart 
             correlationAnalysis={analysisData.correlation_analysis}
+            stockInfo={analysisData.stock_info}
           />
         </div>
         
@@ -618,10 +649,6 @@ function HomeContent() {
             newsAnalysis={analysisData.news_analysis}
           />
         </div>
-        
-        <AIInsights 
-          llmInsights={analysisData.llm_insights}
-        />
       </div>
     </div>
   );

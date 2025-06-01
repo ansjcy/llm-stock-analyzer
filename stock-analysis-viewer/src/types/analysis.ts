@@ -3,6 +3,7 @@ export interface PEHistoryData {
   Close: number;
   TTM_EPS: number;
   PE_Ratio: number;
+  timestamp: number;  // Unix timestamp for better date handling
 }
 
 export interface PEHistory {

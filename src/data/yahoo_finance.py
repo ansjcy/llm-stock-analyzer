@@ -397,15 +397,18 @@ class YahooFinanceAPI:
                         # Filter out unrealistic PE ratios
                         if 0 < pe_ratio <= 150:  # Reasonable PE range
                             pe_data.append({
-                                'Date': date,
+                                'Date': date.isoformat(),  # Convert to ISO format string for better JSON serialization
                                 'Close': price,
                                 'TTM_EPS': ttm_eps,
-                                'PE_Ratio': pe_ratio
+                                'PE_Ratio': pe_ratio,
+                                'timestamp': int(date.timestamp())  # Add Unix timestamp for frontend usage
                             })
             
             if pe_data:
                 pe_df = pd.DataFrame(pe_data)
-                pe_df.set_index('Date', inplace=True)
+                # Convert Date back to datetime for DataFrame index, but keep the ISO string in the data
+                pe_df['DateIndex'] = pd.to_datetime(pe_df['Date'])
+                pe_df.set_index('DateIndex', inplace=True)
                 stock_logger.info(f"Retrieved {len(pe_df)} PE ratio data points for {ticker}")
                 return pe_df
             else:
@@ -437,8 +440,19 @@ class YahooFinanceAPI:
                 valid_pe_ratios = pe_ratios[(pe_ratios > 0) & (pe_ratios <= 100)]
                 
                 if len(valid_pe_ratios) > 0:
+                    # Convert DataFrame to records with proper timestamp handling
+                    historical_records = []
+                    for _, row in historical_pe.tail(252).iterrows():  # Last year of data
+                        historical_records.append({
+                            'Date': row['Date'],  # ISO format string
+                            'Close': float(row['Close']),
+                            'TTM_EPS': float(row['TTM_EPS']),
+                            'PE_Ratio': float(row['PE_Ratio']),
+                            'timestamp': int(row['timestamp'])  # Unix timestamp
+                        })
+                    
                     pe_history = {
-                        'historical_data': historical_pe.to_dict('records')[-252:],  # Last year of data
+                        'historical_data': historical_records,
                         'current_pe': float(valid_pe_ratios.iloc[-1]) if len(valid_pe_ratios) > 0 else None,
                         'avg_pe_1y': float(valid_pe_ratios.tail(252).mean()) if len(valid_pe_ratios) >= 252 else float(valid_pe_ratios.mean()),
                         'avg_pe_6m': float(valid_pe_ratios.tail(126).mean()) if len(valid_pe_ratios) >= 126 else float(valid_pe_ratios.mean()),
