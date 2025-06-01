@@ -1,0 +1,246 @@
+name: Update Stock Analysis Data (Weekly - LLM)
+
+on:
+  schedule:
+    # Run every Sunday at 2:00 PM (14:00 UTC)
+    - cron: '0 14 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "weekly-llm-analysis"
+  cancel-in-progress: true
+
+jobs:
+  update-llm-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Create necessary directories
+        run: |
+          mkdir -p reports
+          mkdir -p charts
+          mkdir -p logs
+      
+      - name: Find latest base analysis files
+        id: find_base_files
+        run: |
+          echo "Looking for latest base analysis files..."
+          
+          # Define tickers
+          TICKERS="AMZN AAPL GOOGL DIS KO MSFT NFLX AVGO SPY QQQ NVDA TSLA"
+          BASE_FILES=""
+          
+          for ticker in $TICKERS; do
+            # Find the most recent base file for this ticker
+            LATEST_FILE=$(find stock-analysis-viewer/public/reports -name "${ticker}_analysis_base_*.json" -type f | sort -r | head -1)
+            if [ -n "$LATEST_FILE" ]; then
+              echo "Found base file for $ticker: $LATEST_FILE"
+              BASE_FILES="$BASE_FILES $LATEST_FILE"
+            else
+              echo "Warning: No base file found for $ticker"
+            fi
+          done
+          
+          echo "base_files=$BASE_FILES" >> $GITHUB_OUTPUT
+          echo "Base files to process: $BASE_FILES"
+      
+      - name: Run LLM analysis for each ticker
+        run: |
+          BASE_FILES="${{ steps.find_base_files.outputs.base_files }}"
+
+          if [ -z "$BASE_FILES" ]; then
+            echo "No base files found. Cannot run LLM analysis."
+            exit 1
+          fi
+
+          # Set timeout for the entire LLM analysis process (45 minutes)
+          timeout 2700 bash -c '
+          for base_file in $BASE_FILES; do
+            if [ -f "$base_file" ]; then
+              echo "Processing LLM analysis for: $base_file"
+
+              # Extract ticker from filename
+              TICKER=$(basename "$base_file" | cut -d'"'"'_'"'"' -f1)
+
+              echo "Starting LLM analysis for $TICKER at $(date)"
+
+              # Run LLM analysis with timeout per ticker (8 minutes)
+              timeout 480 python src/main.py --ticker "$TICKER" --save-report --format json --llm-only --base-data-path "$base_file" --chinese || {
+                echo "LLM analysis for $TICKER timed out or failed at $(date)"
+                # Create error file for this ticker
+                echo "{\"error\": \"LLM analysis timeout\", \"ticker\": \"$TICKER\", \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > "stock-analysis-viewer/public/reports/${TICKER}_llm_error_$(date +%Y%m%d_%H%M%S).json"
+              }
+
+              echo "Completed LLM analysis for $TICKER at $(date)"
+            else
+              echo "Base file not found: $base_file"
+            fi
+          done
+          ' || echo "Overall LLM analysis process timed out after 45 minutes"
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CACHE_DURATION: "3600"
+          DEFAULT_LLM_PROVIDER: "gemini"
+          FUNDAMENTAL_ANALYSIS_ENABLED: "true"
+          LOG_LEVEL: "INFO"
+          NEWS_ANALYSIS_ENABLED: "true"
+          NODE_ENV: "production"
+          SAVE_REPORTS: "true"
+          SENTIMENT_ANALYSIS_ENABLED: "true"
+          SINA_FINANCE_ENABLED: "true"
+          TECHNICAL_ANALYSIS_PERIOD: "252"
+          USE_CACHE: "true"
+          YAHOO_FINANCE_ENABLED: "true"
+          # Timeout configurations to prevent getting stuck
+          GEMINI_RETRY_MAX_ATTEMPTS: "2"
+          GEMINI_RETRY_MAX_DELAY: "30"
+          GEMINI_KEY_WAIT_TIMEOUT: "90"
+          LLM_ANALYSIS_TIMEOUT: "180"
+          LLM_TOTAL_TIMEOUT: "1200"
+        continue-on-error: true
+      
+      - name: List generated LLM files
+        run: |
+          echo "Reports directory (root):"
+          ls -la reports/ || echo "No root reports directory"
+          echo "Frontend reports directory:"
+          ls -la stock-analysis-viewer/public/reports/ || echo "No frontend reports directory"
+          echo "LLM files specifically:"
+          find stock-analysis-viewer/public/reports -name "*_llm_*.json" -type f || echo "No LLM files found"
+          
+      - name: Copy generated LLM files to root directories for git tracking
+        run: |
+          # Copy LLM reports from frontend public directory to root for git tracking
+          if [ -d "stock-analysis-viewer/public/reports" ] && [ "$(ls -A stock-analysis-viewer/public/reports/*_llm_*.json 2>/dev/null)" ]; then
+            echo "Copying LLM reports from frontend to root directory..."
+            cp stock-analysis-viewer/public/reports/*_llm_*.json reports/ 2>/dev/null || true
+            echo "LLM reports copied successfully"
+          fi
+          
+          # List what we now have in root directories
+          echo "Root reports after copy:"
+          ls -la reports/ || echo "No reports found"
+      
+      - name: Create placeholder files if LLM analysis failed
+        run: |
+          # Check if any LLM files were created
+          if [ ! "$(ls -A stock-analysis-viewer/public/reports/*_llm_*.json 2>/dev/null)" ]; then
+            echo '{"error": "LLM Analysis failed", "timestamp": "'$(date)'", "message": "LLM stock analysis could not be completed. Please check the logs and API keys."}' > reports/llm_placeholder.json
+            cp reports/llm_placeholder.json stock-analysis-viewer/public/reports/
+          fi
+      
+      # Commit the updated LLM data back to the repository
+      - name: Commit updated LLM data
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          # Add LLM reports
+          git add reports/*_llm_*.json stock-analysis-viewer/public/reports/*_llm_*.json reports/llm_placeholder.json stock-analysis-viewer/public/reports/llm_placeholder.json || true
+          if git diff --cached --quiet; then
+            echo "No LLM changes to commit"
+          else
+            git commit -m "Auto-update LLM stock analysis data (weekly) [skip ci]"
+            git push
+          fi
+      
+      - name: Upload LLM analysis artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: llm-stock-analysis-data
+          path: |
+            reports/*_llm_*.json
+            stock-analysis-viewer/public/reports/*_llm_*.json
+          if-no-files-found: warn
+
+  deploy-github-pages:
+    needs: update-llm-analysis
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Download LLM analysis artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: llm-stock-analysis-data
+          path: ./
+        continue-on-error: true
+      
+      - name: Sync LLM reports to frontend
+        run: |
+          # Ensure frontend directories exist
+          mkdir -p stock-analysis-viewer/public/reports
+          
+          # Copy LLM files from downloaded artifacts (if any) to frontend
+          if [ "$(ls -A reports/*_llm_*.json 2>/dev/null)" ]; then
+            cp reports/*_llm_*.json stock-analysis-viewer/public/reports/ 2>/dev/null || true
+            echo "Copied LLM reports from artifacts to frontend"
+          else
+            echo "No LLM reports in artifacts to copy"
+          fi
+          
+          # List final frontend directory contents
+          echo "Final frontend reports:"
+          ls -la stock-analysis-viewer/public/reports/ || echo "No frontend reports"
+          echo "LLM files specifically:"
+          find stock-analysis-viewer/public/reports -name "*_llm_*.json" -type f || echo "No LLM files found"
+          
+          # Update data manifest for the frontend
+          echo "Updating data manifest..."
+          cat > stock-analysis-viewer/public/manifest.json << EOF
+          {
+            "lastUpdated": "$(date -u '+%Y-%m-%dT%H:%M:%S.%3NZ')",
+            "ticker": "AMZN",
+            "reports": $(find stock-analysis-viewer/public/reports -name "*.json" 2>/dev/null | jq -R -s -c 'split("\n")[:-1] | map(gsub("stock-analysis-viewer/public/reports/"; ""))' || echo '[]'),
+            "charts": $(find stock-analysis-viewer/public/charts -type f 2>/dev/null | jq -R -s -c 'split("\n")[:-1] | map(gsub("stock-analysis-viewer/public/charts/"; ""))' || echo '[]'),
+            "status": "$([ -f "reports/llm_placeholder.json" ] && echo "llm_failed" || echo "success")"
+          }
+          EOF
+      
+      - name: Install frontend dependencies
+        working-directory: ./stock-analysis-viewer
+        run: npm install
+      
+      - name: Build frontend
+        working-directory: ./stock-analysis-viewer
+        run: |
+          npm run build
+        env:
+          NODE_ENV: production
+          NEXT_OUTPUT: export
+      
+      - name: Add .nojekyll to output directory  
+        run: touch stock-analysis-viewer/out/.nojekyll
+
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./stock-analysis-viewer/out
+      - id: deployment
+        uses: actions/deploy-pages@v4

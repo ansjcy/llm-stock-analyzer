@@ -30,6 +30,10 @@ class YahooFinanceAPI:
             info = stock.info
             
             stock_logger.info(f"Retrieved stock info for {ticker}")
+
+            # Normalize financial ratios to handle different formats
+            normalized_info = self._normalize_financial_ratios(info)
+
             return {
                 'symbol': ticker,
                 'name': info.get('longName', ticker),
@@ -59,28 +63,81 @@ class YahooFinanceAPI:
                 'beta': info.get('beta'),
                 'trailing_eps': info.get('trailingEps'),
                 'forward_eps': info.get('forwardEps'),
-                'book_value': info.get('bookValue'),
-                'price_to_book': info.get('priceToBook'),
-                'return_on_equity': info.get('returnOnEquity'),
-                'return_on_assets': info.get('returnOnAssets'),
-                'debt_to_equity': info.get('debtToEquity'),
-                'current_ratio': info.get('currentRatio'),
-                'quick_ratio': info.get('quickRatio'),
-                'gross_margins': info.get('grossMargins'),
-                'operating_margins': info.get('operatingMargins'),
-                'profit_margins': info.get('profitMargins'),
-                'revenue_growth': info.get('revenueGrowth'),
-                'earnings_growth': info.get('earningsGrowth'),
+                'book_value': normalized_info.get('bookValue'),
+                'price_to_book': normalized_info.get('priceToBook'),
+                'return_on_equity': normalized_info.get('returnOnEquity'),
+                'return_on_assets': normalized_info.get('returnOnAssets'),
+                'debt_to_equity': normalized_info.get('debtToEquity'),
+                'current_ratio': normalized_info.get('currentRatio'),
+                'quick_ratio': normalized_info.get('quickRatio'),
+                'gross_margins': normalized_info.get('grossMargins'),
+                'operating_margins': normalized_info.get('operatingMargins'),
+                'profit_margins': normalized_info.get('profitMargins'),
+                'revenue_growth': normalized_info.get('revenueGrowth'),
+                'earnings_growth': normalized_info.get('earningsGrowth'),
                 '52_week_high': info.get('fiftyTwoWeekHigh'),
                 '52_week_low': info.get('fiftyTwoWeekLow'),
                 'analyst_target_price': info.get('targetMeanPrice'),
                 'recommendation': info.get('recommendationMean'),
                 'recommendation_key': info.get('recommendationKey'),
-                'number_of_analyst_opinions': info.get('numberOfAnalystOpinions'),
+                'number_of_analyst_opinions': normalized_info.get('numberOfAnalystOpinions'),
+                'full_time_employees': normalized_info.get('fullTimeEmployees')
             }
         except Exception as e:
             stock_logger.error(f"Error fetching stock info for {ticker}: {e}")
             return None
+
+    def _normalize_financial_ratios(self, info: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalize financial ratios to handle different formats and edge cases"""
+        normalized = info.copy()
+
+        # Normalize debt-to-equity ratio
+        debt_to_equity = info.get('debtToEquity')
+        if debt_to_equity is not None and debt_to_equity > 0:
+            # Yahoo Finance sometimes returns debt-to-equity as a percentage (180.05)
+            # when it should be a ratio (1.8005). Values > 10 are likely percentages.
+            if debt_to_equity > 10:
+                normalized['debtToEquity'] = debt_to_equity / 100
+            else:
+                normalized['debtToEquity'] = debt_to_equity
+
+        # Normalize ROE - handle both decimal and percentage formats
+        roe = info.get('returnOnEquity')
+        if roe is not None:
+            # If ROE > 1, it's likely a percentage, convert to decimal
+            if roe > 1:
+                normalized['returnOnEquity'] = roe / 100
+            else:
+                normalized['returnOnEquity'] = roe
+
+        # Normalize earnings growth - handle extreme values
+        earnings_growth = info.get('earningsGrowth')
+        if earnings_growth is not None:
+            # Cap extreme values and handle negatives
+            if earnings_growth < -1 or earnings_growth > 10:  # Cap at 1000% growth
+                normalized['earningsGrowth'] = None
+            else:
+                normalized['earningsGrowth'] = earnings_growth
+
+        # Normalize revenue growth - handle extreme values
+        revenue_growth = info.get('revenueGrowth')
+        if revenue_growth is not None:
+            # Cap extreme values and handle negatives
+            if revenue_growth < -1 or revenue_growth > 10:  # Cap at 1000% growth
+                normalized['revenueGrowth'] = None
+            else:
+                normalized['revenueGrowth'] = revenue_growth
+
+        # Normalize P/E ratio - handle extreme values
+        pe_ratio = info.get('trailingPE')
+        if pe_ratio is not None:
+            # Filter out unrealistic P/E ratios
+            if pe_ratio <= 0 or pe_ratio > 1000:
+                normalized['trailingPE'] = None
+            else:
+                normalized['trailingPE'] = pe_ratio
+
+        return normalized
     
     def get_historical_data(self, ticker: str, period: str = "1y", interval: str = "1d") -> Optional[pd.DataFrame]:
         """Get historical stock data"""

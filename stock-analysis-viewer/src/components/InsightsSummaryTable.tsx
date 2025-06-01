@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Brain, DollarSign, TrendingUp, TrendingDown, Activity, ChevronRight, FileText } from 'lucide-react';
-import { LLMInsights, WarrenBuffettAnalysis, Summary, Recommendation } from '@/types/analysis';
+import { Brain, DollarSign, TrendingUp, TrendingDown, Activity, ChevronRight, FileText, BarChart3 } from 'lucide-react';
+import { LLMInsights, WarrenBuffettAnalysis, PeterLynchAnalysis, Summary, Recommendation } from '@/types/analysis';
 import { useRouter } from 'next/navigation';
 
 interface InsightsSummaryTableProps {
   llmInsights?: LLMInsights;
   warrenBuffettAnalysis?: WarrenBuffettAnalysis;
+  peterLynchAnalysis?: PeterLynchAnalysis;
   summary?: Summary;
   recommendation?: Recommendation;
   analysisData?: any; // Full analysis data to pass to the subpage
@@ -15,7 +16,8 @@ interface InsightsSummaryTableProps {
 
 export default function InsightsSummaryTable({ 
   llmInsights, 
-  warrenBuffettAnalysis, 
+  warrenBuffettAnalysis,
+  peterLynchAnalysis,
   summary, 
   recommendation,
   analysisData 
@@ -52,6 +54,24 @@ export default function InsightsSummaryTable({
         sessionStorage.setItem('previousSelectedReport', currentSelectedReport);
       }
       router.push('/warren-buffett');
+    }
+  };
+
+  const handlePeterLynchClick = () => {
+    if (peterLynchAnalysis) {
+      // Store data in sessionStorage to avoid URL length limits
+      sessionStorage.setItem('peterLynchData', JSON.stringify(peterLynchAnalysis));
+      if (llmInsights?.peter_lynch) {
+        sessionStorage.setItem('peterLynchLlmData', llmInsights.peter_lynch);
+      }
+      // Store current page state to restore when returning
+      sessionStorage.setItem('returnToAnalysis', 'true');
+      // Store current selected report to restore dropdown selection
+      const currentSelectedReport = sessionStorage.getItem('currentSelectedReport');
+      if (currentSelectedReport) {
+        sessionStorage.setItem('previousSelectedReport', currentSelectedReport);
+      }
+      router.push('/peter-lynch');
     }
   };
 
@@ -285,10 +305,71 @@ export default function InsightsSummaryTable({
             </div>
           </div>
         )}
+
+        {/* Peter Lynch Analysis Row */}
+        {peterLynchAnalysis && (
+          <div 
+            onClick={handlePeterLynchClick}
+            className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                  <BarChart3 className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    彼得·林奇分析
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    基于GARP（合理价格成长）投资理念的评估
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
+                  <div className={`px-3 py-1 rounded-full flex items-center space-x-1 ${getSignalColor(peterLynchAnalysis.overall_signal)}`}>
+                    {getSignalIcon(peterLynchAnalysis.overall_signal)}
+                    <span className="text-sm font-medium">
+                      {formatSignalText(peterLynchAnalysis.overall_signal)}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className={`text-lg font-bold ${getScoreColor(peterLynchAnalysis.score_percentage)}`}>
+                    {peterLynchAnalysis.score_percentage.toFixed(1)}%
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-500">
+                    GARP评分
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+                    {peterLynchAnalysis.confidence.toFixed(1)}%
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-500">
+                    信心度
+                  </div>
+                </div>
+                {peterLynchAnalysis.garp_analysis?.metrics?.peg_ratio && (
+                  <div className="text-right">
+                    <div className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                      {peterLynchAnalysis.garp_analysis.metrics.peg_ratio.toFixed(2)}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-500">
+                      PEG比率
+                    </div>
+                  </div>
+                )}
+                <ChevronRight className="w-5 h-5 text-gray-400" />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Empty state */}
-      {!llmInsights && !warrenBuffettAnalysis && !summary && !recommendation && (
+      {!llmInsights && !warrenBuffettAnalysis && !peterLynchAnalysis && !summary && !recommendation && (
         <div className="px-6 py-8 text-center">
           <div className="text-gray-500 dark:text-gray-400">
             暂无可用的分析见解

@@ -85,9 +85,14 @@ class FinancialDataService:
             if 'returnOnEquity' in latest_ratios and latest_ratios['returnOnEquity'] is not None:
                 ratios['return_on_equity'] = latest_ratios['returnOnEquity']
             
-            # Debt to Equity Ratio
+            # Debt to Equity Ratio - handle different formats
             if 'debtEquityRatio' in latest_ratios and latest_ratios['debtEquityRatio'] is not None:
-                ratios['debt_to_equity'] = latest_ratios['debtEquityRatio']
+                debt_equity = latest_ratios['debtEquityRatio']
+                # FMP returns debt-to-equity as a decimal ratio, not percentage
+                # If the value seems too high (>10), it might be a percentage
+                if debt_equity > 10:
+                    debt_equity = debt_equity / 100
+                ratios['debt_to_equity'] = debt_equity
             
             # Operating Margin (as decimal)
             if 'operatingProfitMargin' in latest_ratios and latest_ratios['operatingProfitMargin'] is not None:
@@ -142,39 +147,51 @@ class FinancialDataService:
             
             # Fill in missing values from Yahoo Finance with enhanced data
             if enhanced_ratios:
-                # Return on Equity
-                if (not enhanced_info.get('returnOnEquity') and 
+                # Return on Equity - use multiple field names
+                if (not enhanced_info.get('returnOnEquity') and not enhanced_info.get('return_on_equity') and
                     'return_on_equity' in enhanced_ratios):
                     enhanced_info['returnOnEquity'] = enhanced_ratios['return_on_equity']
-                
-                # Debt to Equity
-                if (not enhanced_info.get('debtToEquity') and 
+                    enhanced_info['return_on_equity'] = enhanced_ratios['return_on_equity']
+
+                # Debt to Equity - use multiple field names
+                if (not enhanced_info.get('debtToEquity') and not enhanced_info.get('debt_to_equity') and
                     'debt_to_equity' in enhanced_ratios):
                     enhanced_info['debtToEquity'] = enhanced_ratios['debt_to_equity']
-                
+                    enhanced_info['debt_to_equity'] = enhanced_ratios['debt_to_equity']
+
                 # Operating Margins
-                if (not enhanced_info.get('operatingMargins') and 
+                if (not enhanced_info.get('operatingMargins') and not enhanced_info.get('operating_margins') and
                     'operating_margin' in enhanced_ratios):
                     enhanced_info['operatingMargins'] = enhanced_ratios['operating_margin']
-                
+                    enhanced_info['operating_margins'] = enhanced_ratios['operating_margin']
+
                 # Current Ratio
-                if (not enhanced_info.get('currentRatio') and 
+                if (not enhanced_info.get('currentRatio') and not enhanced_info.get('current_ratio') and
                     'current_ratio' in enhanced_ratios):
                     enhanced_info['currentRatio'] = enhanced_ratios['current_ratio']
-                
-                # Additional ratios
+                    enhanced_info['current_ratio'] = enhanced_ratios['current_ratio']
+
+                # Additional ratios with multiple field names
                 if 'return_on_assets' in enhanced_ratios:
-                    enhanced_info['returnOnAssets'] = enhanced_ratios['return_on_assets']
-                    
+                    if not enhanced_info.get('returnOnAssets') and not enhanced_info.get('return_on_assets'):
+                        enhanced_info['returnOnAssets'] = enhanced_ratios['return_on_assets']
+                        enhanced_info['return_on_assets'] = enhanced_ratios['return_on_assets']
+
                 if 'gross_profit_margin' in enhanced_ratios:
-                    enhanced_info['grossProfitMargin'] = enhanced_ratios['gross_profit_margin']
-                    
+                    if not enhanced_info.get('grossProfitMargin') and not enhanced_info.get('gross_margins'):
+                        enhanced_info['grossProfitMargin'] = enhanced_ratios['gross_profit_margin']
+                        enhanced_info['gross_margins'] = enhanced_ratios['gross_profit_margin']
+
                 if 'net_profit_margin' in enhanced_ratios:
-                    enhanced_info['netProfitMargin'] = enhanced_ratios['net_profit_margin']
-                    
+                    if not enhanced_info.get('netProfitMargin') and not enhanced_info.get('profit_margins'):
+                        enhanced_info['netProfitMargin'] = enhanced_ratios['net_profit_margin']
+                        enhanced_info['profit_margins'] = enhanced_ratios['net_profit_margin']
+
                 if 'quick_ratio' in enhanced_ratios:
-                    enhanced_info['quickRatio'] = enhanced_ratios['quick_ratio']
-                
+                    if not enhanced_info.get('quickRatio') and not enhanced_info.get('quick_ratio'):
+                        enhanced_info['quickRatio'] = enhanced_ratios['quick_ratio']
+                        enhanced_info['quick_ratio'] = enhanced_ratios['quick_ratio']
+
                 self.logger.info(f"Enhanced stock info for {ticker} with additional financial ratios")
                 
         except Exception as e:

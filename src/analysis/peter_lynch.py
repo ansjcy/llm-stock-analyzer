@@ -103,7 +103,94 @@ class PeterLynchAnalyzer:
                 'overall_signal': 'neutral',
                 'confidence': 0.0
             }
-    
+
+    def _get_normalized_pe_ratio(self, stock_info: Dict[str, Any]) -> float:
+        """Get normalized P/E ratio from various possible fields"""
+        pe_ratio = (stock_info.get('pe_ratio') or
+                   stock_info.get('trailingPE') or
+                   stock_info.get('trailing_pe') or
+                   stock_info.get('priceToEarningsRatio'))
+
+        # Handle edge cases
+        if pe_ratio is None or pe_ratio <= 0 or pe_ratio > 1000:
+            return None
+        return pe_ratio
+
+    def _get_normalized_earnings_growth(self, stock_info: Dict[str, Any]) -> float:
+        """Get normalized earnings growth rate from various possible fields"""
+        earnings_growth = (stock_info.get('earnings_growth') or
+                          stock_info.get('earningsGrowth') or
+                          stock_info.get('earningsQuarterlyGrowth'))
+
+        if earnings_growth is None:
+            return None
+
+        # Handle negative growth or extreme values
+        if earnings_growth < -1 or earnings_growth > 10:  # Cap at 1000% growth
+            return None
+
+        return abs(earnings_growth) if earnings_growth < 0 else earnings_growth
+
+    def _get_normalized_revenue_growth(self, stock_info: Dict[str, Any]) -> float:
+        """Get normalized revenue growth rate from various possible fields"""
+        revenue_growth = (stock_info.get('revenue_growth') or
+                         stock_info.get('revenueGrowth') or
+                         stock_info.get('revenueQuarterlyGrowth'))
+
+        if revenue_growth is None:
+            return None
+
+        # Handle negative growth or extreme values
+        if revenue_growth < -1 or revenue_growth > 10:  # Cap at 1000% growth
+            return None
+
+        return abs(revenue_growth) if revenue_growth < 0 else revenue_growth
+
+    def _get_normalized_debt_to_equity(self, stock_info: Dict[str, Any]) -> float:
+        """Get normalized debt-to-equity ratio, handling different formats"""
+        debt_to_equity = (stock_info.get('debt_to_equity') or
+                         stock_info.get('debtToEquity') or
+                         stock_info.get('debt_equity_ratio'))
+
+        if debt_to_equity is None or debt_to_equity < 0:
+            return None
+
+        # Convert percentage to ratio if needed (values > 10 are likely percentages)
+        if debt_to_equity > 10:
+            debt_to_equity = debt_to_equity / 100
+
+        return debt_to_equity
+
+    def _get_normalized_roe(self, stock_info: Dict[str, Any]) -> float:
+        """Get normalized Return on Equity, handling different formats"""
+        roe = (stock_info.get('return_on_equity') or
+               stock_info.get('returnOnEquity') or
+               stock_info.get('roe'))
+
+        if roe is None:
+            return None
+
+        # Handle different formats - ROE can be decimal (0.15) or percentage (15.0)
+        # If value is > 1, it's likely a percentage, convert to decimal
+        if roe > 1:
+            roe = roe / 100
+
+        return roe
+
+    def _get_employee_count(self, stock_info: Dict[str, Any]) -> int:
+        """Get employee count from various possible fields"""
+        possible_employee_fields = [
+            'full_time_employees', 'fullTimeEmployees', 'employees',
+            'number_of_employees', 'total_employees', 'employee_count',
+            'fullTimeEmployees', 'employeeCount'
+        ]
+
+        for field in possible_employee_fields:
+            employees = stock_info.get(field)
+            if employees is not None and isinstance(employees, (int, float)) and employees > 0:
+                return int(employees)
+        return None
+
     def _analyze_garp_metrics(self, stock_info: Dict[str, Any], financial_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Analyze Growth At Reasonable Price metrics - Lynch's core philosophy
@@ -113,17 +200,19 @@ class PeterLynchAnalyzer:
         max_score = 10
         details = []
         metrics = {}
-        
+
         try:
+            # Get normalized financial metrics
+            pe_ratio = self._get_normalized_pe_ratio(stock_info)
+            earnings_growth = self._get_normalized_earnings_growth(stock_info)
+            revenue_growth = self._get_normalized_revenue_growth(stock_info)
+
             # PEG Ratio Analysis - Lynch's favorite metric
-            peg_ratio = stock_info.get('peg_ratio')
-            pe_ratio = stock_info.get('pe_ratio')
-            earnings_growth = stock_info.get('earnings_growth')
-            revenue_growth = stock_info.get('revenue_growth')
-            
-            if peg_ratio is not None:
+            peg_ratio = stock_info.get('peg_ratio') or stock_info.get('pegRatio')
+
+            if peg_ratio is not None and peg_ratio > 0:
                 metrics['peg_ratio'] = peg_ratio
-                
+
                 if peg_ratio < 0.5:  # Exceptional GARP opportunity
                     score += 4
                     if self.language == 'zh':
@@ -156,7 +245,8 @@ class PeterLynchAnalyzer:
             else:
                 # Try to calculate PEG using available data
                 growth_rate_for_peg = None
-                
+                growth_source = None
+
                 # First try earnings growth
                 if earnings_growth and earnings_growth > 0:
                     growth_rate_for_peg = earnings_growth
@@ -165,15 +255,14 @@ class PeterLynchAnalyzer:
                 elif revenue_growth and revenue_growth > 0:
                     growth_rate_for_peg = revenue_growth
                     growth_source = "revenue"
-                
-                if pe_ratio and growth_rate_for_peg and pe_ratio > 0:
-                    # Handle growth rate properly - if it's already a percentage (>1), use as is
-                    # If it's a decimal (<1), convert to percentage
+
+                if pe_ratio and growth_rate_for_peg and pe_ratio > 0 and growth_rate_for_peg > 0:
+                    # Convert growth rate to percentage if needed
                     growth_percentage = growth_rate_for_peg * 100 if growth_rate_for_peg <= 1 else growth_rate_for_peg
                     calculated_peg = pe_ratio / growth_percentage
                     metrics['calculated_peg'] = calculated_peg
                     metrics['peg_growth_source'] = growth_source
-                    
+
                     if calculated_peg < 1.0:
                         score += 2
                         if self.language == 'zh':
@@ -529,75 +618,61 @@ class PeterLynchAnalyzer:
         
         try:
             # Return on Equity - Lynch liked companies that could reinvest earnings profitably
-            roe = stock_info.get('return_on_equity')
+            roe = self._get_normalized_roe(stock_info)
             if roe is not None:
-                # Handle ROE values properly - ROE is typically given as decimal (0.25 = 25%)
-                # But sometimes as percentage (25.0 = 25%), so we need to detect which format
-                if roe > 1:
-                    roe_decimal = roe / 100  # Convert percentage to decimal
-                else:
-                    roe_decimal = roe  # Already as decimal
-                
-                if roe_decimal > 0.15:  # 15%+ ROE
+                if roe > 0.15:  # 15%+ ROE
                     score += 2
                     if self.language == 'zh':
-                        details.append(f"强劲的股本回报率 {roe_decimal:.1%}")
+                        details.append(f"强劲的股本回报率 {roe:.1%}")
                     else:
-                        details.append(f"Strong ROE of {roe_decimal:.1%}")
-                elif roe_decimal > 0.10:  # 10%+ ROE
+                        details.append(f"Strong ROE of {roe:.1%}")
+                elif roe > 0.10:  # 10%+ ROE
                     score += 1
                     if self.language == 'zh':
-                        details.append(f"适度的股本回报率 {roe_decimal:.1%}")
+                        details.append(f"适度的股本回报率 {roe:.1%}")
                     else:
-                        details.append(f"Moderate ROE of {roe_decimal:.1%}")
-                elif roe_decimal > 0:  # Positive but low ROE
+                        details.append(f"Moderate ROE of {roe:.1%}")
+                elif roe > 0:  # Positive but low ROE
                     if self.language == 'zh':
-                        details.append(f"较低的股本回报率 {roe_decimal:.1%}")
+                        details.append(f"较低的股本回报率 {roe:.1%}")
                     else:
-                        details.append(f"Low ROE of {roe_decimal:.1%}")
+                        details.append(f"Low ROE of {roe:.1%}")
                 else:  # Negative ROE - problematic
                     if self.language == 'zh':
-                        details.append(f"负股本回报率 {roe_decimal:.1%} - 亏损公司")
+                        details.append(f"负股本回报率 {roe:.1%} - 亏损公司")
                     else:
-                        details.append(f"Negative ROE of {roe_decimal:.1%} - loss-making company")
+                        details.append(f"Negative ROE of {roe:.1%} - loss-making company")
             else:
                 if self.language == 'zh':
                     details.append("股本回报率数据不可用")
                 else:
                     details.append("ROE data not available")
-            
+
             # Debt levels - Lynch preferred companies with manageable debt
-            debt_to_equity = stock_info.get('debt_to_equity')
+            debt_to_equity = self._get_normalized_debt_to_equity(stock_info)
             if debt_to_equity is not None:
-                # Handle debt-to-equity ratio - typically given as percentage or ratio
-                # In your example: debt_to_equity = 51.641, which likely means 51.64%
-                if debt_to_equity > 10:
-                    debt_ratio = debt_to_equity / 100  # Convert percentage to decimal
-                else:
-                    debt_ratio = debt_to_equity  # Already as decimal ratio
-                    
-                if debt_ratio < 0.25:  # Very low debt (< 25%)
+                if debt_to_equity < 0.25:  # Very low debt (< 25%)
                     score += 2
                     if self.language == 'zh':
-                        details.append(f"低债务水平 {debt_ratio:.1%} - 财务灵活性强")
+                        details.append(f"低债务水平 {debt_to_equity:.1%} - 财务灵活性强")
                     else:
-                        details.append(f"Low debt level of {debt_ratio:.1%} - high financial flexibility")
-                elif debt_ratio < 0.50:  # Moderate debt (25-50%)
+                        details.append(f"Low debt level of {debt_to_equity:.1%} - high financial flexibility")
+                elif debt_to_equity < 0.50:  # Moderate debt (25-50%)
                     score += 1
                     if self.language == 'zh':
-                        details.append(f"适度的债务水平 {debt_ratio:.1%}")
+                        details.append(f"适度的债务水平 {debt_to_equity:.1%}")
                     else:
-                        details.append(f"Moderate debt level of {debt_ratio:.1%}")
-                elif debt_ratio < 1.0:  # High debt (50-100%)
+                        details.append(f"Moderate debt level of {debt_to_equity:.1%}")
+                elif debt_to_equity < 1.0:  # High debt (50-100%)
                     if self.language == 'zh':
-                        details.append(f"高债务水平 {debt_ratio:.1%} - 增加风险")
+                        details.append(f"高债务水平 {debt_to_equity:.1%} - 增加风险")
                     else:
-                        details.append(f"High debt level of {debt_ratio:.1%} - increases risk")
+                        details.append(f"High debt level of {debt_to_equity:.1%} - increases risk")
                 else:  # Very high debt (>100%) - potentially problematic
                     if self.language == 'zh':
-                        details.append(f"非常高的债务水平 {debt_ratio:.1%} - 财务风险极高")
+                        details.append(f"非常高的债务水平 {debt_to_equity:.1%} - 财务风险极高")
                     else:
-                        details.append(f"Very high debt level of {debt_ratio:.1%} - severe financial risk")
+                        details.append(f"Very high debt level of {debt_to_equity:.1%} - severe financial risk")
             else:
                 if self.language == 'zh':
                     details.append("债务股权比数据不可用")
@@ -708,18 +783,8 @@ class PeterLynchAnalyzer:
                     details.append("Financial sector - Lynch typically avoided complex financial companies")
             
             # Employee data analysis with multiple field name checks
-            employees = None
-            # Check multiple possible field names for employee count
-            possible_employee_fields = [
-                'full_time_employees', 'fullTimeEmployees', 'employees', 
-                'number_of_employees', 'total_employees', 'employee_count'
-            ]
-            
-            for field in possible_employee_fields:
-                employees = stock_info.get(field)
-                if employees is not None:
-                    break
-            
+            employees = self._get_employee_count(stock_info)
+
             if employees and employees > 1000:  # Substantial company
                 score += 1
                 if self.language == 'zh':

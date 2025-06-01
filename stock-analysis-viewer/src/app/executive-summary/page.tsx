@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Moon, Sun } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import CombinedExecutiveSummary from '@/components/CombinedExecutiveSummary';
 import { StockAnalysisResult } from '@/types/analysis';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
+import ThemeToggle from '@/components/ThemeToggle';
 
 function ExecutiveSummaryPageContent() {
   const router = useRouter();
-  const { theme, toggleTheme } = useTheme();
   const [analysisData, setAnalysisData] = useState<StockAnalysisResult | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -63,19 +63,7 @@ function ExecutiveSummaryPageContent() {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Theme Toggle */}
-        <div className="fixed top-4 right-4 z-50">
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            aria-label="Toggle theme"
-          >
-            {theme === 'light' ? (
-              <Moon className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-            ) : (
-              <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-            )}
-          </button>
-        </div>
+        <ThemeToggle />
 
         {/* Header */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8 border border-gray-200 dark:border-gray-700">

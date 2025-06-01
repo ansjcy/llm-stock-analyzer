@@ -2,6 +2,16 @@
 
 An advanced AI-powered stock analysis platform that combines comprehensive technical analysis, fundamental analysis, sentiment analysis, and real-time news summarization using Large Language Models (LLMs).
 
+## Recent Updates 🆕
+
+### Gemini Model Configuration & Safety Filtering Fix
+- **✅ Stable configuration with Gemini 2.0 Flash** as primary model and **Gemini 1.5 Flash** as fallback
+- **🛡️ Fixed content filtering issues** with Chinese prompts by configuring proper safety settings  
+- **🔧 Resolved civic integrity category error** by using only the 4 officially supported safety categories
+- **📈 Enhanced model reliability** with optimized fallback system (Gemini 2.0 → Gemini 1.5)
+- **🚀 Improved safety configuration** with all supported safety categories set to `BLOCK_NONE` for financial analysis
+- **⚡ Reduced timeouts and retry attempts** for faster response handling
+
 ## Features
 
 ### 🔍 Multi-Dimensional Analysis

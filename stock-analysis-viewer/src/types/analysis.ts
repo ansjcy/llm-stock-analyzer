@@ -99,6 +99,7 @@ export interface LLMInsights {
   fundamental?: string;
   news?: string;
   warren_buffett?: string;
+  peter_lynch?: string;
 }
 
 export interface Recommendation {
@@ -224,6 +225,107 @@ export interface WarrenBuffettAnalysis {
   buffett_principles: WarrenBuffettPrinciples;
 }
 
+// Peter Lynch Analysis Types
+export interface PeterLynchGarpAnalysis {
+  score: number;
+  max_score: number;
+  score_percentage: number;
+  details: string[];
+  metrics: {
+    peg_ratio?: number;
+    calculated_peg?: number;
+    pe_ratio?: number;
+    earnings_growth?: number;
+    revenue_growth?: number;
+    [key: string]: unknown;
+  };
+  category: string;
+}
+
+export interface PeterLynchGrowthAnalysis {
+  score: number;
+  max_score: number;
+  score_percentage: number;
+  details: string[];
+  revenue_growth_rates?: number[];
+  earnings_consistency_metrics?: {
+    consistency_score?: number;
+    growth_trend?: string;
+    [key: string]: unknown;
+  };
+  category: string;
+}
+
+export interface PeterLynchBusinessQualityAnalysis {
+  score: number;
+  max_score: number;
+  score_percentage: number;
+  details: string[];
+  quality_metrics?: {
+    return_on_equity?: number;
+    debt_to_equity?: number;
+    current_ratio?: number;
+    free_cash_flow?: number;
+    [key: string]: unknown;
+  };
+  category: string;
+}
+
+export interface PeterLynchMarketPositionAnalysis {
+  score: number;
+  max_score: number;
+  score_percentage: number;
+  details: string[];
+  market_cap_category?: string;
+  growth_potential?: string;
+  category: string;
+}
+
+export interface PeterLynchPrinciples {
+  individual_principles: {
+    growth_at_reasonable_price: {
+      score: number;
+      meets_criteria: boolean;
+      description: string;
+    };
+    consistent_growth: {
+      score: number;
+      meets_criteria: boolean;
+      description: string;
+    };
+    business_quality: {
+      score: number;
+      meets_criteria: boolean;
+      description: string;
+    };
+    market_position: {
+      score: number;
+      meets_criteria: boolean;
+      description: string;
+    };
+  };
+  total_principles_met: number;
+  total_principles: number;
+  adherence_percentage: number;
+  overall_assessment: string;
+}
+
+export interface PeterLynchAnalysis {
+  ticker: string;
+  analysis_date: string;
+  overall_signal: string;
+  confidence: number;
+  total_score: number;
+  max_possible_score: number;
+  score_percentage: number;
+  garp_analysis: PeterLynchGarpAnalysis;
+  growth_analysis: PeterLynchGrowthAnalysis;
+  business_quality_analysis: PeterLynchBusinessQualityAnalysis;
+  market_position_analysis: PeterLynchMarketPositionAnalysis;
+  investment_reasoning: string | string[];
+  lynch_principles: PeterLynchPrinciples;
+}
+
 export interface StockAnalysisResult {
   ticker: string;
   analysis_date: string;
@@ -232,9 +334,11 @@ export interface StockAnalysisResult {
   correlation_analysis: CorrelationAnalysis;
   fundamental_analysis: Record<string, unknown>;
   warren_buffett_analysis?: WarrenBuffettAnalysis;
+  peter_lynch_analysis?: PeterLynchAnalysis;
   news_analysis: NewsAnalysis;
   llm_insights: LLMInsights;
   recommendation: Recommendation;
   summary: Summary;
   charts: Charts;
+  historical_data?: any[];
 } 

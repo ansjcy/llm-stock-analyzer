@@ -12,29 +12,65 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+// Function to get initial theme
+function getInitialTheme(): Theme {
+  if (typeof window === 'undefined') return 'light';
+
+  try {
+    const savedTheme = localStorage.getItem('theme') as Theme;
+    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+      return savedTheme;
+    }
+
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+  } catch (error) {
+    console.warn('Error accessing localStorage or matchMedia:', error);
+  }
+
+  return 'light';
+}
+
+// Function to apply theme to document
+function applyTheme(theme: Theme) {
+  if (typeof window === 'undefined') return;
+
+  const root = window.document.documentElement;
+  const body = window.document.body;
+
+  // Remove existing theme classes
+  root.classList.remove('light', 'dark');
+  body.classList.remove('light', 'dark');
+
+  // Add new theme class
+  root.classList.add(theme);
+  body.classList.add(theme);
+
+  try {
+    localStorage.setItem('theme', theme);
+  } catch (error) {
+    console.warn('Error saving theme to localStorage:', error);
+  }
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('light');
   const [mounted, setMounted] = useState(false);
 
+  // Initialize theme on mount
   useEffect(() => {
-    // Check for saved theme preference or default to system preference
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
-      setTheme(savedTheme);
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setTheme('dark');
-    }
+    const initialTheme = getInitialTheme();
+    setTheme(initialTheme);
+    applyTheme(initialTheme);
     setMounted(true);
   }, []);
 
+  // Apply theme changes
   useEffect(() => {
-    if (!mounted) return;
-    
-    // Apply theme to document
-    const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(theme);
-    localStorage.setItem('theme', theme);
+    if (mounted) {
+      applyTheme(theme);
+    }
   }, [theme, mounted]);
 
   const toggleTheme = () => {

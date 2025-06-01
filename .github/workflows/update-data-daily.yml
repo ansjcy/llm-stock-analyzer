@@ -1,20 +1,13 @@
-name: Update Stock Analysis and Deploy to GitHub Pages (Legacy - Disabled)
+name: Update Stock Analysis Data (Daily - Non-LLM)
 
-# Disabled - replaced by split daily/weekly workflows
 on:
+  schedule:
+    # Run at 1:00 PM (13:00 UTC) Monday to Friday
+    - cron: '0 13 * * 1-5'
+  # push:
+  #   branches: [main]
+  #   paths: ['src/**', 'requirements.txt', 'stock-analysis-viewer/**']
   workflow_dispatch:
-    inputs:
-      force_run:
-        description: 'Force run this legacy workflow (not recommended)'
-        required: false
-        default: 'false'
-  push:
-    branches: [main]
-    paths: ['src/**', 'requirements.txt', 'stock-analysis-viewer/**']
-# Original triggers (disabled):
-#   schedule:
-#     # Run at 1:00 PM (13:00 UTC) Monday to Friday
-#     - cron: '0 13 * * 1-5'
 
 permissions:
   contents: write
@@ -22,11 +15,11 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: "daily-analysis"
   cancel-in-progress: true
 
 jobs:
-  update-stock-analysis:
+  update-base-analysis:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -49,25 +42,22 @@ jobs:
           mkdir -p charts
           mkdir -p logs
       
-      - name: Run stock analysis
+      - name: Run base stock analysis (non-LLM)
         run: |
-          python src/main.py --ticker AMZN,AAPL,GOOGL,DIS,KO,MSFT,NFLX,AVGO,SPY,QQQ,NVDA,TSLA --chinese --charts --save-report --format json
+          python src/main.py --ticker AMZN,AAPL,GOOGL,DIS,KO,MSFT,NFLX,AVGO,SPY,QQQ,NVDA,TSLA --chinese --charts --save-report --format json --non-llm-only
         env:
           PYTHONPATH: ${{ github.workspace }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           CACHE_DURATION: "3600"
-          DEFAULT_LLM_PROVIDER: "gemini"
           FUNDAMENTAL_ANALYSIS_ENABLED: "true"
           LOG_LEVEL: "INFO"
           NEWS_ANALYSIS_ENABLED: "true"
           NODE_ENV: "production"
           SAVE_REPORTS: "true"
-          SENTIMENT_ANALYSIS_ENABLED: "true"
+          SENTIMENT_ANALYSIS_ENABLED: "false"
           SINA_FINANCE_ENABLED: "true"
           TECHNICAL_ANALYSIS_PERIOD: "252"
           USE_CACHE: "true"
           YAHOO_FINANCE_ENABLED: "true"
-
         continue-on-error: true
       
       - name: List generated files
@@ -107,7 +97,7 @@ jobs:
         run: |
           # Create placeholder files if directories are empty
           if [ ! "$(ls -A reports/)" ]; then
-            echo '{"error": "Analysis failed", "timestamp": "'$(date)'", "message": "Stock analysis could not be completed. Please check the logs."}' > reports/placeholder.json
+            echo '{"error": "Analysis failed", "timestamp": "'$(date)'", "message": "Base stock analysis could not be completed. Please check the logs."}' > reports/placeholder.json
           fi
           if [ ! "$(ls -A charts/)" ]; then
             touch charts/placeholder.txt
@@ -124,14 +114,14 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Auto-update stock analysis data [skip ci]"
+            git commit -m "Auto-update base stock analysis data (daily) [skip ci]"
             git push
           fi
       
       - name: Upload analysis artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: stock-analysis-data
+          name: base-stock-analysis-data
           path: |
             reports/
             charts/
@@ -140,7 +130,7 @@ jobs:
           if-no-files-found: warn
 
   deploy-github-pages:
-    needs: update-stock-analysis
+    needs: update-base-analysis
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -156,7 +146,7 @@ jobs:
       - name: Download analysis artifacts
         uses: actions/download-artifact@v4
         with:
-          name: stock-analysis-data
+          name: base-stock-analysis-data
           path: ./
         continue-on-error: true
       
@@ -219,4 +209,4 @@ jobs:
         with:
           path: ./stock-analysis-viewer/out
       - id: deployment
-        uses: actions/deploy-pages@v4 
+        uses: actions/deploy-pages@v4

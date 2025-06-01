@@ -8,13 +8,13 @@ import os
 import sys
 import json
 import argparse
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, Any, Optional
 
 import click
 from rich.console import Console
 from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
 from rich.table import Table
 from rich.markdown import Markdown
 import matplotlib.pyplot as plt
@@ -110,7 +110,8 @@ class StockAnalyzer:
             'llm_insights': {},
             'recommendation': {},
             'summary': {},
-            'charts': {}
+            'charts': {},
+            'historical_data': None  # Add historical data for frontend charts
         }
 
         # Store historical data for chart generation
@@ -152,6 +153,9 @@ class StockAnalyzer:
                 technical_analysis = self.technical_analyzer.analyze_technical_signals(historical_data, ticker)
                 results['technical_analysis'] = technical_analysis
                 progress.update(task3, completed=1)
+
+                # Convert historical data to frontend-compatible format
+                results['historical_data'] = self._convert_historical_data_for_frontend(historical_data_for_charts)
 
                 # Correlation analysis is already included in technical analysis
                 correlation_analysis = technical_analysis.get('correlation_analysis', {})
@@ -211,54 +215,308 @@ class StockAnalyzer:
 
             # Step 7: Generate LLM insights (if available)
             if self.llm_client:
-                task7_desc = "Generating AI insights..." if self.language == 'en' else "生成AI洞察..."
-                task7 = progress.add_task(task7_desc, total=6)
+                # Count available analysis types for progress tracking
+                available_analyses = []
+                if results['technical_analysis']:
+                    available_analyses.append('technical')
+                available_analyses.append('fundamental')  # Always available
+                if results['warren_buffett_analysis']:
+                    available_analyses.append('warren_buffett')
+                if results['peter_lynch_analysis']:
+                    available_analyses.append('peter_lynch')
+                if news_articles:
+                    available_analyses.append('news')
+                available_analyses.extend(['recommendation', 'summary'])  # Always generated
+
+                total_llm_steps = len(available_analyses)
+                task7_desc = f"Generating {total_llm_steps} AI insights..." if self.language == 'en' else f"生成{total_llm_steps}个AI洞察..."
+                task7 = progress.add_task(task7_desc, total=total_llm_steps)
 
                 # Enhanced technical analysis insights with comprehensive data
                 if results['technical_analysis']:
-                    # Combine technical and correlation data for LLM analysis
-                    enhanced_technical_data = {
-                        **results['technical_analysis'],
-                        'correlation_analysis': results.get('correlation_analysis', {})
-                    }
-                    technical_insights = self.llm_client.generate_technical_analysis(
-                        ticker, enhanced_technical_data, stock_info
-                    )
-                    results['llm_insights']['technical'] = technical_insights
+                    progress.update(task7, description="Technical AI analysis..." if self.language == 'en' else "技术分析AI洞察...")
+                    console.print(f"[dim]→ Generating technical analysis insights[/dim]")
+
+                    try:
+                        # Combine technical and correlation data for LLM analysis
+                        enhanced_technical_data = {
+                            **results['technical_analysis'],
+                            'correlation_analysis': results.get('correlation_analysis', {})
+                        }
+                        technical_insights = self.llm_client.generate_technical_analysis(
+                            ticker, enhanced_technical_data, stock_info
+                        )
+                        results['llm_insights']['technical'] = technical_insights
+                        console.print(f"[green]✓ Technical insights generated ({len(technical_insights)} chars)[/green]")
+                    except Exception as e:
+                        console.print(f"[red]✗ Technical insights failed: {e}[/red]")
+                        results['llm_insights']['technical'] = f"Error: {str(e)}"
+
                     progress.advance(task7)
 
                 # Fundamental analysis insights
-                fundamental_insights = self.llm_client.generate_fundamental_analysis(
-                    ticker, stock_info, financial_data
-                )
-                results['llm_insights']['fundamental'] = fundamental_insights
+                progress.update(task7, description="Fundamental AI analysis..." if self.language == 'en' else "基本面分析AI洞察...")
+                console.print(f"[dim]→ Generating fundamental analysis insights[/dim]")
+
+                try:
+                    fundamental_insights = self.llm_client.generate_fundamental_analysis(
+                        ticker, stock_info, financial_data
+                    )
+                    results['llm_insights']['fundamental'] = fundamental_insights
+                    console.print(f"[green]✓ Fundamental insights generated ({len(fundamental_insights)} chars)[/green]")
+                except Exception as e:
+                    console.print(f"[red]✗ Fundamental insights failed: {e}[/red]")
+                    results['llm_insights']['fundamental'] = f"Error: {str(e)}"
+
                 progress.advance(task7)
 
                 # Warren Buffett analysis insights
                 if results['warren_buffett_analysis']:
-                    warren_buffett_insights = self.llm_client.generate_warren_buffett_analysis(
-                        ticker, results['warren_buffett_analysis'], stock_info
-                    )
-                    results['llm_insights']['warren_buffett'] = warren_buffett_insights
+                    progress.update(task7, description="Warren Buffett AI analysis..." if self.language == 'en' else "巴菲特分析AI洞察...")
+                    console.print(f"[dim]→ Generating Warren Buffett insights[/dim]")
+
+                    try:
+                        warren_buffett_insights = self.llm_client.generate_warren_buffett_analysis(
+                            ticker, results['warren_buffett_analysis'], stock_info
+                        )
+                        results['llm_insights']['warren_buffett'] = warren_buffett_insights
+                        console.print(f"[green]✓ Warren Buffett insights generated ({len(warren_buffett_insights)} chars)[/green]")
+                    except Exception as e:
+                        console.print(f"[red]✗ Warren Buffett insights failed: {e}[/red]")
+                        results['llm_insights']['warren_buffett'] = f"Error: {str(e)}"
+
                     progress.advance(task7)
 
                 # Peter Lynch analysis insights
                 if results['peter_lynch_analysis']:
-                    peter_lynch_insights = self.llm_client.generate_peter_lynch_analysis(
-                        ticker, results['peter_lynch_analysis'], stock_info
-                    )
-                    results['llm_insights']['peter_lynch'] = peter_lynch_insights
+                    progress.update(task7, description="Peter Lynch AI analysis..." if self.language == 'en' else "林奇分析AI洞察...")
+                    console.print(f"[dim]→ Generating Peter Lynch insights[/dim]")
+
+                    try:
+                        peter_lynch_insights = self.llm_client.generate_peter_lynch_analysis(
+                            ticker, results['peter_lynch_analysis'], stock_info
+                        )
+                        results['llm_insights']['peter_lynch'] = peter_lynch_insights
+                        console.print(f"[green]✓ Peter Lynch insights generated ({len(peter_lynch_insights)} chars)[/green]")
+                    except Exception as e:
+                        console.print(f"[red]✗ Peter Lynch insights failed: {e}[/red]")
+                        results['llm_insights']['peter_lynch'] = f"Error: {str(e)}"
+
                     progress.advance(task7)
 
                 # News sentiment analysis
                 if news_articles:
+                    progress.update(task7, description="News AI analysis..." if self.language == 'en' else "新闻分析AI洞察...")
+                    console.print(f"[dim]→ Generating news sentiment insights from {len(news_articles)} articles[/dim]")
+
+                    try:
+                        news_insights = self.llm_client.generate_news_analysis(
+                            ticker, news_articles, stock_info
+                        )
+                        results['llm_insights']['news'] = news_insights
+                        console.print(f"[green]✓ News insights generated ({len(news_insights)} chars)[/green]")
+                    except Exception as e:
+                        console.print(f"[red]✗ News insights failed: {e}[/red]")
+                        results['llm_insights']['news'] = f"Error: {str(e)}"
+
+                    progress.advance(task7)
+
+                # Overall investment recommendation
+                progress.update(task7, description="Investment recommendation..." if self.language == 'en' else "投资建议生成...")
+                console.print(f"[dim]→ Generating investment recommendation[/dim]")
+
+                try:
+                    investment_recommendation = self.llm_client.generate_investment_recommendation(
+                        ticker, stock_info,
+                        results['llm_insights'].get('technical', ''),
+                        results['llm_insights'].get('fundamental', ''),
+                        results['llm_insights'].get('news', '')
+                    )
+                    results['recommendation'] = {
+                        'full_analysis': investment_recommendation
+                    }
+                    console.print(f"[green]✓ Investment recommendation generated ({len(investment_recommendation)} chars)[/green]")
+                except Exception as e:
+                    console.print(f"[red]✗ Investment recommendation failed: {e}[/red]")
+                    results['recommendation'] = {
+                        'full_analysis': f"Error: {str(e)}"
+                    }
+
+                progress.advance(task7)
+
+                # Executive summary
+                progress.update(task7, description="Executive summary..." if self.language == 'en' else "执行摘要生成...")
+                console.print(f"[dim]→ Generating executive summary[/dim]")
+
+                try:
+                    executive_summary = self.llm_client.summarize_analysis(
+                        ticker, stock_info,
+                        results['llm_insights'].get('technical', ''),
+                        results['llm_insights'].get('fundamental', ''),
+                        results['llm_insights'].get('news', ''),
+                        investment_recommendation
+                    )
+                    results['summary'] = {
+                        'executive_summary': executive_summary
+                    }
+                    console.print(f"[green]✓ Executive summary generated ({len(executive_summary)} chars)[/green]")
+                except Exception as e:
+                    console.print(f"[red]✗ Executive summary failed: {e}[/red]")
+                    results['summary'] = {
+                        'executive_summary': f"Error: {str(e)}"
+                    }
+
+                progress.advance(task7)
+
+        return results
+
+    def generate_llm_insights_only(self, base_results: Dict[str, Any]) -> Dict[str, Any]:
+        """Generate only LLM insights using existing base analysis data"""
+        if not self.llm_client:
+            raise ValueError("LLM client not available")
+
+        # Create a copy of base results to add LLM insights
+        results = base_results.copy()
+        ticker = results['ticker']
+        stock_info = results.get('stock_info', {})
+
+        # Initialize LLM insights if not present
+        if 'llm_insights' not in results:
+            results['llm_insights'] = {}
+
+        console.print(f"[blue]Generating LLM insights for {ticker}...[/blue]")
+
+        # Count available analysis types for progress tracking
+        available_analyses = []
+        if results.get('technical_analysis'):
+            available_analyses.append('technical')
+        available_analyses.append('fundamental')  # Always available
+        if results.get('warren_buffett_analysis'):
+            available_analyses.append('warren_buffett')
+        if results.get('peter_lynch_analysis'):
+            available_analyses.append('peter_lynch')
+        news_articles = results.get('news_analysis', {}).get('recent_articles', [])
+        if news_articles:
+            available_analyses.append('news')
+        available_analyses.extend(['recommendation', 'summary'])  # Always generated
+
+        total_steps = len(available_analyses)
+        console.print(f"[cyan]Will generate {total_steps} LLM analysis components[/cyan]")
+
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TaskProgressColumn(),
+            console=console
+        ) as progress:
+            task = progress.add_task("Starting LLM analysis...", total=total_steps)
+
+            # Enhanced technical analysis insights
+            if results.get('technical_analysis'):
+                progress.update(task, description="[yellow]Generating technical analysis insights...[/yellow]")
+                console.print(f"[dim]→ Processing technical indicators and correlation data[/dim]")
+
+                try:
+                    enhanced_technical_data = {
+                        **results['technical_analysis'],
+                        'correlation_analysis': results.get('correlation_analysis', {})
+                    }
+
+                    console.print(f"[dim]→ Calling LLM for technical analysis (this may take 30-60 seconds)[/dim]")
+                    technical_insights = self.llm_client.generate_technical_analysis(
+                        ticker, enhanced_technical_data, stock_info
+                    )
+                    results['llm_insights']['technical'] = technical_insights
+                    console.print(f"[green]✓ Technical analysis insights generated ({len(technical_insights)} chars)[/green]")
+
+                except Exception as e:
+                    console.print(f"[red]✗ Technical analysis failed: {e}[/red]")
+                    results['llm_insights']['technical'] = f"Error generating technical analysis: {str(e)}"
+
+                progress.advance(task)
+
+            # Fundamental analysis insights
+            progress.update(task, description="[yellow]Generating fundamental analysis insights...[/yellow]")
+            console.print(f"[dim]→ Processing fundamental metrics and stock info[/dim]")
+
+            try:
+                console.print(f"[dim]→ Calling LLM for fundamental analysis (this may take 30-60 seconds)[/dim]")
+                fundamental_insights = self.llm_client.generate_fundamental_analysis(
+                    ticker, stock_info, results.get('fundamental_analysis', {})
+                )
+                results['llm_insights']['fundamental'] = fundamental_insights
+                console.print(f"[green]✓ Fundamental analysis insights generated ({len(fundamental_insights)} chars)[/green]")
+
+            except Exception as e:
+                console.print(f"[red]✗ Fundamental analysis failed: {e}[/red]")
+                results['llm_insights']['fundamental'] = f"Error generating fundamental analysis: {str(e)}"
+
+            progress.advance(task)
+
+            # Warren Buffett analysis insights
+            if results.get('warren_buffett_analysis'):
+                progress.update(task, description="[yellow]Generating Warren Buffett insights...[/yellow]")
+                console.print(f"[dim]→ Processing Warren Buffett value analysis[/dim]")
+
+                try:
+                    console.print(f"[dim]→ Calling LLM for Warren Buffett analysis (this may take 30-60 seconds)[/dim]")
+                    warren_buffett_insights = self.llm_client.generate_warren_buffett_analysis(
+                        ticker, results['warren_buffett_analysis'], stock_info
+                    )
+                    results['llm_insights']['warren_buffett'] = warren_buffett_insights
+                    console.print(f"[green]✓ Warren Buffett insights generated ({len(warren_buffett_insights)} chars)[/green]")
+
+                except Exception as e:
+                    console.print(f"[red]✗ Warren Buffett analysis failed: {e}[/red]")
+                    results['llm_insights']['warren_buffett'] = f"Error generating Warren Buffett analysis: {str(e)}"
+
+                progress.advance(task)
+
+            # Peter Lynch analysis insights
+            if results.get('peter_lynch_analysis'):
+                progress.update(task, description="[yellow]Generating Peter Lynch insights...[/yellow]")
+                console.print(f"[dim]→ Processing Peter Lynch growth analysis[/dim]")
+
+                try:
+                    console.print(f"[dim]→ Calling LLM for Peter Lynch analysis (this may take 30-60 seconds)[/dim]")
+                    peter_lynch_insights = self.llm_client.generate_peter_lynch_analysis(
+                        ticker, results['peter_lynch_analysis'], stock_info
+                    )
+                    results['llm_insights']['peter_lynch'] = peter_lynch_insights
+                    console.print(f"[green]✓ Peter Lynch insights generated ({len(peter_lynch_insights)} chars)[/green]")
+
+                except Exception as e:
+                    console.print(f"[red]✗ Peter Lynch analysis failed: {e}[/red]")
+                    results['llm_insights']['peter_lynch'] = f"Error generating Peter Lynch analysis: {str(e)}"
+
+                progress.advance(task)
+
+            # News sentiment analysis
+            if news_articles:
+                progress.update(task, description="[yellow]Generating news sentiment analysis...[/yellow]")
+                console.print(f"[dim]→ Processing {len(news_articles)} news articles[/dim]")
+
+                try:
+                    console.print(f"[dim]→ Calling LLM for news sentiment analysis (this may take 30-60 seconds)[/dim]")
                     news_insights = self.llm_client.generate_news_analysis(
                         ticker, news_articles, stock_info
                     )
                     results['llm_insights']['news'] = news_insights
-                    progress.advance(task7)
+                    console.print(f"[green]✓ News sentiment analysis generated ({len(news_insights)} chars)[/green]")
 
-                # Overall investment recommendation
+                except Exception as e:
+                    console.print(f"[red]✗ News sentiment analysis failed: {e}[/red]")
+                    results['llm_insights']['news'] = f"Error generating news analysis: {str(e)}"
+
+                progress.advance(task)
+
+            # Overall investment recommendation
+            progress.update(task, description="[yellow]Generating investment recommendation...[/yellow]")
+            console.print(f"[dim]→ Synthesizing all insights for investment recommendation[/dim]")
+
+            try:
+                console.print(f"[dim]→ Calling LLM for investment recommendation (this may take 30-60 seconds)[/dim]")
                 investment_recommendation = self.llm_client.generate_investment_recommendation(
                     ticker, stock_info,
                     results['llm_insights'].get('technical', ''),
@@ -268,9 +526,22 @@ class StockAnalyzer:
                 results['recommendation'] = {
                     'full_analysis': investment_recommendation
                 }
-                progress.advance(task7)
+                console.print(f"[green]✓ Investment recommendation generated ({len(investment_recommendation)} chars)[/green]")
 
-                # Executive summary
+            except Exception as e:
+                console.print(f"[red]✗ Investment recommendation failed: {e}[/red]")
+                results['recommendation'] = {
+                    'full_analysis': f"Error generating investment recommendation: {str(e)}"
+                }
+
+            progress.advance(task)
+
+            # Executive summary
+            progress.update(task, description="[yellow]Generating executive summary...[/yellow]")
+            console.print(f"[dim]→ Creating executive summary from all analyses[/dim]")
+
+            try:
+                console.print(f"[dim]→ Calling LLM for executive summary (this may take 30-60 seconds)[/dim]")
                 executive_summary = self.llm_client.summarize_analysis(
                     ticker, stock_info,
                     results['llm_insights'].get('technical', ''),
@@ -281,6 +552,20 @@ class StockAnalyzer:
                 results['summary'] = {
                     'executive_summary': executive_summary
                 }
+                console.print(f"[green]✓ Executive summary generated ({len(executive_summary)} chars)[/green]")
+
+            except Exception as e:
+                console.print(f"[red]✗ Executive summary failed: {e}[/red]")
+                results['summary'] = {
+                    'executive_summary': f"Error generating executive summary: {str(e)}"
+                }
+
+            progress.advance(task)
+
+            progress.update(task, description="[green]LLM analysis completed![/green]")
+
+        # Update analysis date for LLM insights
+        results['llm_analysis_date'] = datetime.now().isoformat()
 
         return results
 
@@ -311,6 +596,80 @@ class StockAnalyzer:
                 'earnings_growth': stock_info.get('earnings_growth'),
             }
         }
+
+    def _convert_historical_data_for_frontend(self, historical_data: pd.DataFrame) -> list:
+        """Convert pandas DataFrame to frontend-compatible format with technical indicators"""
+        try:
+            # Calculate technical indicators for the frontend
+            prices = historical_data['Close']
+            
+            # Moving averages
+            sma_20 = prices.rolling(window=20).mean()
+            sma_50 = prices.rolling(window=50).mean()
+            sma_200 = prices.rolling(window=200).mean()
+            
+            # RSI calculation
+            delta = prices.diff()
+            gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+            loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+            rs = gain / loss
+            rsi = 100 - (100 / (1 + rs))
+            
+            # MACD calculation
+            exp1 = prices.ewm(span=12).mean()
+            exp2 = prices.ewm(span=26).mean()
+            macd_line = exp1 - exp2
+            macd_signal = macd_line.ewm(span=9).mean()
+            macd_histogram = macd_line - macd_signal
+            
+            # Bollinger Bands
+            bb_middle = sma_20
+            bb_std = prices.rolling(window=20).std()
+            bb_upper = bb_middle + (bb_std * 2)
+            bb_lower = bb_middle - (bb_std * 2)
+            
+            # Convert to list of dictionaries
+            data_list = []
+            for idx, row in historical_data.iterrows():
+                data_point = {
+                    'date': idx.strftime('%Y-%m-%d') if hasattr(idx, 'strftime') else str(idx),
+                    'timestamp': int(idx.timestamp() * 1000) if hasattr(idx, 'timestamp') else None,
+                    'open': float(row['Open']) if pd.notna(row['Open']) else None,
+                    'high': float(row['High']) if pd.notna(row['High']) else None,
+                    'low': float(row['Low']) if pd.notna(row['Low']) else None,
+                    'close': float(row['Close']) if pd.notna(row['Close']) else None,
+                    'volume': int(row['Volume']) if pd.notna(row['Volume']) else None,
+                }
+                
+                # Add technical indicators if available
+                if idx in sma_20.index and pd.notna(sma_20.loc[idx]):
+                    data_point['sma_20'] = float(sma_20.loc[idx])
+                if idx in sma_50.index and pd.notna(sma_50.loc[idx]):
+                    data_point['sma_50'] = float(sma_50.loc[idx])
+                if idx in sma_200.index and pd.notna(sma_200.loc[idx]):
+                    data_point['sma_200'] = float(sma_200.loc[idx])
+                if idx in rsi.index and pd.notna(rsi.loc[idx]):
+                    data_point['rsi'] = float(rsi.loc[idx])
+                if idx in macd_line.index and pd.notna(macd_line.loc[idx]):
+                    data_point['macd_line'] = float(macd_line.loc[idx])
+                if idx in macd_signal.index and pd.notna(macd_signal.loc[idx]):
+                    data_point['macd_signal'] = float(macd_signal.loc[idx])
+                if idx in macd_histogram.index and pd.notna(macd_histogram.loc[idx]):
+                    data_point['macd_histogram'] = float(macd_histogram.loc[idx])
+                if idx in bb_upper.index and pd.notna(bb_upper.loc[idx]):
+                    data_point['bb_upper'] = float(bb_upper.loc[idx])
+                if idx in bb_middle.index and pd.notna(bb_middle.loc[idx]):
+                    data_point['bb_middle'] = float(bb_middle.loc[idx])
+                if idx in bb_lower.index and pd.notna(bb_lower.loc[idx]):
+                    data_point['bb_lower'] = float(bb_lower.loc[idx])
+                
+                data_list.append(data_point)
+            
+            return data_list
+            
+        except Exception as e:
+            stock_logger.error(f"Error converting historical data for frontend: {e}")
+            return []
 
     def display_results(self, results: Dict[str, Any], detailed: bool = False):
         """Display analysis results in a formatted way"""
@@ -766,6 +1125,71 @@ class StockAnalyzer:
             filename = f"reports/{ticker}_analysis_{timestamp}.md"
 
         save_msg = f"Report saved to: {filename_full}" if self.language == 'en' else f"报告已保存至：{filename_full}"
+        console.print(f"[green]{save_msg}[/green]")
+        return filename
+
+    def save_base_report(self, results: Dict[str, Any], format_type: str = "json"):
+        """Save base analysis report (non-LLM data) to file"""
+        ticker = results['ticker']
+        timestamp = results['timestamp']
+
+        # Create reports directory in public folder if it doesn't exist
+        reports_dir = "./stock-analysis-viewer/public/reports"
+        os.makedirs(reports_dir, exist_ok=True)
+
+        # Create base data (exclude LLM insights, recommendation, summary)
+        base_data = {
+            'ticker': results['ticker'],
+            'analysis_date': results['analysis_date'],
+            'timestamp': results['timestamp'],
+            'stock_info': results.get('stock_info', {}),
+            'technical_analysis': results.get('technical_analysis', {}),
+            'correlation_analysis': results.get('correlation_analysis', {}),
+            'fundamental_analysis': results.get('fundamental_analysis', {}),
+            'warren_buffett_analysis': results.get('warren_buffett_analysis', {}),
+            'peter_lynch_analysis': results.get('peter_lynch_analysis', {}),
+            'news_analysis': results.get('news_analysis', {}),
+            'charts': results.get('charts', {}),
+            'historical_data': results.get('historical_data', [])
+        }
+
+        if format_type == "json":
+            filename_full = f"{reports_dir}/{ticker}_analysis_base_{timestamp}.json"
+            with open(filename_full, 'w') as f:
+                json.dump(base_data, f, indent=2, default=str)
+            filename = f"reports/{ticker}_analysis_base_{timestamp}.json"
+
+        save_msg = f"Base report saved to: {filename_full}" if self.language == 'en' else f"基础报告已保存至：{filename_full}"
+        console.print(f"[green]{save_msg}[/green]")
+        return filename
+
+    def save_llm_report(self, results: Dict[str, Any], format_type: str = "json"):
+        """Save LLM analysis report to file"""
+        ticker = results['ticker']
+        timestamp = results.get('timestamp', datetime.now().strftime('%Y%m%d_%H%M%S'))
+
+        # Create reports directory in public folder if it doesn't exist
+        reports_dir = "./stock-analysis-viewer/public/reports"
+        os.makedirs(reports_dir, exist_ok=True)
+
+        # Create LLM data (only LLM insights, recommendation, summary)
+        llm_data = {
+            'ticker': results['ticker'],
+            'analysis_date': results['analysis_date'],
+            'llm_analysis_date': results.get('llm_analysis_date', datetime.now().isoformat()),
+            'timestamp': timestamp,
+            'llm_insights': results.get('llm_insights', {}),
+            'recommendation': results.get('recommendation', {}),
+            'summary': results.get('summary', {})
+        }
+
+        if format_type == "json":
+            filename_full = f"{reports_dir}/{ticker}_analysis_llm_{timestamp}.json"
+            with open(filename_full, 'w') as f:
+                json.dump(llm_data, f, indent=2, default=str)
+            filename = f"reports/{ticker}_analysis_llm_{timestamp}.json"
+
+        save_msg = f"LLM report saved to: {filename_full}" if self.language == 'en' else f"LLM报告已保存至：{filename_full}"
         console.print(f"[green]{save_msg}[/green]")
         return filename
 
@@ -1434,8 +1858,24 @@ class StockAnalyzer:
 @click.option('--llm-provider', type=click.Choice(['openai', 'gemini']), help='LLM provider to use (openai or gemini)')
 @click.option('--benchmarks', help='Comma-separated list of benchmark symbols for correlation analysis')
 @click.option('--chinese', is_flag=True, help='Enable Chinese language support')
-def main(ticker, detailed, save_report, charts, start_date, end_date, report_format, llm_provider, benchmarks, chinese):
+@click.option('--non-llm-only', is_flag=True, help='Run only non-LLM analysis (for daily runs)')
+@click.option('--llm-only', is_flag=True, help='Run only LLM analysis using existing base data (for weekly runs)')
+@click.option('--base-data-path', help='Path to base analysis data file (required for --llm-only mode)')
+def main(ticker, detailed, save_report, charts, start_date, end_date, report_format, llm_provider, benchmarks, chinese, non_llm_only, llm_only, base_data_path):
     """LLM Stock Analysis Tool - Comprehensive AI-powered stock analysis with enhanced technical indicators"""
+
+    # Validate mode options
+    if non_llm_only and llm_only:
+        console.print("[red]Error: Cannot use both --non-llm-only and --llm-only flags together[/red]")
+        return
+
+    if llm_only and not base_data_path:
+        console.print("[red]Error: --base-data-path is required when using --llm-only mode[/red]")
+        return
+
+    if llm_only and not os.path.exists(base_data_path):
+        console.print(f"[red]Error: Base data file not found: {base_data_path}[/red]")
+        return
 
     # Set global language
     language = 'zh' if chinese else 'en'
@@ -1490,31 +1930,64 @@ def main(ticker, detailed, save_report, charts, start_date, end_date, report_for
     ))
 
     try:
-        analyzer = StockAnalyzer(llm_provider=llm_provider, benchmark_symbols=benchmark_symbols, language=language)
-        
-        # Analyze each ticker
-        for i, current_ticker in enumerate(ticker_list, 1):
-            # Show progress for multiple tickers
-            if len(ticker_list) > 1:
-                progress_msg = f"Processing {i}/{len(ticker_list)}: {current_ticker}" if language == 'en' else f"处理 {i}/{len(ticker_list)}: {current_ticker}"
-                console.print(f"\n[bold cyan]{'='*60}[/bold cyan]")
-                console.print(f"[bold cyan]{progress_msg}[/bold cyan]")
-                console.print(f"[bold cyan]{'='*60}[/bold cyan]")
+        if llm_only:
+            # LLM-only mode: Load base data and generate LLM insights
+            console.print(f"[blue]Running LLM-only analysis using base data from: {base_data_path}[/blue]")
 
-            results = analyzer.analyze_stock(
-                ticker=current_ticker,
-                detailed=detailed,
-                start_date=start_date,
-                end_date=end_date,
-                generate_charts=charts
-            )
+            # Load base data
+            with open(base_data_path, 'r') as f:
+                base_results = json.load(f)
+
+            # Initialize analyzer with LLM client
+            analyzer = StockAnalyzer(llm_provider=llm_provider, benchmark_symbols=benchmark_symbols, language=language)
+
+            if not analyzer.llm_client:
+                console.print("[red]Error: LLM client not available for LLM-only mode[/red]")
+                return
+
+            # Generate LLM insights for the base data
+            llm_results = analyzer.generate_llm_insights_only(base_results)
 
             # Display results
-            analyzer.display_results(results, detailed=detailed)
+            analyzer.display_results(llm_results, detailed=detailed)
 
-            # Save report if requested
+            # Save LLM report if requested
             if save_report:
-                analyzer.save_report(results, format_type=report_format)
+                analyzer.save_llm_report(llm_results, format_type=report_format)
+        else:
+            # Normal or non-LLM mode
+            analyzer = StockAnalyzer(
+                llm_provider=None if non_llm_only else llm_provider,
+                benchmark_symbols=benchmark_symbols,
+                language=language
+            )
+
+            # Analyze each ticker
+            for i, current_ticker in enumerate(ticker_list, 1):
+                # Show progress for multiple tickers
+                if len(ticker_list) > 1:
+                    progress_msg = f"Processing {i}/{len(ticker_list)}: {current_ticker}" if language == 'en' else f"处理 {i}/{len(ticker_list)}: {current_ticker}"
+                    console.print(f"\n[bold cyan]{'='*60}[/bold cyan]")
+                    console.print(f"[bold cyan]{progress_msg}[/bold cyan]")
+                    console.print(f"[bold cyan]{'='*60}[/bold cyan]")
+
+                results = analyzer.analyze_stock(
+                    ticker=current_ticker,
+                    detailed=detailed,
+                    start_date=start_date,
+                    end_date=end_date,
+                    generate_charts=charts
+                )
+
+                # Display results
+                analyzer.display_results(results, detailed=detailed)
+
+                # Save report if requested
+                if save_report:
+                    if non_llm_only:
+                        analyzer.save_base_report(results, format_type=report_format)
+                    else:
+                        analyzer.save_report(results, format_type=report_format)
                 
             # Add spacing between multiple ticker analyses
             if len(ticker_list) > 1 and i < len(ticker_list):

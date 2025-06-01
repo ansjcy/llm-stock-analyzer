@@ -7,23 +7,33 @@ import TechnicalAnalysis from '@/components/TechnicalAnalysis';
 import CorrelationChart from '@/components/CorrelationChart';
 import NewsSection from '@/components/NewsSection';
 import InsightsSummaryTable from '@/components/InsightsSummaryTable';
-import { Upload, FileText, TrendingUp, AlertCircle, ChevronDown, Moon, Sun } from 'lucide-react';
+import { Upload, FileText, TrendingUp, AlertCircle, ChevronDown } from 'lucide-react';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
+import ThemeToggle from '@/components/ThemeToggle';
 
-interface ReportFile {
+interface ReportFileInfo {
   filename: string;
+  fullPath: string;
+  date: string;
+  time: string;
+}
+
+interface ReportGroup {
   ticker: string;
   date: string;
   time: string;
-  fullPath: string;
+  baseFile?: ReportFileInfo;
+  llmFile?: ReportFileInfo;
+  legacyFile?: ReportFileInfo;
+  hasComplete: boolean;
 }
 
 function HomeContent() {
-  const { theme, toggleTheme, mounted } = useTheme();
+  const { mounted } = useTheme();
   const [analysisData, setAnalysisData] = useState<StockAnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [availableReports, setAvailableReports] = useState<ReportFile[]>([]);
+  const [availableReports, setAvailableReports] = useState<ReportGroup[]>([]);
   const [selectedReport, setSelectedReport] = useState<string>('');
   const [loadingReports, setLoadingReports] = useState(true);
 
@@ -50,28 +60,64 @@ function HomeContent() {
     }
   }, []);
 
-  const loadReport = async (reportPath: string) => {
-    if (!reportPath) return;
-    
+  const loadReport = async (reportGroup: any) => {
+    if (!reportGroup) return;
+
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(reportPath);
-      if (!response.ok) {
-        throw new Error('Failed to load report');
+      let data: StockAnalysisResult;
+
+      if (reportGroup.legacyFile) {
+        // Handle legacy complete files
+        const response = await fetch(reportGroup.legacyFile.fullPath);
+        if (!response.ok) {
+          throw new Error('Failed to load legacy report');
+        }
+        data = await response.json();
+      } else {
+        // Handle new split files - merge base and LLM data
+        let baseData: any = {};
+        let llmData: any = {};
+
+        // Load base data
+        if (reportGroup.baseFile) {
+          const baseResponse = await fetch(reportGroup.baseFile.fullPath);
+          if (!baseResponse.ok) {
+            throw new Error('Failed to load base report');
+          }
+          baseData = await baseResponse.json();
+        }
+
+        // Load LLM data if available
+        if (reportGroup.llmFile) {
+          const llmResponse = await fetch(reportGroup.llmFile.fullPath);
+          if (!llmResponse.ok) {
+            console.warn('Failed to load LLM report, continuing with base data only');
+          } else {
+            llmData = await llmResponse.json();
+          }
+        }
+
+        // Merge the data
+        data = {
+          ...baseData,
+          llm_insights: llmData.llm_insights || {},
+          recommendation: llmData.recommendation || {},
+          summary: llmData.summary || {},
+          llm_analysis_date: llmData.llm_analysis_date
+        };
       }
-      
-      const data: StockAnalysisResult = await response.json();
-      
+
       // Validate the data structure
       if (!data.ticker || !data.stock_info) {
         throw new Error('Invalid analysis file format');
       }
-      
+
       setAnalysisData(data);
-      // Store the loaded report path in sessionStorage for restoration
-      sessionStorage.setItem('currentSelectedReport', reportPath);
+      // Store the loaded report group in sessionStorage for restoration
+      sessionStorage.setItem('currentSelectedReport', JSON.stringify(reportGroup));
     } catch (err) {
       console.error('Error loading report:', err);
       setError('加载分析报告时出错。请尝试其他报告。');
@@ -80,9 +126,16 @@ function HomeContent() {
     }
   };
 
-  const handleReportSelection = (reportPath: string) => {
-    setSelectedReport(reportPath);
-    loadReport(reportPath);
+  const handleReportSelection = (reportIndex: string) => {
+    if (!reportIndex) return;
+
+    const index = parseInt(reportIndex);
+    const reportGroup = availableReports[index];
+
+    if (reportGroup) {
+      setSelectedReport(reportIndex);
+      loadReport(reportGroup);
+    }
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -350,31 +403,44 @@ function HomeContent() {
   useEffect(() => {
     // Check if returning from a detail page and reports are available
     const shouldReturnToAnalysis = sessionStorage.getItem('returnToAnalysis');
-    
+
     if (shouldReturnToAnalysis && availableReports.length > 0) {
       console.log('Returning from detail page, attempting to restore selection');
       // Clear the flag
       sessionStorage.removeItem('returnToAnalysis');
-      
+
       // Try to restore the previous selected report
       const previousSelectedReport = sessionStorage.getItem('previousSelectedReport');
       console.log('Previous selected report:', previousSelectedReport);
-      
-      if (previousSelectedReport && availableReports.some(report => report.fullPath === previousSelectedReport)) {
-        console.log('Restoring previous selection:', previousSelectedReport);
-        
-        // Use setTimeout to ensure the state update happens after current render cycle
-        setTimeout(() => {
-          console.log('Setting selectedReport to:', previousSelectedReport);
-          setSelectedReport(previousSelectedReport);
-          loadReport(previousSelectedReport);
-        }, 100);
-        
-        // Clean up the previous selection storage
-        sessionStorage.removeItem('previousSelectedReport');
-        return;
+
+      if (previousSelectedReport) {
+        try {
+          const reportGroup = JSON.parse(previousSelectedReport);
+          const index = availableReports.findIndex(report =>
+            report.ticker === reportGroup.ticker &&
+            report.date === reportGroup.date &&
+            report.time === reportGroup.time
+          );
+
+          if (index >= 0) {
+            console.log('Restoring previous selection:', index);
+
+            // Use setTimeout to ensure the state update happens after current render cycle
+            setTimeout(() => {
+              console.log('Setting selectedReport to:', index.toString());
+              setSelectedReport(index.toString());
+              loadReport(availableReports[index]);
+            }, 100);
+
+            // Clean up the previous selection storage
+            sessionStorage.removeItem('previousSelectedReport');
+            return;
+          }
+        } catch (e) {
+          console.error('Error parsing previous selected report:', e);
+        }
       }
-      
+
       // If no valid previous selection, don't auto-select, keep current state
       console.log('No valid previous selection found');
       return;
@@ -384,9 +450,8 @@ function HomeContent() {
   // Auto-select first report when reports are loaded (only on fresh load)
   useEffect(() => {
     if (availableReports.length > 0 && !selectedReport && !analysisData && !sessionStorage.getItem('returnToAnalysis')) {
-      const firstReportPath = availableReports[0].fullPath;
-      setSelectedReport(firstReportPath);
-      loadReport(firstReportPath);
+      setSelectedReport('0');
+      loadReport(availableReports[0]);
     }
   }, [availableReports, selectedReport, analysisData]);
 
@@ -417,19 +482,7 @@ function HomeContent() {
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           {/* Theme Toggle */}
-          <div className="fixed top-4 right-4 z-50">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === 'light' ? (
-                <Moon className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-              ) : (
-                <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-              )}
-            </button>
-          </div>
+          <ThemeToggle />
 
           <div className="text-center mb-12">
             <TrendingUp className="mx-auto h-16 w-16 text-blue-600 mb-4" />
@@ -456,13 +509,28 @@ function HomeContent() {
                   className="w-full p-4 text-lg border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none appearance-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white pr-10"
                 >
                   <option value="">选择股票分析报告...</option>
-                  {availableReports.map((report) => (
-                    <option key={report.fullPath} value={report.fullPath}>
-                      {report.ticker} - {new Date(
-                        `${report.date.slice(0, 4)}-${report.date.slice(4, 6)}-${report.date.slice(6, 8)}`
-                      ).toLocaleDateString('zh-CN')} ({report.time.slice(0, 2)}:${report.time.slice(2, 4)})
-                    </option>
-                  ))}
+                  {availableReports.map((report, index) => {
+                    const dateStr = `${report.date.slice(0, 4)}-${report.date.slice(4, 6)}-${report.date.slice(6, 8)}`;
+                    const timeStr = `${report.time.slice(0, 2)}:${report.time.slice(2, 4)}`;
+
+                    // Determine status indicator
+                    let statusIndicator = '';
+                    if (report.legacyFile) {
+                      statusIndicator = ' (完整)';
+                    } else if (report.hasComplete) {
+                      statusIndicator = ' (基础+LLM)';
+                    } else if (report.baseFile && !report.llmFile) {
+                      statusIndicator = ' (仅基础)';
+                    } else if (report.llmFile && !report.baseFile) {
+                      statusIndicator = ' (仅LLM)';
+                    }
+
+                    return (
+                      <option key={index} value={index.toString()}>
+                        {report.ticker} - {new Date(dateStr).toLocaleDateString('zh-CN')} ({timeStr}){statusIndicator}
+                      </option>
+                    );
+                  })}
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
               </div>
@@ -559,19 +627,7 @@ function HomeContent() {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Theme Toggle */}
-        <div className="fixed top-4 right-4 z-50">
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            aria-label="Toggle theme"
-          >
-            {theme === 'light' ? (
-              <Moon className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-            ) : (
-              <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-            )}
-          </button>
-        </div>
+        <ThemeToggle />
 
         {/* Action Bar */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 mb-6 border border-gray-200 dark:border-gray-700">
@@ -597,13 +653,27 @@ function HomeContent() {
                     className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none appearance-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white pr-8"
                   >
                     <option value="">切换到其他报告...</option>
-                    {availableReports.map((report) => (
-                      <option key={report.fullPath} value={report.fullPath}>
-                        {report.ticker} - {new Date(
-                          `${report.date.slice(0, 4)}-${report.date.slice(4, 6)}-${report.date.slice(6, 8)}`
-                        ).toLocaleDateString('zh-CN')}
-                      </option>
-                    ))}
+                    {availableReports.map((report, index) => {
+                      const dateStr = `${report.date.slice(0, 4)}-${report.date.slice(4, 6)}-${report.date.slice(6, 8)}`;
+
+                      // Determine status indicator
+                      let statusIndicator = '';
+                      if (report.legacyFile) {
+                        statusIndicator = ' (完整)';
+                      } else if (report.hasComplete) {
+                        statusIndicator = ' (基础+LLM)';
+                      } else if (report.baseFile && !report.llmFile) {
+                        statusIndicator = ' (仅基础)';
+                      } else if (report.llmFile && !report.baseFile) {
+                        statusIndicator = ' (仅LLM)';
+                      }
+
+                      return (
+                        <option key={index} value={index.toString()}>
+                          {report.ticker} - {new Date(dateStr).toLocaleDateString('zh-CN')}{statusIndicator}
+                        </option>
+                      );
+                    })}
                   </select>
                   <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
                 </div>
@@ -624,6 +694,7 @@ function HomeContent() {
           <InsightsSummaryTable 
             llmInsights={analysisData.llm_insights}
             warrenBuffettAnalysis={analysisData.warren_buffett_analysis}
+            peterLynchAnalysis={analysisData.peter_lynch_analysis}
             summary={analysisData.summary}
             recommendation={analysisData.recommendation}
             analysisData={analysisData}
@@ -634,6 +705,8 @@ function HomeContent() {
           <TechnicalAnalysis 
             technicalAnalysis={analysisData.technical_analysis}
             charts={analysisData.charts}
+            ticker={analysisData.ticker}
+            historicalData={analysisData.historical_data}
           />
         </div>
         

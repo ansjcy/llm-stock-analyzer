@@ -42,9 +42,10 @@ class LLMClientFactory:
                 return OpenAIClient(language=language)
             
             elif provider == "gemini":
-                if not config.GEMINI_API_KEY:
-                    raise ValueError("Gemini API key is required")
-                stock_logger.info("Creating Gemini client")
+                gemini_keys = config.get_gemini_api_keys()
+                if not gemini_keys:
+                    raise ValueError("At least one Gemini API key is required. Set GEMINI_API_KEY or GEMINI_API_KEYS environment variable.")
+                stock_logger.info(f"Creating Gemini client with {len(gemini_keys)} API keys")
                 return GeminiClient(language=language)
             
             else:
@@ -68,8 +69,8 @@ class LLMClientFactory:
         
         if config.OPENAI_API_KEY:
             available.append("openai")
-        
-        if config.GEMINI_API_KEY:
+
+        if config.get_gemini_api_keys():
             available.append("gemini")
         
         return available

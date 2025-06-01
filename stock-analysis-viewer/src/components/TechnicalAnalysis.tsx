@@ -1,15 +1,16 @@
 import { TechnicalAnalysis as TechnicalAnalysisType, Charts } from '@/types/analysis';
 import { TrendingUp, TrendingDown, Activity, Target, Gauge, BarChart3 } from 'lucide-react';
-import Image from 'next/image';
 import HelpTooltip from './HelpTooltip';
-import { resolveChartPath } from '@/utils/chartPath';
+import TechnicalCharts from './TechnicalCharts';
 
 interface TechnicalAnalysisProps {
   technicalAnalysis: TechnicalAnalysisType;
   charts?: Charts;
+  ticker: string;
+  historicalData?: any[];
 }
 
-export default function TechnicalAnalysis({ technicalAnalysis, charts }: TechnicalAnalysisProps) {
+export default function TechnicalAnalysis({ technicalAnalysis, charts, ticker, historicalData }: TechnicalAnalysisProps) {
   const getSignalColor = (signal: string | undefined | null) => {
     if (!signal || typeof signal !== 'string') return 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300';
     if (signal === 'bullish' || signal === 'buy') return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
@@ -142,37 +143,23 @@ export default function TechnicalAnalysis({ technicalAnalysis, charts }: Technic
         />
       </h2>
 
-      {/* Technical Analysis Chart */}
-      {charts?.technical_analysis && (
-        <div className="mb-6">
-          <div className="flex items-center space-x-2 mb-4">
-            <BarChart3 className="text-blue-600" size={20} />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">技术分析图表</h3>
-            <HelpTooltip 
-              content="技术分析图表显示股票价格走势、技术指标和交易量。包括移动平均线、RSI、MACD等关键指标的可视化展示，帮助识别趋势和交易机会。"
-              title="技术分析图表"
-              size="sm"
-            />
-          </div>
-          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-            <Image 
-              src={resolveChartPath(charts.technical_analysis)}
-              alt="Technical Analysis Chart"
-              className="w-full h-auto rounded-lg shadow-sm"
-              width={800}
-              height={400}
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                const parent = target.parentElement;
-                if (parent) {
-                  parent.innerHTML = '<div class="text-center py-8 text-gray-500 dark:text-gray-400">图表加载失败</div>';
-                }
-              }}
-            />
-          </div>
+      {/* Interactive Technical Analysis Charts */}
+      <div className="mb-6">
+        <div className="flex items-center space-x-2 mb-4">
+          <BarChart3 className="text-blue-600" size={20} />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">交互式技术分析图表</h3>
+          <HelpTooltip 
+            content="交互式技术分析图表显示股票价格走势、技术指标和交易量。包括移动平均线、RSI、MACD等关键指标的可视化展示，帮助识别趋势和交易机会。图表支持缩放和悬停查看详细数据。"
+            title="交互式技术分析图表"
+            size="sm"
+          />
         </div>
-      )}
+        <TechnicalCharts 
+          technicalAnalysis={technicalAnalysis}
+          historicalData={historicalData}
+          ticker={ticker}
+        />
+      </div>
 
       {/* Overall Signal */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-6 mb-6">
