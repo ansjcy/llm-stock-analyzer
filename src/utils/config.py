@@ -41,7 +41,7 @@ class Config:
     LLM_TOTAL_TIMEOUT: int = int(os.getenv("LLM_TOTAL_TIMEOUT", "600"))  # 10 minutes total for all LLM analysis
 
     # Gemini Configuration
-    GEMINI_PRIMARY_MODEL: str = os.getenv("GEMINI_PRIMARY_MODEL", "gemini-2.0-flash")
+    GEMINI_PRIMARY_MODEL: str = os.getenv("GEMINI_PRIMARY_MODEL", "gemini-2.5-flash-preview-05-20")
     GEMINI_FALLBACK_MODEL: str = os.getenv("GEMINI_FALLBACK_MODEL", "gemini-1.5-flash")
     
     # Data Sources Configuration

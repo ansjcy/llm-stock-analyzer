@@ -35,6 +35,7 @@ from src.analysis.technical_indicators import get_technical_analyzer
 from src.analysis.warren_buffett import get_warren_buffett_analyzer
 from src.analysis.peter_lynch import get_peter_lynch_analyzer
 from src.llm.client_factory import create_llm_client, LLMClientFactory
+from src.llm.token_tracker import token_tracker
 
 
 console = Console()
@@ -1226,6 +1227,9 @@ class StockAnalyzer:
         os.makedirs(reports_dir, exist_ok=True)
 
         if format_type == "json":
+            # Add token usage summary to results
+            results['token_usage'] = token_tracker.get_summary()
+
             filename_full = f"{reports_dir}/{ticker}_analysis_{timestamp}.json"
             with open(filename_full, 'w') as f:
                 json.dump(results, f, indent=2, default=str)
@@ -1295,7 +1299,8 @@ class StockAnalyzer:
             'timestamp': timestamp,
             'llm_insights': results.get('llm_insights', {}),
             'recommendation': results.get('recommendation', {}),
-            'summary': results.get('summary', {})
+            'summary': results.get('summary', {}),
+            'token_usage': token_tracker.get_summary()
         }
 
         if format_type == "json":
@@ -1684,6 +1689,31 @@ class StockAnalyzer:
             md_content += f"""## Executive Summary
 {summary.get('executive_summary', 'No summary available')}
 
+"""
+
+        # Add token usage summary
+        token_summary = token_tracker.get_summary()
+        if token_summary['total_calls'] > 0:
+            md_content += f"""## Token Usage Summary
+
+**Total LLM API Calls:** {token_summary['total_calls']}
+**Total Input Tokens:** {token_summary['total_input_tokens']:,}
+**Total Output Tokens:** {token_summary['total_output_tokens']:,}
+**Total Tokens:** {token_summary['total_tokens']:,}
+**Estimated Cost:** ${token_summary['total_cost']:.4f}
+**Analysis Duration:** {token_summary['duration_seconds']:.1f} seconds
+
+### Usage by Provider
+"""
+            for provider, stats in token_summary['by_provider'].items():
+                models_str = ", ".join(stats['models'])
+                md_content += f"""
+**{provider.upper()}:**
+- Models: {models_str}
+- Calls: {stats['calls']}
+- Input Tokens: {stats['input_tokens']:,}
+- Output Tokens: {stats['output_tokens']:,}
+- Cost: ${stats['cost']:.4f}
 """
 
         md_content += f"""
@@ -2107,6 +2137,10 @@ def main(ticker, detailed, save_report, charts, start_date, end_date, report_for
             # Add spacing between multiple ticker analyses
             if len(ticker_list) > 1 and i < len(ticker_list):
                 console.print("\n")
+
+        # Display token usage summary
+        console.print("\n")
+        token_tracker.display_summary()
 
         # Summary message for multiple tickers
         if len(ticker_list) > 1:

@@ -13,6 +13,7 @@ from src.utils.logger import stock_logger
 from src.llm.base_client import BaseLLMClient
 from src.llm.analysis_prompts import AnalysisPrompts
 from src.llm.simple_key_manager import GeminiKeyManager, RetryConfig
+from src.llm.token_tracker import token_tracker
 
 
 class APITimeoutError(Exception):
@@ -64,20 +65,22 @@ class GeminiClient(BaseLLMClient):
 
         stock_logger.info(f"Initialized Gemini client with {len(api_keys)} API keys, primary model: {self.primary_model}, fallback: {self.fallback_model}")
         
-    def _generate_response(self, system_prompt: str, user_prompt: str, max_tokens: int = 2000) -> str:
+    def _generate_response(self, system_prompt: str, user_prompt: str, max_tokens: int = 2000, operation: str = "unknown") -> str:
         """
         Helper method to generate response from Gemini with rate limiting and retry logic
         """
+        start_time = time.time()
+
         # Combine system and user prompts for Gemini
         combined_prompt = f"System: {system_prompt}\n\nUser: {user_prompt}"
 
-        # Update generation config with specific max tokens
+        # Ensure max_tokens is an integer (though we don't use it in GenerationConfig due to bug)
+        max_tokens = int(max_tokens)
+
+        # Update generation config (removed max_output_tokens due to Gemini 2.5 Flash bug)
+        # Note: max_output_tokens causes content filtering issues in Gemini 2.5 Flash
         generation_config = genai.types.GenerationConfig(
             temperature=0.7,
-            top_p=1.0,
-            top_k=32,
-            candidate_count=1,
-            max_output_tokens=max_tokens,
         )
 
         # Configure safety settings to be maximally permissive for financial analysis
@@ -104,7 +107,7 @@ class GeminiClient(BaseLLMClient):
         models_to_try = [self.primary_model, self.fallback_model]
 
         for i, model_name in enumerate(models_to_try):
-            result = self._try_model(model_name, combined_prompt, generation_config, safety_settings)
+            result = self._try_model(model_name, combined_prompt, generation_config, safety_settings, operation, start_time)
 
             # Check if we got a successful response
             if result and not result.startswith("Error:") and "content filtering" not in result.lower():
@@ -129,7 +132,7 @@ class GeminiClient(BaseLLMClient):
 
         return "Error: All models failed due to content filtering or other issues. Please try rephrasing your request."
 
-    def _try_model(self, model_name: str, combined_prompt: str, generation_config, safety_settings) -> str:
+    def _try_model(self, model_name: str, combined_prompt: str, generation_config, safety_settings, operation: str, start_time: float) -> str:
         """
         Try to generate response with a specific model using simple retry logic
         """
@@ -156,10 +159,7 @@ class GeminiClient(BaseLLMClient):
                 # Make the API request with timeout for fast rate limit detection
                 stock_logger.info(f"Making API request to {model_name} with key ...{api_key[-8:]} (attempt {attempt + 1}/{max_attempts})")
 
-                # Set up timeout (10 seconds for quick detection of hanging calls)
-                signal.signal(signal.SIGALRM, timeout_handler)
-                signal.alarm(60)
-
+                # Make the API request (removed signal timeout for debugging)
                 try:
                     response = model.generate_content(
                         combined_prompt,
@@ -167,14 +167,15 @@ class GeminiClient(BaseLLMClient):
                         safety_settings=safety_settings
                     )
                     stock_logger.info(f"API request to {model_name} completed successfully")
-                finally:
-                    signal.alarm(0)  # Cancel timeout
+                except Exception as api_error:
+                    # Re-raise the exception to be caught by the outer try-catch
+                    raise api_error
 
                 # Record successful request
                 self.key_manager.record_request(api_key)
 
                 # Process response
-                return self._process_response(response, combined_prompt, model_name)
+                return self._process_response(response, combined_prompt, model_name, operation, start_time)
 
             except google_exceptions.ResourceExhausted as e:
                 # Rate limit error (429) - should be detected quickly
@@ -230,9 +231,36 @@ class GeminiClient(BaseLLMClient):
         else:
             return "Error: All retry attempts failed."
 
-    def _process_response(self, response, combined_prompt: str, model_name: str = "unknown") -> str:
+    def _process_response(self, response, combined_prompt: str, model_name: str = "unknown", operation: str = "unknown", start_time: float = 0.0) -> str:
         """Process the Gemini API response and extract text"""
         try:
+            # Always try to track token usage, even for blocked responses
+            duration = time.time() - start_time
+            input_tokens = 0
+            output_tokens = 0
+            cached_tokens = 0
+
+            # Extract token usage if available
+            if hasattr(response, 'usage_metadata') and response.usage_metadata:
+                usage = response.usage_metadata
+                input_tokens = getattr(usage, 'prompt_token_count', 0)
+                output_tokens = getattr(usage, 'candidates_token_count', 0)
+                cached_tokens = getattr(usage, 'cached_content_token_count', 0)
+
+                # Record usage
+                token_tracker.record_usage(
+                    provider='gemini',
+                    model=model_name,
+                    operation=operation,
+                    input_tokens=input_tokens,
+                    output_tokens=output_tokens,
+                    cached_tokens=cached_tokens,
+                    duration_seconds=duration
+                )
+            else:
+                # Log when usage metadata is not available
+                stock_logger.warning(f"No usage metadata available for {model_name} {operation} call - this may affect cost tracking")
+
             # Check if response was blocked
             if response.candidates and len(response.candidates) > 0:
                 candidate = response.candidates[0]
@@ -292,7 +320,7 @@ class GeminiClient(BaseLLMClient):
         """Internal method for technical analysis generation"""
         try:
             prompts = AnalysisPrompts.get_technical_analysis_prompt(ticker, technical_data, stock_info, self.language)
-            return self._generate_response(prompts["system"], prompts["user"], 2000)
+            return self._generate_response(prompts["system"], prompts["user"], 2000, "technical_analysis")
 
         except Exception as e:
             stock_logger.error(f"Error generating technical analysis: {e}")
@@ -308,7 +336,7 @@ class GeminiClient(BaseLLMClient):
         """Internal method for fundamental analysis generation"""
         try:
             prompts = AnalysisPrompts.get_fundamental_analysis_prompt(ticker, stock_info, financial_data, self.language)
-            return self._generate_response(prompts["system"], prompts["user"], 2000)
+            return self._generate_response(prompts["system"], prompts["user"], 2000, "fundamental_analysis")
 
         except Exception as e:
             stock_logger.error(f"Error generating fundamental analysis: {e}")
@@ -324,7 +352,7 @@ class GeminiClient(BaseLLMClient):
         """Internal method for news analysis generation"""
         try:
             prompts = AnalysisPrompts.get_news_analysis_prompt(ticker, news_articles, stock_info, self.language)
-            return self._generate_response(prompts["system"], prompts["user"], 1500)
+            return self._generate_response(prompts["system"], prompts["user"], 1500, "news_analysis")
 
         except Exception as e:
             stock_logger.error(f"Error generating news analysis: {e}")
@@ -340,7 +368,7 @@ class GeminiClient(BaseLLMClient):
         """Internal method for Warren Buffett analysis generation"""
         try:
             prompts = AnalysisPrompts.get_warren_buffett_analysis_prompt(ticker, warren_buffett_data, stock_info, self.language)
-            return self._generate_response(prompts["system"], prompts["user"], 2500)
+            return self._generate_response(prompts["system"], prompts["user"], 2500, "warren_buffett_analysis")
 
         except Exception as e:
             stock_logger.error(f"Error generating Warren Buffett analysis: {e}")
@@ -356,7 +384,7 @@ class GeminiClient(BaseLLMClient):
         """Internal method for Peter Lynch analysis generation"""
         try:
             prompts = AnalysisPrompts.get_peter_lynch_analysis_prompt(ticker, peter_lynch_data, stock_info, self.language)
-            return self._generate_response(prompts["system"], prompts["user"], 2500)
+            return self._generate_response(prompts["system"], prompts["user"], 2500, "peter_lynch_analysis")
 
         except Exception as e:
             stock_logger.error(f"Error generating Peter Lynch analysis: {e}")
@@ -376,7 +404,7 @@ class GeminiClient(BaseLLMClient):
             prompts = AnalysisPrompts.get_investment_recommendation_prompt(
                 ticker, stock_info, technical_analysis, fundamental_analysis, news_analysis, self.language
             )
-            return self._generate_response(prompts["system"], prompts["user"], 2000)
+            return self._generate_response(prompts["system"], prompts["user"], 2000, "investment_recommendation")
 
         except Exception as e:
             stock_logger.error(f"Error generating investment recommendation: {e}")
@@ -397,7 +425,7 @@ class GeminiClient(BaseLLMClient):
                 ticker, stock_info, technical_summary, fundamental_summary,
                 news_summary, recommendation, self.language
             )
-            return self._generate_response(prompts["system"], prompts["user"], 1000)
+            return self._generate_response(prompts["system"], prompts["user"], 1000, "executive_summary")
 
         except Exception as e:
             stock_logger.error(f"Error generating summary: {e}")
