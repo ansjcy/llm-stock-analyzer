@@ -111,9 +111,10 @@ jobs:
           USE_CACHE: "true"
           YAHOO_FINANCE_ENABLED: "true"
           # Timeout configurations to prevent getting stuck
-          GEMINI_RETRY_MAX_ATTEMPTS: "2"
-          GEMINI_RETRY_MAX_DELAY: "30"
-          GEMINI_KEY_WAIT_TIMEOUT: "90"
+          GEMINI_RETRY_MAX_ATTEMPTS: "4"
+          GEMINI_RETRY_BASE_DELAY: "0.5"
+          GEMINI_RETRY_MAX_DELAY: "10"
+          GEMINI_KEY_WAIT_TIMEOUT: "30"
           LLM_ANALYSIS_TIMEOUT: "180"
           LLM_TOTAL_TIMEOUT: "1200"
         continue-on-error: true

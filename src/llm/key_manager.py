@@ -26,40 +26,32 @@ class KeyUsage:
 
 class GeminiKeyManager:
     """
-    Manages multiple Gemini API keys with rate limiting and load balancing
-    
-    Features:
-    - Round-robin load balancing across multiple keys
-    - Rate limiting: max 10 requests per key per minute
-    - Automatic key rotation when rate limits are hit
-    - Thread-safe operations
-    - Retry mechanism with exponential backoff
+    Simple Gemini API key manager with round-robin selection and rate limit tracking
     """
-    
+
     def __init__(self, api_keys: List[str], max_requests_per_minute: int = 10):
         """
         Initialize the key manager
-        
+
         Args:
             api_keys: List of Gemini API keys
             max_requests_per_minute: Maximum requests per key per minute
         """
         if not api_keys:
             raise ValueError("At least one API key must be provided")
-        
+
         self.api_keys = api_keys
         self.max_requests_per_minute = max_requests_per_minute
         self.current_key_index = 0
         self.lock = threading.Lock()
-        
-        # Initialize key usage tracking
-        self.key_usage: Dict[str, KeyUsage] = {}
+
+        # Simple tracking: just track rate limited keys and when they'll be available
+        self.rate_limited_keys: Dict[str, float] = {}  # key -> timestamp when available again
+        self.request_counts: Dict[str, deque] = {}  # key -> deque of request timestamps
+
+        # Initialize request tracking
         for key in api_keys:
-            self.key_usage[key] = KeyUsage(
-                key=key,
-                request_times=deque(maxlen=max_requests_per_minute),
-                rate_limit_history=deque(maxlen=10)  # Track last 10 rate limit events
-            )
+            self.request_counts[key] = deque(maxlen=max_requests_per_minute)
         
         stock_logger.info(f"Initialized Gemini Key Manager with {len(api_keys)} keys, "
                          f"max {max_requests_per_minute} requests per minute per key")

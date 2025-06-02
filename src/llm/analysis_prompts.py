@@ -29,7 +29,9 @@ class AnalysisPrompts:
         correlation_data = technical_data.get('correlation_analysis', {})
 
         # Get beta from correlation_data or fallback to stock_info
-        beta_value =  stock_info.get('beta') or correlation_data.get('beta').get('sp500_beta')
+        beta_value = stock_info.get('beta')
+        if not beta_value and correlation_data.get('beta'):
+            beta_value = correlation_data.get('beta', {}).get('sp500_beta')
         beta_display = f"{beta_value:.3f}" if beta_value and isinstance(beta_value, (int, float)) else '无数据'
         beta_display_en = f"{beta_value:.3f}" if beta_value and isinstance(beta_value, (int, float)) else 'N/A'
 
@@ -56,9 +58,9 @@ class AnalysisPrompts:
             - 移动平均+RSI+成交量：{strategies.get('ma_rsi_volume_strategy', {}).get('signal', '无数据')} (评分：{strategies.get('ma_rsi_volume_strategy', {}).get('score', 0):.1f})
             
             市场相关性分析：
-            - 短期标普500相关性: {correlation_data.get('correlations', {}).get('short_term').get('^GSPC', 'N/A')}
-            - 中期标普500相关性：{correlation_data.get('correlations', {}).get('medium_term').get('^GSPC', 'N/A')}
-            - 长期标普500相关性: {correlation_data.get('correlations', {}).get('long_term').get('^GSPC', 'N/A')}
+            - 短期标普500相关性: {correlation_data.get('correlations', {}).get('short_term', {}).get('^GSPC', 'N/A')}
+            - 中期标普500相关性：{correlation_data.get('correlations', {}).get('medium_term', {}).get('^GSPC', 'N/A')}
+            - 长期标普500相关性: {correlation_data.get('correlations', {}).get('long_term', {}).get('^GSPC', 'N/A')}
             - 贝塔系数（系统性风险）：{beta_display}
             - 多元化评分：{correlation_data.get('diversification_score', '无数据')}
             
@@ -153,9 +155,9 @@ class AnalysisPrompts:
             - MA+RSI+Volume: {strategies.get('ma_rsi_volume_strategy', {}).get('signal', 'N/A')} (Score: {strategies.get('ma_rsi_volume_strategy', {}).get('score', 0):.1f})
             
             Market Correlation Analysis:
-            - Short term S&P 500 Correlation: {correlation_data.get('correlations', {}).get('short_term').get('^GSPC', 'N/A')}
-            - Medium term S&P 500 Correlation: {correlation_data.get('correlations', {}).get('medium_term').get('^GSPC', 'N/A')}
-            - Long term S&P 500 Correlation: {correlation_data.get('correlations', {}).get('long_term').get('^GSPC', 'N/A')}
+            - Short term S&P 500 Correlation: {correlation_data.get('correlations', {}).get('short_term', {}).get('^GSPC', 'N/A')}
+            - Medium term S&P 500 Correlation: {correlation_data.get('correlations', {}).get('medium_term', {}).get('^GSPC', 'N/A')}
+            - Long term S&P 500 Correlation: {correlation_data.get('correlations', {}).get('long_term', {}).get('^GSPC', 'N/A')}
             - Beta (Systematic Risk): {beta_display_en}
             - Diversification Score: {correlation_data.get('diversification_score', 'N/A')}
             

@@ -31,14 +31,14 @@ class Config:
 
     # Rate Limiting Configuration
     GEMINI_MAX_REQUESTS_PER_MINUTE: int = int(os.getenv("GEMINI_MAX_REQUESTS_PER_MINUTE", "10"))
-    GEMINI_RETRY_MAX_ATTEMPTS: int = int(os.getenv("GEMINI_RETRY_MAX_ATTEMPTS", "2"))  # Reduced from 3 to 2
-    GEMINI_RETRY_BASE_DELAY: float = float(os.getenv("GEMINI_RETRY_BASE_DELAY", "1.0"))
-    GEMINI_RETRY_MAX_DELAY: float = float(os.getenv("GEMINI_RETRY_MAX_DELAY", "30.0"))  # Reduced from 60 to 30
-    GEMINI_KEY_WAIT_TIMEOUT: int = int(os.getenv("GEMINI_KEY_WAIT_TIMEOUT", "90"))  # Reduced from 120 to 90 seconds
+    GEMINI_RETRY_MAX_ATTEMPTS: int = int(os.getenv("GEMINI_RETRY_MAX_ATTEMPTS", "3"))  # Simple retry count
+    GEMINI_RETRY_BASE_DELAY: float = float(os.getenv("GEMINI_RETRY_BASE_DELAY", "1.0"))  # Simple 1 second delay
+    GEMINI_RETRY_MAX_DELAY: float = float(os.getenv("GEMINI_RETRY_MAX_DELAY", "5.0"))  # Max 5 seconds
+    GEMINI_KEY_WAIT_TIMEOUT: int = int(os.getenv("GEMINI_KEY_WAIT_TIMEOUT", "10"))  # Reduced to 10 seconds
 
     # LLM Analysis Timeout Configuration
-    LLM_ANALYSIS_TIMEOUT: int = int(os.getenv("LLM_ANALYSIS_TIMEOUT", "180"))  # 3 minutes per LLM analysis step
-    LLM_TOTAL_TIMEOUT: int = int(os.getenv("LLM_TOTAL_TIMEOUT", "1200"))  # 20 minutes total for all LLM analysis
+    LLM_ANALYSIS_TIMEOUT: int = int(os.getenv("LLM_ANALYSIS_TIMEOUT", "60"))  # 1 minute per LLM analysis step
+    LLM_TOTAL_TIMEOUT: int = int(os.getenv("LLM_TOTAL_TIMEOUT", "600"))  # 10 minutes total for all LLM analysis
 
     # Gemini Configuration
     GEMINI_PRIMARY_MODEL: str = os.getenv("GEMINI_PRIMARY_MODEL", "gemini-2.0-flash")
