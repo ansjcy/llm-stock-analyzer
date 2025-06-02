@@ -9,7 +9,7 @@ import sys
 import json
 import argparse
 from datetime import datetime
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 import click
 from rich.console import Console
@@ -403,6 +403,16 @@ class StockAnalyzer:
         total_steps = len(available_analyses)
         console.print(f"[cyan]Will generate {total_steps} LLM analysis components[/cyan]")
 
+        # Check if we can use parallel processing
+        available_keys = self.llm_client.key_manager.get_multiple_available_keys()
+        use_parallel = len(available_keys) >= 2 and len(available_analyses) >= 2
+
+        if use_parallel:
+            console.print(f"[cyan]Using parallel processing with {len(available_keys)} keys for faster analysis[/cyan]")
+            return self._generate_parallel_llm_insights(results, ticker, stock_info, news_articles)
+        else:
+            console.print(f"[cyan]Using sequential processing (available keys: {len(available_keys)})[/cyan]")
+
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
@@ -567,6 +577,111 @@ class StockAnalyzer:
         # Update analysis date for LLM insights
         results['llm_analysis_date'] = datetime.now().isoformat()
 
+        return results
+
+    def _generate_parallel_llm_insights(self, results: Dict[str, Any], ticker: str, stock_info: Dict[str, Any],
+                                       news_articles: List[Dict]) -> Dict[str, Any]:
+        """Generate LLM insights using parallel processing with multiple API keys"""
+
+        # Prepare analysis requests for parallel processing
+        analysis_requests = []
+
+        # Technical analysis
+        if results.get('technical_analysis'):
+            enhanced_technical_data = {
+                **results['technical_analysis'],
+                'correlation_analysis': results.get('correlation_analysis', {})
+            }
+            analysis_requests.append({
+                'type': 'technical',
+                'method': 'generate_technical_analysis',
+                'args': [ticker, enhanced_technical_data, stock_info]
+            })
+
+        # Fundamental analysis
+        analysis_requests.append({
+            'type': 'fundamental',
+            'method': 'generate_fundamental_analysis',
+            'args': [ticker, stock_info, results.get('fundamental_analysis', {})]
+        })
+
+        # Warren Buffett analysis
+        if results.get('warren_buffett_analysis'):
+            analysis_requests.append({
+                'type': 'warren_buffett',
+                'method': 'generate_warren_buffett_analysis',
+                'args': [ticker, results['warren_buffett_analysis'], stock_info]
+            })
+
+        # Peter Lynch analysis
+        if results.get('peter_lynch_analysis'):
+            analysis_requests.append({
+                'type': 'peter_lynch',
+                'method': 'generate_peter_lynch_analysis',
+                'args': [ticker, results['peter_lynch_analysis'], stock_info]
+            })
+
+        # News analysis
+        if news_articles:
+            analysis_requests.append({
+                'type': 'news',
+                'method': 'generate_news_analysis',
+                'args': [ticker, news_articles, stock_info]
+            })
+
+        console.print(f"[cyan]Starting parallel analysis for {len(analysis_requests)} components...[/cyan]")
+
+        # Execute parallel analysis
+        parallel_results = self.llm_client.generate_parallel_analysis(analysis_requests)
+
+        # Update results with parallel analysis outputs
+        for analysis_type, result in parallel_results.items():
+            results['llm_insights'][analysis_type] = result
+            console.print(f"[green]✓ {analysis_type.title()} analysis completed ({len(result)} chars)[/green]")
+
+        # Generate investment recommendation (sequential, as it depends on other analyses)
+        console.print(f"[yellow]Generating investment recommendation...[/yellow]")
+        try:
+            investment_recommendation = self.llm_client.generate_investment_recommendation(
+                ticker, stock_info,
+                results['llm_insights'].get('technical', ''),
+                results['llm_insights'].get('fundamental', ''),
+                results['llm_insights'].get('news', '')
+            )
+            results['recommendation'] = {
+                'full_analysis': investment_recommendation
+            }
+            console.print(f"[green]✓ Investment recommendation generated ({len(investment_recommendation)} chars)[/green]")
+        except Exception as e:
+            console.print(f"[red]✗ Investment recommendation failed: {e}[/red]")
+            results['recommendation'] = {
+                'full_analysis': f"Error generating investment recommendation: {str(e)}"
+            }
+
+        # Generate executive summary (sequential, as it depends on recommendation)
+        console.print(f"[yellow]Generating executive summary...[/yellow]")
+        try:
+            executive_summary = self.llm_client.summarize_analysis(
+                ticker, stock_info,
+                results['llm_insights'].get('technical', ''),
+                results['llm_insights'].get('fundamental', ''),
+                results['llm_insights'].get('news', ''),
+                investment_recommendation
+            )
+            results['summary'] = {
+                'executive_summary': executive_summary
+            }
+            console.print(f"[green]✓ Executive summary generated ({len(executive_summary)} chars)[/green]")
+        except Exception as e:
+            console.print(f"[red]✗ Executive summary failed: {e}[/red]")
+            results['summary'] = {
+                'executive_summary': f"Error generating executive summary: {str(e)}"
+            }
+
+        # Update analysis date for LLM insights
+        results['llm_analysis_date'] = datetime.now().isoformat()
+
+        console.print(f"[green]✓ Parallel LLM analysis completed![/green]")
         return results
 
     def _extract_key_metrics(self, stock_info: Dict[str, Any]) -> Dict[str, Any]:

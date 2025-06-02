@@ -19,6 +19,9 @@ class KeyUsage:
     last_used: float = 0.0
     is_rate_limited: bool = False
     rate_limit_until: float = 0.0
+    rate_limit_recovery_time: Optional[float] = None  # When key recovered from rate limit
+    consecutive_rate_limits: int = 0  # Track how often this key gets rate limited
+    rate_limit_history: deque = None  # Track recent rate limit events
 
 
 class GeminiKeyManager:
@@ -54,11 +57,16 @@ class GeminiKeyManager:
         for key in api_keys:
             self.key_usage[key] = KeyUsage(
                 key=key,
-                request_times=deque(maxlen=max_requests_per_minute)
+                request_times=deque(maxlen=max_requests_per_minute),
+                rate_limit_history=deque(maxlen=10)  # Track last 10 rate limit events
             )
         
         stock_logger.info(f"Initialized Gemini Key Manager with {len(api_keys)} keys, "
                          f"max {max_requests_per_minute} requests per minute per key")
+
+        # Log key identifiers for debugging (last 8 characters)
+        key_ids = [f"...{key[-8:]}" for key in api_keys]
+        stock_logger.info(f"Available keys: {key_ids}")
     
     def _cleanup_old_requests(self, key_usage: KeyUsage) -> None:
         """Remove request timestamps older than 1 minute"""
@@ -84,6 +92,7 @@ class GeminiKeyManager:
         if key_usage.is_rate_limited and current_time >= key_usage.rate_limit_until:
             key_usage.is_rate_limited = False
             key_usage.rate_limit_until = 0.0
+            key_usage.rate_limit_recovery_time = current_time  # Track when key recovered
             stock_logger.info(f"Rate limit cleared for key ending in ...{key[-8:]}")
 
         # Clean up old requests
@@ -104,26 +113,148 @@ class GeminiKeyManager:
     
     def get_available_key(self) -> Optional[str]:
         """
-        Get an available API key using round-robin load balancing
-        
+        Get an available API key using intelligent selection that avoids recently rate-limited keys
+
+        Selection criteria (in order of priority):
+        1. Avoid keys that recently recovered from rate limits (within last 30 seconds)
+        2. Prefer keys with lowest current usage (least likely to hit rate limit)
+        3. Prefer keys with fewer recent rate limit events
+        4. Prefer keys with lower total usage for long-term balance
+
         Returns:
             Available API key or None if all keys are rate limited
         """
         with self.lock:
-            # Try to find an available key starting from current index
-            for _ in range(len(self.api_keys)):
-                key = self.api_keys[self.current_key_index]
-                
+            available_keys = []
+            current_time = time.time()
+
+            # First, collect all available keys with their risk scores
+            for key in self.api_keys:
                 if self._is_key_available(key):
-                    # Move to next key for next request (round-robin)
-                    self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
-                    return key
-                
-                # Try next key
-                self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
-            
-            # No available keys
-            return None
+                    key_usage = self.key_usage[key]
+                    self._cleanup_old_requests(key_usage)
+
+                    current_requests = len(key_usage.request_times)
+                    available_capacity = self.max_requests_per_minute - current_requests
+
+                    # Calculate risk score (lower is better)
+                    risk_score = self._calculate_key_risk_score(key_usage, current_time, current_requests)
+
+                    available_keys.append((key, current_requests, available_capacity, risk_score, key_usage))
+
+            if not available_keys:
+                stock_logger.debug("No available keys found")
+                return None
+
+            # Sort by risk score (ascending - lower risk is better)
+            available_keys.sort(key=lambda x: x[3])
+
+            # Select the lowest risk key
+            best_key, current_reqs, available_cap, risk_score, key_usage = available_keys[0]
+
+            # Reset consecutive rate limits on successful selection (if key hasn't been rate limited recently)
+            if key_usage.rate_limit_recovery_time is None or (current_time - key_usage.rate_limit_recovery_time) > 300:
+                key_usage.consecutive_rate_limits = 0
+
+            stock_logger.debug(f"Smart selection: key ...{best_key[-8:]} with {current_reqs}/{self.max_requests_per_minute} "
+                             f"current requests, risk score: {risk_score:.2f}")
+
+            # Log selection reasoning for top keys
+            if len(available_keys) > 1:
+                top_keys_info = []
+                for k, cr, ac, rs, ku in available_keys[:3]:  # Show top 3 alternatives
+                    recovery_info = ""
+                    if ku.rate_limit_recovery_time:
+                        time_since_recovery = current_time - ku.rate_limit_recovery_time
+                        recovery_info = f", recovered {time_since_recovery:.0f}s ago"
+
+                    top_keys_info.append(f"...{k[-8:]}(risk:{rs:.2f}, usage:{cr}/{self.max_requests_per_minute}{recovery_info})")
+
+                stock_logger.debug(f"Key selection options: {', '.join(top_keys_info)}")
+
+            return best_key
+
+    def _calculate_key_risk_score(self, key_usage: KeyUsage, current_time: float, current_requests: int) -> float:
+        """
+        Calculate a risk score for a key (lower is better)
+
+        Factors:
+        - Current usage (most important): Higher usage = higher risk
+        - Recent recovery penalty: Keys that just recovered from rate limit get penalty
+        - Rate limit frequency: Keys that get rate limited often get penalty
+        - Historical usage: Slight preference for less used keys
+        """
+        risk_score = 0.0
+
+        # 1. Current usage risk (0-100 points, most important factor)
+        usage_ratio = current_requests / self.max_requests_per_minute
+        risk_score += usage_ratio * 100
+
+        # 2. Recent recovery penalty (0-50 points)
+        if key_usage.rate_limit_recovery_time:
+            time_since_recovery = current_time - key_usage.rate_limit_recovery_time
+            if time_since_recovery < 30:  # Penalize keys that recovered within last 30 seconds
+                recovery_penalty = (30 - time_since_recovery) / 30 * 50
+                risk_score += recovery_penalty
+
+        # 3. Rate limit frequency penalty (0-30 points)
+        if key_usage.rate_limit_history:
+            # Count rate limits in the last 10 minutes
+            recent_rate_limits = sum(1 for rl_time in key_usage.rate_limit_history
+                                   if current_time - rl_time < 600)
+            risk_score += recent_rate_limits * 10
+
+        # 4. Consecutive rate limits penalty (0-20 points)
+        risk_score += key_usage.consecutive_rate_limits * 5
+
+        # 5. Historical usage balance (0-10 points)
+        # Slight preference for keys with lower total usage
+        avg_total_requests = sum(ku.total_requests for ku in self.key_usage.values()) / len(self.key_usage)
+        if avg_total_requests > 0:
+            usage_deviation = (key_usage.total_requests - avg_total_requests) / avg_total_requests
+            risk_score += max(0, usage_deviation) * 10
+
+        return risk_score
+
+    def get_multiple_available_keys(self, count: int = None) -> List[str]:
+        """
+        Get multiple available keys for parallel processing using smart selection
+
+        Args:
+            count: Number of keys to return (None = all available)
+
+        Returns:
+            List of available API keys sorted by risk score (lowest risk first)
+        """
+        with self.lock:
+            available_keys = []
+            current_time = time.time()
+
+            for key in self.api_keys:
+                if self._is_key_available(key):
+                    key_usage = self.key_usage[key]
+                    self._cleanup_old_requests(key_usage)
+
+                    current_requests = len(key_usage.request_times)
+                    risk_score = self._calculate_key_risk_score(key_usage, current_time, current_requests)
+
+                    available_keys.append((key, current_requests, risk_score))
+
+            # Sort by risk score (ascending - lower risk first)
+            available_keys.sort(key=lambda x: x[2])
+
+            # Return requested number of keys
+            if count is None:
+                result_keys = [key for key, _, _ in available_keys]
+            else:
+                result_keys = [key for key, _, _ in available_keys[:count]]
+
+            if result_keys:
+                key_info = [(f"...{k[-8:]}", f"{cr}/{self.max_requests_per_minute}", f"risk:{rs:.1f}")
+                           for k, cr, rs in available_keys[:len(result_keys)]]
+                stock_logger.info(f"Returning {len(result_keys)} keys for parallel processing: {key_info}")
+
+            return result_keys
     
     def record_request(self, key: str) -> None:
         """Record a successful request for the given key"""
@@ -142,7 +273,7 @@ class GeminiKeyManager:
     def record_rate_limit(self, key: str, retry_after: Optional[int] = None) -> None:
         """
         Record that a key hit rate limit
-        
+
         Args:
             key: The API key that hit rate limit
             retry_after: Seconds to wait before retrying (from API response)
@@ -151,14 +282,19 @@ class GeminiKeyManager:
             if key in self.key_usage:
                 key_usage = self.key_usage[key]
                 current_time = time.time()
-                
+
                 # Set rate limit duration (default to 60 seconds if not specified)
                 wait_time = retry_after if retry_after else 60
                 key_usage.is_rate_limited = True
                 key_usage.rate_limit_until = current_time + wait_time
-                
+                key_usage.consecutive_rate_limits += 1
+
+                # Track rate limit event in history
+                key_usage.rate_limit_history.append(current_time)
+
                 stock_logger.warning(f"Key ending in ...{key[-8:]} hit rate limit. "
-                                   f"Will retry after {wait_time} seconds")
+                                   f"Will retry after {wait_time} seconds "
+                                   f"(consecutive rate limits: {key_usage.consecutive_rate_limits})")
     
     def get_next_available_time(self) -> float:
         """
@@ -210,6 +346,15 @@ class GeminiKeyManager:
                 }
             
             return stats
+
+    def get_key_summary(self) -> str:
+        """Get a quick summary of key availability"""
+        with self.lock:
+            total_keys = len(self.api_keys)
+            available_keys = sum(1 for key in self.api_keys if self._is_key_available(key))
+            rate_limited_keys = sum(1 for key in self.api_keys if self.key_usage[key].is_rate_limited)
+
+            return f"{available_keys}/{total_keys} keys available, {rate_limited_keys} rate limited"
 
     def wait_for_available_key(self, max_wait_time: float = 300) -> Optional[str]:
         """

@@ -97,7 +97,7 @@ jobs:
           ' || echo "Overall LLM analysis process timed out after 45 minutes"
         env:
           PYTHONPATH: ${{ github.workspace }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
           CACHE_DURATION: "3600"
           DEFAULT_LLM_PROVIDER: "gemini"
           FUNDAMENTAL_ANALYSIS_ENABLED: "true"

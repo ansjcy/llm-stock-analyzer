@@ -5,7 +5,8 @@ Google Gemini LLM client for stock analysis and report generation
 import time
 import signal
 import threading
-from typing import Dict, Any, List, Optional
+import concurrent.futures
+from typing import Dict, Any, List, Optional, Tuple
 import google.generativeai as genai
 from google.api_core import exceptions as google_exceptions
 
@@ -157,23 +158,28 @@ class GeminiClient(BaseLLMClient):
         # Retry logic with exponential backoff
         for attempt in range(self.retry_config.max_retries + 1):
             try:
-                # Get an available API key
+                # Get an available API key (this now uses intelligent load balancing)
                 api_key = self.key_manager.get_available_key()
 
                 if not api_key:
+                    # Log current key status
+                    key_summary = self.key_manager.get_key_summary()
+                    stock_logger.warning(f"No available keys found. Status: {key_summary}")
+
                     # Check if we should abort immediately due to long-term rate limits
                     if self.key_manager.should_abort_waiting():
                         stock_logger.error("All API keys are rate limited for extended periods. Aborting immediately.")
                         return "Error: All API keys are rate limited for extended periods. Please try again later."
 
-                    # All keys are rate limited, wait for one to become available
-                    stock_logger.warning("All API keys are rate limited. Waiting for available key...")
-                    # Use a shorter timeout to prevent getting stuck indefinitely
-                    max_wait_time = config.GEMINI_KEY_WAIT_TIMEOUT if hasattr(config, 'GEMINI_KEY_WAIT_TIMEOUT') else 90
+                    # All keys are rate limited, but only wait briefly since we have multiple keys
+                    stock_logger.warning("All API keys are currently rate limited. Waiting briefly for one to become available...")
+                    # Use a much shorter timeout since we have multiple keys
+                    max_wait_time = min(config.GEMINI_KEY_WAIT_TIMEOUT if hasattr(config, 'GEMINI_KEY_WAIT_TIMEOUT') else 90, 30)
                     api_key = self.key_manager.wait_for_available_key(max_wait_time=max_wait_time)
 
                     if not api_key:
-                        stock_logger.error(f"All API keys exhausted after waiting {max_wait_time}s. Aborting request.")
+                        final_summary = self.key_manager.get_key_summary()
+                        stock_logger.error(f"All API keys still rate limited after waiting {max_wait_time}s. Final status: {final_summary}")
                         return f"Error: All API keys are rate limited and timeout reached after {max_wait_time}s. Please try again later."
 
                 # Configure the API with the selected key
@@ -221,14 +227,25 @@ class GeminiClient(BaseLLMClient):
 
                     self.key_manager.record_rate_limit(api_key, retry_after)
 
+                # Check if we have other available keys before waiting
+                key_summary = self.key_manager.get_key_summary()
+                stock_logger.info(f"After rate limit, key status: {key_summary}")
+
+                # Try to get another key immediately
+                another_key = self.key_manager.get_available_key()
+                if another_key:
+                    stock_logger.info(f"Found alternative key ...{another_key[-8:]}, retrying immediately")
+                    # Don't sleep, just continue to next iteration with new key
+                    continue
+
                 # If this is the last attempt, return error
                 if attempt == self.retry_config.max_retries:
                     stock_logger.error(f"Rate limit exceeded for all {self.retry_config.max_retries + 1} attempts")
                     return f"Error: Rate limit exceeded for all attempts. Please try again later."
 
-                # Wait before retrying with exponential backoff
+                # Only wait if no other keys are available
                 delay = self.retry_config.get_delay(attempt)
-                stock_logger.info(f"Retrying in {delay:.1f} seconds (attempt {attempt + 1}/{self.retry_config.max_retries + 1})")
+                stock_logger.info(f"No alternative keys available. Retrying in {delay:.1f} seconds (attempt {attempt + 1}/{self.retry_config.max_retries + 1})")
                 time.sleep(delay)
 
             except APITimeoutError as e:
@@ -386,4 +403,137 @@ class GeminiClient(BaseLLMClient):
             
         except Exception as e:
             stock_logger.error(f"Error generating summary: {e}")
-            return f"Error generating summary: {str(e)}" 
+            return f"Error generating summary: {str(e)}"
+
+    def generate_parallel_analysis(self, analysis_requests: List[Dict[str, Any]]) -> Dict[str, str]:
+        """
+        Generate multiple LLM analyses in parallel using different API keys
+
+        Args:
+            analysis_requests: List of analysis request dictionaries, each containing:
+                - 'type': Analysis type (e.g., 'technical', 'fundamental', 'news')
+                - 'method': Method name to call (e.g., 'generate_technical_analysis')
+                - 'args': Arguments to pass to the method
+
+        Returns:
+            Dictionary mapping analysis type to result
+        """
+        if not analysis_requests:
+            return {}
+
+        # Get available keys for parallel processing
+        available_keys = self.key_manager.get_multiple_available_keys(count=len(analysis_requests))
+
+        if not available_keys:
+            stock_logger.warning("No keys available for parallel processing, falling back to sequential")
+            return self._generate_sequential_analysis(analysis_requests)
+
+        stock_logger.info(f"Starting parallel analysis with {len(available_keys)} keys for {len(analysis_requests)} requests")
+
+        results = {}
+
+        # Use ThreadPoolExecutor for parallel processing
+        with concurrent.futures.ThreadPoolExecutor(max_workers=len(available_keys)) as executor:
+            # Submit all tasks
+            future_to_analysis = {}
+
+            for i, request in enumerate(analysis_requests):
+                # Assign key in round-robin fashion
+                assigned_key = available_keys[i % len(available_keys)]
+
+                future = executor.submit(
+                    self._execute_single_analysis_with_key,
+                    request,
+                    assigned_key
+                )
+                future_to_analysis[future] = request['type']
+
+            # Collect results as they complete
+            for future in concurrent.futures.as_completed(future_to_analysis, timeout=600):  # 10 minute timeout
+                analysis_type = future_to_analysis[future]
+                try:
+                    result = future.result()
+                    results[analysis_type] = result
+                    stock_logger.info(f"Completed parallel analysis: {analysis_type}")
+                except Exception as e:
+                    stock_logger.error(f"Parallel analysis failed for {analysis_type}: {e}")
+                    results[analysis_type] = f"Error in parallel processing: {str(e)}"
+
+        stock_logger.info(f"Parallel analysis completed. Results: {list(results.keys())}")
+        return results
+
+    def _execute_single_analysis_with_key(self, request: Dict[str, Any], api_key: str) -> str:
+        """
+        Execute a single analysis request with a specific API key
+
+        Args:
+            request: Analysis request dictionary
+            api_key: Specific API key to use
+
+        Returns:
+            Analysis result string
+        """
+        analysis_type = request['type']
+        method_name = request['method']
+        args = request.get('args', [])
+        kwargs = request.get('kwargs', {})
+
+        stock_logger.debug(f"Executing {analysis_type} analysis with key ...{api_key[-8:]}")
+
+        try:
+            # Get the method from this instance
+            method = getattr(self, method_name)
+
+            # Temporarily override the key selection to use the assigned key
+            original_get_key = self.key_manager.get_available_key
+
+            def get_assigned_key():
+                # Check if the assigned key is still available
+                if self.key_manager._is_key_available(api_key):
+                    return api_key
+                else:
+                    # Fall back to normal key selection if assigned key is no longer available
+                    return original_get_key()
+
+            self.key_manager.get_available_key = get_assigned_key
+
+            try:
+                # Execute the analysis method
+                result = method(*args, **kwargs)
+                return result
+            finally:
+                # Restore original key selection method
+                self.key_manager.get_available_key = original_get_key
+
+        except Exception as e:
+            stock_logger.error(f"Error executing {analysis_type} with key ...{api_key[-8:]}: {e}")
+            return f"Error executing {analysis_type}: {str(e)}"
+
+    def _generate_sequential_analysis(self, analysis_requests: List[Dict[str, Any]]) -> Dict[str, str]:
+        """
+        Fallback method to generate analyses sequentially
+
+        Args:
+            analysis_requests: List of analysis request dictionaries
+
+        Returns:
+            Dictionary mapping analysis type to result
+        """
+        results = {}
+
+        for request in analysis_requests:
+            analysis_type = request['type']
+            method_name = request['method']
+            args = request.get('args', [])
+            kwargs = request.get('kwargs', {})
+
+            try:
+                method = getattr(self, method_name)
+                result = method(*args, **kwargs)
+                results[analysis_type] = result
+                stock_logger.info(f"Completed sequential analysis: {analysis_type}")
+            except Exception as e:
+                stock_logger.error(f"Sequential analysis failed for {analysis_type}: {e}")
+                results[analysis_type] = f"Error in sequential processing: {str(e)}"
+
+        return results
