@@ -1860,7 +1860,7 @@ class StockAnalyzer:
 
             # Return web-accessible path for frontend usage
             # Add basePath for production deployment (GitHub Pages)
-            base_path = "/stock-analyzer" if os.getenv('NODE_ENV') == 'production' else ""
+            base_path = "/llm-stock-analyzer" if os.getenv('NODE_ENV') == 'production' else ""
             chart_filename = f"{base_path}/charts/{ticker}_technical_analysis_{timestamp}.png"
             return chart_filename
 
@@ -1983,7 +1983,7 @@ class StockAnalyzer:
 
             # Return web-accessible path for frontend usage
             # Add basePath for production deployment (GitHub Pages)
-            base_path = "/stock-analyzer" if os.getenv('NODE_ENV') == 'production' else ""
+            base_path = "/llm-stock-analyzer" if os.getenv('NODE_ENV') == 'production' else ""
             chart_filename = f"{base_path}/charts/{results['ticker']}_correlation_{timestamp}.png"
             return chart_filename
 

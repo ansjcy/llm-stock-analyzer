@@ -39,7 +39,7 @@ function HomeContent() {
 
   // Helper function to get correct API URL with basePath
   const getApiUrl = (path: string) => {
-    const basePath = process.env.NODE_ENV === 'production' ? '/stock-analyzer' : '';
+    const basePath = process.env.NODE_ENV === 'production' ? '/llm-stock-analyzer' : '';
     return `${basePath}${path}`;
   };
 

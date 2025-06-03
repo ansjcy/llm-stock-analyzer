@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true
   },
-  basePath: process.env.NODE_ENV === 'production' ? '/stock-analyzer' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/stock-analyzer' : '',
+  basePath: process.env.NODE_ENV === 'production' ? '/llm-stock-analyzer' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/llm-stock-analyzer' : '',
 };
 
 export default nextConfig;

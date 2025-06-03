@@ -20,7 +20,7 @@ export async function GET() {
     const jsonFiles = files.filter(file => file.endsWith('.json'));
     
     // Get basePath for production builds
-    const basePath = process.env.NODE_ENV === 'production' ? '/stock-analyzer' : '';
+    const basePath = process.env.NODE_ENV === 'production' ? '/llm-stock-analyzer' : '';
     
     // Group files by ticker and type
     const reportGroups: { [key: string]: any } = {};

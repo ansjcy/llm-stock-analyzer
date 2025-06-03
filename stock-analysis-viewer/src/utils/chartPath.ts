@@ -6,11 +6,11 @@
 export function resolveChartPath(originalPath: string): string {
   if (!originalPath) return '';
   
-  // If the path already starts with /stock-analyzer, remove it for development
-  if (originalPath.startsWith('/stock-analyzer/charts/')) {
+  // If the path already starts with /llm-stock-analyzer, remove it for development
+  if (originalPath.startsWith('/llm-stock-analyzer/charts/')) {
     // In development, we want to serve from /charts/ directly
     // In production, the basePath will be automatically added by Next.js
-    return originalPath.replace('/stock-analyzer', '');
+    return originalPath.replace('/llm-stock-analyzer', '');
   }
   
   // If the path starts with /charts/, keep it as is
