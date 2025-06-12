@@ -8,28 +8,26 @@ export const revalidate = false;
 export async function GET() {
   try {
     const reportsDir = path.join(process.cwd(), 'public', 'reports');
-    
+
     // Check if reports directory exists
     try {
       await fs.access(reportsDir);
     } catch {
       return NextResponse.json({ reports: [] });
     }
-    
+
     const files = await fs.readdir(reportsDir);
     const jsonFiles = files.filter(file => file.endsWith('.json'));
-    
+
     // Get basePath for production builds
     const basePath = process.env.NODE_ENV === 'production' ? '/llm-stock-analyzer' : '';
-    
-    // Group files by ticker and type
+
+    // Group files by ticker and timestamp to get the latest for each ticker
     const reportGroups: { [key: string]: any } = {};
 
     jsonFiles.forEach(file => {
-      // Match new naming convention: TICKER_analysis_TYPE_TIMESTAMP.json
+      // Match naming convention: TICKER_analysis_TYPE_TIMESTAMP.json (only base and llm files)
       const newMatch = file.match(/^([A-Z]+)_analysis_(base|llm)_(\d+)_(\d+)\.json$/);
-      // Match old naming convention: TICKER_analysis_TIMESTAMP.json
-      const oldMatch = file.match(/^([A-Z]+)_analysis_(\d+)_(\d+)\.json$/);
 
       if (newMatch) {
         const ticker = newMatch[1];
@@ -73,27 +71,8 @@ export async function GET() {
         // Check if we have both files
         reportGroups[ticker].hasComplete = !!(reportGroups[ticker].baseFile && reportGroups[ticker].llmFile);
 
-      } else if (oldMatch) {
-        // Handle legacy files (complete analysis)
-        const ticker = oldMatch[1];
-        const date = oldMatch[2];
-        const time = oldMatch[3];
-
-        if (!reportGroups[ticker] || date > reportGroups[ticker].date || (date === reportGroups[ticker].date && time > reportGroups[ticker].time)) {
-          reportGroups[ticker] = {
-            ticker,
-            date,
-            time,
-            legacyFile: {
-              filename: file,
-              fullPath: `${basePath}/reports/${file}`,
-              date,
-              time
-            },
-            hasComplete: true
-          };
-        }
       }
+      // Legacy files have been removed, only process base and LLM files
     });
 
     // Convert to array and sort by date/time

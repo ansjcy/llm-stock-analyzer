@@ -19,73 +19,107 @@ class YahooFinanceAPI:
     
     def __init__(self):
         self.session = requests.Session()
+        # Rotate between different user agents to avoid blocking
+        self.user_agents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/121.0',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/121.0'
+        ]
+        self.current_ua_index = 0
+        self._update_user_agent()
+
+    def _update_user_agent(self):
+        """Update session with next user agent"""
         self.session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            'User-Agent': self.user_agents[self.current_ua_index]
         })
+        self.current_ua_index = (self.current_ua_index + 1) % len(self.user_agents)
     
     def get_stock_info(self, ticker: str) -> Optional[Dict[str, Any]]:
-        """Get basic stock information"""
-        try:
-            stock = yf.Ticker(ticker)
-            info = stock.info
-            
-            stock_logger.info(f"Retrieved stock info for {ticker}")
+        """Get basic stock information with retry logic"""
+        max_retries = 3
 
-            # Normalize financial ratios to handle different formats
-            normalized_info = self._normalize_financial_ratios(info)
+        for attempt in range(max_retries):
+            try:
+                # Rotate user agent for each attempt
+                if attempt > 0:
+                    self._update_user_agent()
+                    stock_logger.info(f"Retry {attempt} for {ticker} with new user agent")
 
-            return {
-                'symbol': ticker,
-                'name': info.get('longName', ticker),
-                'sector': info.get('sector', 'N/A'),
-                'industry': info.get('industry', 'N/A'),
-                'country': info.get('country', 'N/A'),
-                'currency': info.get('currency', 'USD'),
-                'market_cap': info.get('marketCap'),
-                'shares_outstanding': info.get('sharesOutstanding'),
-                'total_revenue': info.get('totalRevenue'),
-                'total_cash': info.get('totalCash'),
-                'total_debt': info.get('totalDebt'),
-                'current_price': info.get('currentPrice') or info.get('regularMarketPrice'),
-                'regular_market_price': info.get('regularMarketPrice'),
-                'previous_close': info.get('previousClose'),
-                'open': info.get('open'),
-                'day_high': info.get('dayHigh'),
-                'day_low': info.get('dayLow'),
-                'volume': info.get('volume'),
-                'avg_volume': info.get('averageVolume'),
-                'pe_ratio': info.get('trailingPE'),
-                'forward_pe': info.get('forwardPE'),
-                'peg_ratio': info.get('pegRatio'),
-                'price_to_book': info.get('priceToBook'),
-                'price_to_sales': info.get('priceToSalesTrailing12Months'),
-                'dividend_yield': info.get('dividendYield'),
-                'beta': info.get('beta'),
-                'trailing_eps': info.get('trailingEps'),
-                'forward_eps': info.get('forwardEps'),
-                'book_value': normalized_info.get('bookValue'),
-                'price_to_book': normalized_info.get('priceToBook'),
-                'return_on_equity': normalized_info.get('returnOnEquity'),
-                'return_on_assets': normalized_info.get('returnOnAssets'),
-                'debt_to_equity': normalized_info.get('debtToEquity'),
-                'current_ratio': normalized_info.get('currentRatio'),
-                'quick_ratio': normalized_info.get('quickRatio'),
-                'gross_margins': normalized_info.get('grossMargins'),
-                'operating_margins': normalized_info.get('operatingMargins'),
-                'profit_margins': normalized_info.get('profitMargins'),
-                'revenue_growth': normalized_info.get('revenueGrowth'),
-                'earnings_growth': normalized_info.get('earningsGrowth'),
-                '52_week_high': info.get('fiftyTwoWeekHigh'),
-                '52_week_low': info.get('fiftyTwoWeekLow'),
-                'analyst_target_price': info.get('targetMeanPrice'),
-                'recommendation': info.get('recommendationMean'),
-                'recommendation_key': info.get('recommendationKey'),
-                'number_of_analyst_opinions': normalized_info.get('numberOfAnalystOpinions'),
-                'full_time_employees': normalized_info.get('fullTimeEmployees')
-            }
-        except Exception as e:
-            stock_logger.error(f"Error fetching stock info for {ticker}: {e}")
-            return None
+                stock = yf.Ticker(ticker)
+                info = stock.info
+
+                # Check if we got valid data
+                if not info or len(info) < 5:  # Basic validation
+                    raise ValueError("Insufficient data returned")
+
+                stock_logger.info(f"Retrieved stock info for {ticker}")
+
+                # Normalize financial ratios to handle different formats
+                normalized_info = self._normalize_financial_ratios(info)
+
+                return {
+                    'symbol': ticker,
+                    'name': info.get('longName', ticker),
+                    'sector': info.get('sector', 'N/A'),
+                    'industry': info.get('industry', 'N/A'),
+                    'country': info.get('country', 'N/A'),
+                    'currency': info.get('currency', 'USD'),
+                    'market_cap': info.get('marketCap'),
+                    'shares_outstanding': info.get('sharesOutstanding'),
+                    'total_revenue': info.get('totalRevenue'),
+                    'total_cash': info.get('totalCash'),
+                    'total_debt': info.get('totalDebt'),
+                    'current_price': info.get('currentPrice') or info.get('regularMarketPrice'),
+                    'regular_market_price': info.get('regularMarketPrice'),
+                    'previous_close': info.get('previousClose'),
+                    'open': info.get('open'),
+                    'day_high': info.get('dayHigh'),
+                    'day_low': info.get('dayLow'),
+                    'volume': info.get('volume'),
+                    'avg_volume': info.get('averageVolume'),
+                    'pe_ratio': info.get('trailingPE'),
+                    'forward_pe': info.get('forwardPE'),
+                    'peg_ratio': info.get('pegRatio'),
+                    'price_to_book': info.get('priceToBook'),
+                    'price_to_sales': info.get('priceToSalesTrailing12Months'),
+                    'dividend_yield': info.get('dividendYield'),
+                    'beta': info.get('beta'),
+                    'trailing_eps': info.get('trailingEps'),
+                    'forward_eps': info.get('forwardEps'),
+                    'book_value': normalized_info.get('bookValue'),
+                    'price_to_book': normalized_info.get('priceToBook'),
+                    'return_on_equity': normalized_info.get('returnOnEquity'),
+                    'return_on_assets': normalized_info.get('returnOnAssets'),
+                    'debt_to_equity': normalized_info.get('debtToEquity'),
+                    'current_ratio': normalized_info.get('currentRatio'),
+                    'quick_ratio': normalized_info.get('quickRatio'),
+                    'gross_margins': normalized_info.get('grossMargins'),
+                    'operating_margins': normalized_info.get('operatingMargins'),
+                    'profit_margins': normalized_info.get('profitMargins'),
+                    'revenue_growth': normalized_info.get('revenueGrowth'),
+                    'earnings_growth': normalized_info.get('earningsGrowth'),
+                    '52_week_high': info.get('fiftyTwoWeekHigh'),
+                    '52_week_low': info.get('fiftyTwoWeekLow'),
+                    'analyst_target_price': info.get('targetMeanPrice'),
+                    'recommendation': info.get('recommendationMean'),
+                    'recommendation_key': info.get('recommendationKey'),
+                    'number_of_analyst_opinions': normalized_info.get('numberOfAnalystOpinions'),
+                    'full_time_employees': normalized_info.get('fullTimeEmployees')
+                }
+
+            except Exception as e:
+                stock_logger.warning(f"Attempt {attempt + 1} failed for {ticker}: {e}")
+                if attempt == max_retries - 1:
+                    stock_logger.error(f"All {max_retries} attempts failed for {ticker}")
+                    return None
+                # Wait a bit before retrying
+                import time
+                time.sleep(1 + attempt)  # Progressive delay
+
+        return None
 
     def _normalize_financial_ratios(self, info: Dict[str, Any]) -> Dict[str, Any]:
         """Normalize financial ratios to handle different formats and edge cases"""

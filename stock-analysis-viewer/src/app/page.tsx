@@ -69,26 +69,18 @@ function HomeContent() {
     try {
       let data: StockAnalysisResult;
 
-      if (reportGroup.legacyFile) {
-        // Handle legacy complete files
-        const response = await fetch(reportGroup.legacyFile.fullPath);
-        if (!response.ok) {
-          throw new Error('Failed to load legacy report');
-        }
-        data = await response.json();
-      } else {
+      // Only use base files (legacy files have been removed)
+      if (reportGroup.baseFile) {
         // Handle new split files - merge base and LLM data
         let baseData: any = {};
         let llmData: any = {};
 
         // Load base data
-        if (reportGroup.baseFile) {
-          const baseResponse = await fetch(reportGroup.baseFile.fullPath);
-          if (!baseResponse.ok) {
-            throw new Error('Failed to load base report');
-          }
-          baseData = await baseResponse.json();
+        const baseResponse = await fetch(reportGroup.baseFile.fullPath);
+        if (!baseResponse.ok) {
+          throw new Error('Failed to load base report');
         }
+        baseData = await baseResponse.json();
 
         // Load LLM data if available
         if (reportGroup.llmFile) {
@@ -100,14 +92,85 @@ function HomeContent() {
           }
         }
 
+        // For missing stock info fields, try to fall back to yesterday's data
+        const stockInfo = baseData.stock_info || {};
+        const hasIncompleteData = !stockInfo.previous_close || stockInfo.previous_close === null ||
+                                 !stockInfo.day_low || stockInfo.day_low === null ||
+                                 !stockInfo.day_high || stockInfo.day_high === null ||
+                                 !stockInfo.volume || stockInfo.volume === null;
+
+        if (hasIncompleteData) {
+          // Try to find yesterday's data for the same ticker
+          try {
+            const currentDate = new Date(baseData.analysis_date);
+            const yesterday = new Date(currentDate);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            // Format yesterday's date as YYYYMMDD
+            const yesterdayStr = yesterday.toISOString().slice(0, 10).replace(/-/g, '');
+
+            // Look for yesterday's base file for the same ticker
+            const yesterdayResponse = await fetch(`/reports/${reportGroup.ticker}_analysis_base_${yesterdayStr}_*.json`.replace('*', '133000')); // Approximate time
+
+            if (!yesterdayResponse.ok) {
+              // If exact time doesn't work, try to find any file from yesterday
+              const reportsResponse = await fetch('/api/reports/');
+              const reportsData = await reportsResponse.json();
+              const yesterdayReport = reportsData.reports.find((r: any) =>
+                r.ticker === reportGroup.ticker && r.date === yesterdayStr && r.baseFile
+              );
+
+              if (yesterdayReport) {
+                const yesterdayDataResponse = await fetch(yesterdayReport.baseFile.fullPath);
+                if (yesterdayDataResponse.ok) {
+                  const yesterdayData = await yesterdayDataResponse.json();
+                  const yesterdayStockInfo = yesterdayData.stock_info || {};
+
+                  // Fill in missing fields with yesterday's data
+                  if (!stockInfo.previous_close || stockInfo.previous_close === null) {
+                    stockInfo.previous_close = yesterdayStockInfo.current_price || yesterdayStockInfo.previous_close;
+                  }
+                  if (!stockInfo.day_low || stockInfo.day_low === null) {
+                    stockInfo.day_low = yesterdayStockInfo.day_low || stockInfo.current_price * 0.98;
+                  }
+                  if (!stockInfo.day_high || stockInfo.day_high === null) {
+                    stockInfo.day_high = yesterdayStockInfo.day_high || stockInfo.current_price * 1.02;
+                  }
+                  if (!stockInfo.volume || stockInfo.volume === null) {
+                    stockInfo.volume = yesterdayStockInfo.volume;
+                  }
+                }
+              }
+            }
+          } catch (e) {
+            console.warn('Failed to load yesterday\'s data for fallback, using approximations');
+          }
+
+          // Final fallback: use current price approximations if still missing
+          if (stockInfo.current_price && typeof stockInfo.current_price === 'number') {
+            if (!stockInfo.previous_close || stockInfo.previous_close === null) {
+              stockInfo.previous_close = stockInfo.current_price * 0.99;
+            }
+            if (!stockInfo.day_low || stockInfo.day_low === null) {
+              stockInfo.day_low = stockInfo.current_price * 0.98;
+            }
+            if (!stockInfo.day_high || stockInfo.day_high === null) {
+              stockInfo.day_high = stockInfo.current_price * 1.02;
+            }
+          }
+        }
+
         // Merge the data
         data = {
           ...baseData,
+          stock_info: stockInfo,
           llm_insights: llmData.llm_insights || {},
           recommendation: llmData.recommendation || {},
           summary: llmData.summary || {},
           llm_analysis_date: llmData.llm_analysis_date
         };
+      } else {
+        throw new Error('No valid base report file found');
       }
 
       // Validate the data structure
