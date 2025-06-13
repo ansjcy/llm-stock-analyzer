@@ -45,17 +45,18 @@ class StockAnalyzer:
     """Main stock analysis orchestrator"""
 
     def __init__(self, llm_provider: Optional[str] = None, benchmark_symbols: Optional[list] = None,
-                 language: str = 'en'):
+                 language: str = 'en', non_llm_only: bool = False):
         self.language = language
+        self.non_llm_only = non_llm_only  # Store the non_llm_only flag
         self.yahoo_api = get_yahoo_finance_api()
 
         # Initialize technical analyzer with benchmark symbols for correlation analysis
         self.benchmark_symbols = benchmark_symbols
         self.technical_analyzer = get_technical_analyzer(benchmark_symbols=self.benchmark_symbols)
-        
+
         # Initialize Warren Buffett analyzer
         self.warren_buffett_analyzer = get_warren_buffett_analyzer(language=language)
-        
+
         # Initialize Peter Lynch analyzer
         self.peter_lynch_analyzer = get_peter_lynch_analyzer(language=language)
 
@@ -214,8 +215,8 @@ class StockAnalyzer:
 
                 progress.update(task6, completed=1)
 
-            # Step 7: Generate LLM insights (if available)
-            if self.llm_client:
+            # Step 7: Generate LLM insights (if available and not in non-LLM mode)
+            if self.llm_client and not self.non_llm_only:
                 # Count available analysis types for progress tracking
                 available_analyses = []
                 if results['technical_analysis']:
@@ -405,14 +406,19 @@ class StockAnalyzer:
         console.print(f"[cyan]Will generate {total_steps} LLM analysis components[/cyan]")
 
         # Check if we can use parallel processing
-        available_keys = self.llm_client.key_manager.get_multiple_available_keys()
-        use_parallel = len(available_keys) >= 2 and len(available_analyses) >= 2
+        try:
+            available_keys = self.llm_client.key_manager.get_multiple_available_keys()
+            use_parallel = len(available_keys) >= 2 and len(available_analyses) >= 2
+        except AttributeError:
+            # Simple key manager doesn't support parallel processing
+            available_keys = []
+            use_parallel = False
 
         if use_parallel:
             console.print(f"[cyan]Using parallel processing with {len(available_keys)} keys for faster analysis[/cyan]")
             return self._generate_parallel_llm_insights(results, ticker, stock_info, news_articles)
         else:
-            console.print(f"[cyan]Using sequential processing (available keys: {len(available_keys)})[/cyan]")
+            console.print(f"[cyan]Using sequential processing (available keys: {len(available_keys) if available_keys else 'N/A - simple key manager'})[/cyan]")
 
         with Progress(
             SpinnerColumn(),
@@ -1277,6 +1283,17 @@ class StockAnalyzer:
             with open(filename_full, 'w') as f:
                 json.dump(base_data, f, indent=2, default=str)
             filename = f"reports/{ticker}_analysis_base_{timestamp}.json"
+        elif format_type == "markdown":
+            filename_full = f"{reports_dir}/{ticker}_analysis_base_{timestamp}.md"
+            with open(filename_full, 'w') as f:
+                f.write(self._generate_markdown_report(base_data))
+            filename = f"reports/{ticker}_analysis_base_{timestamp}.md"
+        else:
+            # Default to JSON if unknown format
+            filename_full = f"{reports_dir}/{ticker}_analysis_base_{timestamp}.json"
+            with open(filename_full, 'w') as f:
+                json.dump(base_data, f, indent=2, default=str)
+            filename = f"reports/{ticker}_analysis_base_{timestamp}.json"
 
         save_msg = f"Base report saved to: {filename_full}" if self.language == 'en' else f"基础报告已保存至：{filename_full}"
         console.print(f"[green]{save_msg}[/green]")
@@ -1304,6 +1321,17 @@ class StockAnalyzer:
         }
 
         if format_type == "json":
+            filename_full = f"{reports_dir}/{ticker}_analysis_llm_{timestamp}.json"
+            with open(filename_full, 'w') as f:
+                json.dump(llm_data, f, indent=2, default=str)
+            filename = f"reports/{ticker}_analysis_llm_{timestamp}.json"
+        elif format_type == "markdown":
+            filename_full = f"{reports_dir}/{ticker}_analysis_llm_{timestamp}.md"
+            with open(filename_full, 'w') as f:
+                f.write(self._generate_markdown_report(llm_data))
+            filename = f"reports/{ticker}_analysis_llm_{timestamp}.md"
+        else:
+            # Default to JSON if unknown format
             filename_full = f"{reports_dir}/{ticker}_analysis_llm_{timestamp}.json"
             with open(filename_full, 'w') as f:
                 json.dump(llm_data, f, indent=2, default=str)
@@ -1993,7 +2021,7 @@ class StockAnalyzer:
 
 
 @click.command()
-@click.option('--ticker', '-t', required=True, help='Stock ticker symbol(s) - use comma to separate multiple tickers (e.g., AAPL,MSFT,GOOGL)')
+@click.option('--ticker', '-t', help='Stock ticker symbol(s) - use comma to separate multiple tickers (e.g., AAPL,MSFT,GOOGL). Optional when using --llm-only mode.')
 @click.option('--detailed', '-d', is_flag=True, help='Show detailed analysis')
 @click.option('--save-report', '-s', is_flag=True, help='Save report to file')
 @click.option('--charts', '-c', is_flag=True, help='Generate technical analysis charts')
@@ -2032,9 +2060,31 @@ def main(ticker, detailed, save_report, charts, start_date, end_date, report_for
         console.print(f"[red]{error_msg}[/red]")
         sys.exit(1)
 
+    # Handle ticker validation based on mode
+    if llm_only:
+        # In LLM-only mode, extract ticker from base data file if not provided
+        if not ticker:
+            try:
+                with open(base_data_path, 'r') as f:
+                    base_data = json.load(f)
+                    ticker = base_data.get('ticker')
+                    if not ticker:
+                        console.print("[red]Error: No ticker found in base data file and none provided via --ticker[/red]")
+                        sys.exit(1)
+                    console.print(f"[cyan]Using ticker from base data file: {ticker}[/cyan]")
+            except Exception as e:
+                console.print(f"[red]Error reading base data file: {e}[/red]")
+                sys.exit(1)
+    else:
+        # In normal mode, ticker is required
+        if not ticker:
+            error_msg = "Error: --ticker is required for normal analysis mode." if language == 'en' else "错误：正常分析模式需要 --ticker 参数。"
+            console.print(f"[red]{error_msg}[/red]")
+            sys.exit(1)
+
     # Parse ticker symbols - support multiple tickers separated by comma
     ticker_list = [t.strip().upper() for t in ticker.split(',') if t.strip()]
-    
+
     # Validate that we have at least one ticker
     if not ticker_list:
         error_msg = "No valid ticker symbols provided." if language == 'en' else "未提供有效的股票代码。"
@@ -2096,15 +2146,28 @@ def main(ticker, detailed, save_report, charts, start_date, end_date, report_for
             # Display results
             analyzer.display_results(llm_results, detailed=detailed)
 
-            # Save LLM report if requested
+            # Save reports if requested
             if save_report:
-                analyzer.save_llm_report(llm_results, format_type=report_format)
+                # Save separate LLM report
+                llm_filename = analyzer.save_llm_report(llm_results, format_type=report_format)
+
+                # Save merged complete report (base + LLM combined)
+                complete_filename = analyzer.save_report(llm_results, format_type=report_format)
+
+                # Show summary of saved files
+                console.print(f"\n[bold green]✅ Reports saved successfully:[/bold green]")
+                console.print(f"[green]• LLM-only report: {llm_filename}[/green]")
+                console.print(f"[green]• Complete merged report: {complete_filename}[/green]")
+
+                merge_msg = "LLM insights have been merged with base analysis data" if language == 'en' else "LLM洞察已与基础分析数据合并"
+                console.print(f"[cyan]ℹ️  {merge_msg}[/cyan]")
         else:
             # Normal or non-LLM mode
             analyzer = StockAnalyzer(
                 llm_provider=None if non_llm_only else llm_provider,
                 benchmark_symbols=benchmark_symbols,
-                language=language
+                language=language,
+                non_llm_only=non_llm_only
             )
 
             # Analyze each ticker

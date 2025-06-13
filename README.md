@@ -7,24 +7,27 @@ A comprehensive stock analysis tool powered by Large Language Models (LLMs) that
 - **🤖 Multi-LLM Support**: Compatible with OpenAI GPT, Google Gemini, Anthropic Claude, and Groq
 - **📊 Comprehensive Analysis**: Technical indicators, fundamental metrics, news sentiment, and correlation analysis
 - **💡 Investment Strategies**: Warren Buffett value investing and Peter Lynch growth investing methodologies
+- **🔄 Workflow Automation**: Separate daily base analysis and weekly LLM insights for cost optimization
 - **🎨 Interactive Visualization**: Modern React-based dashboard for exploring analysis results
 - **🌍 Multi-language Support**: English and Chinese language interfaces
-- **📄 Flexible Output**: JSON, Markdown, and interactive web reports
+- **📄 Flexible Output**: JSON, Markdown, and interactive web reports with automatic merging
 - **⚡ Performance Optimized**: Parallel processing, caching, and intelligent rate limiting
+- **🤖 GitHub Actions**: Automated daily/weekly analysis with deployment to GitHub Pages
 
 ## 📋 Table of Contents
 
-- [Quick Start](#quick-start)
+- [Quick Start](#-quick-start)
 - [Installation](#installation)
-- [Configuration](#configuration)
-- [Analysis Components](#analysis-components)
-- [Command Line Interface](#command-line-interface)
-- [Web Interface](#web-interface)
-- [API Integration](#api-integration)
-- [Output Formats](#output-formats)
-- [Performance Optimization](#performance-optimization)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
+- [Configuration](#️-configuration)
+- [Workflow Automation](#-workflow-automation)
+- [Analysis Components](#-analysis-components)
+- [Command Line Interface](#-command-line-interface)
+- [Web Interface](#-web-interface)
+- [API Integration](#-api-integration)
+- [Output Formats](#-output-formats)
+- [Performance Optimization](#-performance-optimization)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
 
 ## 🚀 Quick Start
 
@@ -67,9 +70,14 @@ A comprehensive stock analysis tool powered by Large Language Models (LLMs) that
 python src/main.py --ticker AAPL --detailed --save-report
 ```
 
-**Generate analysis without AI (faster):**
+**Generate base analysis without AI (faster, for daily automation):**
 ```bash
-python src/main.py --ticker AAPL --no-llm --save-report
+python src/main.py --ticker AAPL --non-llm-only --save-report
+```
+
+**Generate LLM insights from existing base analysis (for weekly automation):**
+```bash
+python src/main.py --llm-only --base-data-path reports/AAPL_analysis_base_20240101_120000.json --save-report
 ```
 
 **View results in web interface:**
@@ -108,6 +116,78 @@ For improved rate limiting and parallel processing:
 # Multiple Gemini keys for load balancing
 GEMINI_API_KEYS=key1_here,key2_here,key3_here
 ```
+
+## 🔄 Workflow Automation
+
+The LLM Stock Analyzer supports efficient automation workflows that separate data collection from AI analysis, optimizing both cost and performance.
+
+### 📅 Daily + Weekly Automation Pattern
+
+**Recommended approach for production use:**
+
+#### Daily Base Analysis (Monday-Friday)
+```bash
+# Generate base analysis without LLM (fast, cost-effective)
+python src/main.py --ticker AAPL,MSFT,GOOGL --non-llm-only --save-report --format json
+```
+
+**Output:** `{TICKER}_analysis_base_{TIMESTAMP}.json`
+- Technical indicators and market data
+- Fundamental analysis metrics
+- News sentiment analysis
+- No AI insights (saves time and API costs)
+
+#### Weekly LLM Analysis (Sunday)
+```bash
+# Generate AI insights from latest base analysis (enhanced mode)
+python src/main.py --llm-only --base-data-path reports/AAPL_analysis_base_20240101_120000.json --save-report
+```
+
+**Output:**
+- `{TICKER}_analysis_llm_{TIMESTAMP}.json` (LLM insights only)
+- `{TICKER}_analysis_{TIMESTAMP}.json` (Complete merged report)
+
+### 🚀 Batch Processing Script
+
+For processing multiple tickers automatically:
+
+```bash
+# Process all tickers with recent base files
+python scripts/weekly_llm_analysis.py --all-recent
+
+# Process specific tickers
+python scripts/weekly_llm_analysis.py --tickers AAPL,MSFT,GOOGL
+
+# Process files from last 3 days
+python scripts/weekly_llm_analysis.py --all-recent --days 3
+```
+
+### 🤖 GitHub Actions Integration
+
+The project includes automated workflows:
+
+- **Daily Workflow**: Generates base analysis files (Monday-Friday)
+- **Weekly Workflow**: Generates LLM insights and merged reports (Sunday)
+- **Legacy Workflow**: Manual trigger with multiple modes
+
+### 📁 File Structure
+
+```
+reports/
+├── AAPL_analysis_base_20240108_130000.json    # Daily base data
+├── AAPL_analysis_llm_20240114_140000.json     # Weekly LLM insights
+├── AAPL_analysis_20240114_140000.json         # Weekly merged complete
+├── MSFT_analysis_base_20240108_130000.json
+└── ...
+```
+
+### ✅ Benefits
+
+- **Cost Optimization**: LLM analysis only runs weekly
+- **Performance**: Daily base analysis is fast and reliable
+- **Flexibility**: Can generate complete reports on-demand
+- **Automation**: GitHub Actions handle scheduling automatically
+- **Scalability**: Easy to add more tickers or adjust frequency
 
 ## 📊 Analysis Components
 
@@ -179,11 +259,27 @@ python src/main.py --ticker AAPL --save-report --format markdown
 # Benchmark correlation analysis
 python src/main.py --ticker AAPL --benchmark-symbols "^GSPC,^DJI,^IXIC"
 
-# Skip LLM analysis (faster execution)
-python src/main.py --ticker AAPL --no-llm
+# Generate base analysis only (for daily automation)
+python src/main.py --ticker AAPL --non-llm-only --save-report
 
-# Generate only LLM insights from existing base analysis
-python src/main.py --ticker AAPL --llm-only --base-file reports/AAPL_base_20240101_120000.json
+# Generate LLM insights from existing base analysis (enhanced mode)
+python src/main.py --llm-only --base-data-path reports/AAPL_analysis_base_20240101_120000.json --save-report
+
+# Auto-detect ticker from base file (no need to specify --ticker)
+python src/main.py --llm-only --base-data-path reports/AAPL_analysis_base_20240101_120000.json --save-report
+```
+
+### Workflow-Specific Commands
+
+```bash
+# Daily automation (fast, no LLM costs)
+python src/main.py --ticker AAPL,MSFT,GOOGL --non-llm-only --save-report --format json
+
+# Weekly LLM batch processing
+python scripts/weekly_llm_analysis.py --all-recent
+
+# Manual complete analysis (traditional mode)
+python src/main.py --ticker AAPL --save-report --format json
 ```
 
 ## 🎨 Web Interface
@@ -240,17 +336,67 @@ For detailed frontend documentation, see [stock-analysis-viewer/README.md](stock
 
 ## 📄 Output Formats
 
-### JSON Reports
-Structured data suitable for programmatic analysis and web interface consumption:
+### File Types
+
+The analyzer generates different file types based on the analysis mode:
+
+#### Base Analysis Files
+```
+{TICKER}_analysis_base_{TIMESTAMP}.json
+```
+Contains non-LLM data: technical indicators, fundamental metrics, news sentiment.
+
+#### LLM Analysis Files
+```
+{TICKER}_analysis_llm_{TIMESTAMP}.json
+```
+Contains only LLM-generated insights and recommendations.
+
+#### Complete Merged Files
+```
+{TICKER}_analysis_{TIMESTAMP}.json
+```
+Contains both base data and LLM insights - ready for frontend consumption.
+
+### JSON Structure
+
+#### Complete Analysis Report
 ```json
 {
   "ticker": "AAPL",
   "analysis_date": "2024-01-09T10:00:00Z",
+  "timestamp": "20240109_100000",
   "stock_info": {...},
   "technical_analysis": {...},
+  "fundamental_analysis": {...},
   "warren_buffett_analysis": {...},
   "peter_lynch_analysis": {...},
-  "llm_insights": {...}
+  "news_analysis": {...},
+  "llm_insights": {
+    "technical_analysis": "...",
+    "fundamental_analysis": "...",
+    "investment_recommendation": "...",
+    "summary": "..."
+  },
+  "recommendation": {...},
+  "summary": {...}
+}
+```
+
+#### Base Analysis Report (Non-LLM)
+```json
+{
+  "ticker": "AAPL",
+  "analysis_date": "2024-01-09T10:00:00Z",
+  "timestamp": "20240109_100000",
+  "stock_info": {...},
+  "technical_analysis": {...},
+  "fundamental_analysis": {...},
+  "warren_buffett_analysis": {...},
+  "peter_lynch_analysis": {...},
+  "news_analysis": {...},
+  "charts": {...},
+  "historical_data": [...]
 }
 ```
 
@@ -261,6 +407,7 @@ Human-readable reports with formatted tables and analysis summaries.
 Rich web interface with:
 - Interactive charts and visualizations
 - Detailed breakdowns of all analysis components
+- Support for both merged and separate file loading
 - Export capabilities
 - Shareable links
 
@@ -319,6 +466,30 @@ GEMINI_API_KEYS=key1,key2,key3
 
 # Consider using faster models
 GEMINI_PRIMARY_MODEL=gemini-1.5-flash
+```
+
+**5. Base File Not Found (LLM-only mode)**
+```bash
+# Ensure base file exists
+ls -la reports/*_analysis_base_*.json
+
+# Generate base file first if missing
+python src/main.py --ticker AAPL --non-llm-only --save-report
+
+# Use correct path format
+python src/main.py --llm-only --base-data-path stock-analysis-viewer/public/reports/AAPL_analysis_base_20240101_120000.json --save-report
+```
+
+**6. Workflow Automation Issues**
+```bash
+# Test daily workflow locally
+python src/main.py --ticker AAPL --non-llm-only --save-report --format json
+
+# Test weekly workflow locally
+python scripts/weekly_llm_analysis.py --tickers AAPL
+
+# Check file permissions and paths
+ls -la stock-analysis-viewer/public/reports/
 ```
 
 ### Debug Mode

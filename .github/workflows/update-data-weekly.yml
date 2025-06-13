@@ -119,7 +119,7 @@ jobs:
           LLM_TOTAL_TIMEOUT: "1200"
         continue-on-error: true
       
-      - name: List generated LLM files
+      - name: List generated LLM and merged files
         run: |
           echo "Reports directory (root):"
           ls -la reports/ || echo "No root reports directory"
@@ -127,8 +127,10 @@ jobs:
           ls -la stock-analysis-viewer/public/reports/ || echo "No frontend reports directory"
           echo "LLM files specifically:"
           find stock-analysis-viewer/public/reports -name "*_llm_*.json" -type f || echo "No LLM files found"
+          echo "Complete merged files (base + LLM):"
+          find stock-analysis-viewer/public/reports -name "*_analysis_*.json" -not -name "*_analysis_base_*" -not -name "*_analysis_llm_*" -type f || echo "No merged files found"
           
-      - name: Copy generated LLM files to root directories for git tracking
+      - name: Copy generated LLM and merged files to root directories for git tracking
         run: |
           # Copy LLM reports from frontend public directory to root for git tracking
           if [ -d "stock-analysis-viewer/public/reports" ] && [ "$(ls -A stock-analysis-viewer/public/reports/*_llm_*.json 2>/dev/null)" ]; then
@@ -136,10 +138,26 @@ jobs:
             cp stock-analysis-viewer/public/reports/*_llm_*.json reports/ 2>/dev/null || true
             echo "LLM reports copied successfully"
           fi
-          
+
+          # Copy merged complete reports (these contain base + LLM data)
+          if [ -d "stock-analysis-viewer/public/reports" ]; then
+            echo "Copying merged complete reports from frontend to root directory..."
+            # Find complete reports that are NOT base files and NOT LLM-only files
+            find stock-analysis-viewer/public/reports -name "*_analysis_*.json" -not -name "*_analysis_base_*" -not -name "*_analysis_llm_*" -type f | while read file; do
+              if [ -f "$file" ]; then
+                cp "$file" reports/ 2>/dev/null || true
+                echo "Copied merged report: $(basename "$file")"
+              fi
+            done
+          fi
+
           # List what we now have in root directories
           echo "Root reports after copy:"
           ls -la reports/ || echo "No reports found"
+          echo "LLM files:"
+          ls -la reports/*_llm_*.json 2>/dev/null || echo "No LLM files found"
+          echo "Complete merged files:"
+          find reports -name "*_analysis_*.json" -not -name "*_analysis_base_*" -not -name "*_analysis_llm_*" -type f 2>/dev/null || echo "No merged files found"
       
       - name: Create placeholder files if LLM analysis failed
         run: |
@@ -148,28 +166,115 @@ jobs:
             echo '{"error": "LLM Analysis failed", "timestamp": "'$(date)'", "message": "LLM stock analysis could not be completed. Please check the logs and API keys."}' > reports/llm_placeholder.json
             cp reports/llm_placeholder.json stock-analysis-viewer/public/reports/
           fi
-      
-      # Commit the updated LLM data back to the repository
-      - name: Commit updated LLM data
+
+      - name: Clean up old LLM and merged files (keep last 14 days)
+        run: |
+          echo "Cleaning up old LLM and merged files older than 14 days..."
+
+          # Calculate cutoff date (14 days ago for weekly files)
+          CUTOFF_DATE=$(date -d '14 days ago' '+%Y%m%d' 2>/dev/null || date -v-14d '+%Y%m%d' 2>/dev/null || echo "20240101")
+          echo "Cutoff date: $CUTOFF_DATE"
+
+          # Function to clean specific file types
+          cleanup_llm_files() {
+            local dir="$1"
+            local description="$2"
+
+            if [ -d "$dir" ]; then
+              echo "Cleaning $description in $dir..."
+
+              # Clean LLM files
+              find "$dir" -name "*_llm_*.json" -type f | while read file; do
+                filename=$(basename "$file")
+
+                # Extract date from filename
+                file_date=""
+                if [[ "$filename" =~ _([0-9]{8})_[0-9]{6} ]]; then
+                  file_date="${BASH_REMATCH[1]}"
+                elif [[ "$filename" =~ _([0-9]{4}-[0-9]{2}-[0-9]{2}) ]]; then
+                  file_date=$(echo "${BASH_REMATCH[1]}" | tr -d '-')
+                elif [[ "$filename" =~ _([0-9]{8}) ]]; then
+                  file_date="${BASH_REMATCH[1]}"
+                fi
+
+                if [ -n "$file_date" ] && [ "$file_date" -lt "$CUTOFF_DATE" ]; then
+                  echo "Deleting old LLM file: $file (date: $file_date)"
+                  rm -f "$file"
+                else
+                  echo "Keeping LLM file: $file (date: $file_date)"
+                fi
+              done
+
+              # Clean merged complete files (but keep base files longer)
+              find "$dir" -name "*_analysis_*.json" -not -name "*_analysis_base_*" -not -name "*_analysis_llm_*" -type f | while read file; do
+                filename=$(basename "$file")
+
+                # Extract date from filename
+                file_date=""
+                if [[ "$filename" =~ _([0-9]{8})_[0-9]{6} ]]; then
+                  file_date="${BASH_REMATCH[1]}"
+                elif [[ "$filename" =~ _([0-9]{4}-[0-9]{2}-[0-9]{2}) ]]; then
+                  file_date=$(echo "${BASH_REMATCH[1]}" | tr -d '-')
+                elif [[ "$filename" =~ _([0-9]{8}) ]]; then
+                  file_date="${BASH_REMATCH[1]}"
+                fi
+
+                if [ -n "$file_date" ] && [ "$file_date" -lt "$CUTOFF_DATE" ]; then
+                  echo "Deleting old merged file: $file (date: $file_date)"
+                  rm -f "$file"
+                else
+                  echo "Keeping merged file: $file (date: $file_date)"
+                fi
+              done
+            else
+              echo "Directory $dir does not exist, skipping cleanup"
+            fi
+          }
+
+          # Clean up LLM and merged files (but preserve base files)
+          cleanup_llm_files "reports" "LLM and merged reports"
+          cleanup_llm_files "stock-analysis-viewer/public/reports" "frontend LLM and merged reports"
+
+          # Show remaining files
+          echo "Remaining LLM files after cleanup:"
+          find reports -name "*_llm_*.json" -type f 2>/dev/null | head -10 || echo "No LLM files found"
+          echo "Remaining merged files after cleanup:"
+          find reports -name "*_analysis_*.json" -not -name "*_analysis_base_*" -not -name "*_analysis_llm_*" -type f 2>/dev/null | head -10 || echo "No merged files found"
+
+      # Commit the updated LLM and merged data back to the repository
+      - name: Commit updated LLM and merged data with cleanup
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          # Add LLM reports
-          git add reports/*_llm_*.json stock-analysis-viewer/public/reports/*_llm_*.json reports/llm_placeholder.json stock-analysis-viewer/public/reports/llm_placeholder.json || true
+
+          # Add new LLM reports and merged complete reports
+          git add reports/*_llm_*.json stock-analysis-viewer/public/reports/*_llm_*.json || true
+          git add reports/*_analysis_*.json stock-analysis-viewer/public/reports/*_analysis_*.json || true
+          git add reports/llm_placeholder.json stock-analysis-viewer/public/reports/llm_placeholder.json || true
+
+          # Stage any deleted files (cleanup)
+          git add -u reports/ stock-analysis-viewer/public/reports/ || true
+
           if git diff --cached --quiet; then
-            echo "No LLM changes to commit"
+            echo "No LLM or merged changes to commit"
           else
-            git commit -m "Auto-update LLM stock analysis data (weekly) [skip ci]"
+            # Check what changes we're committing
+            echo "Changes to be committed:"
+            git diff --cached --name-status
+
+            git commit -m "Auto-update LLM analysis and merged reports (weekly) and cleanup old files [skip ci]"
             git push
           fi
       
-      - name: Upload LLM analysis artifacts
+      - name: Upload LLM and merged analysis artifacts
         uses: actions/upload-artifact@v4
         with:
           name: llm-stock-analysis-data
           path: |
             reports/*_llm_*.json
+            reports/*_analysis_*.json
             stock-analysis-viewer/public/reports/*_llm_*.json
+            stock-analysis-viewer/public/reports/*_analysis_*.json
           if-no-files-found: warn
 
   deploy-github-pages:
@@ -193,11 +298,11 @@ jobs:
           path: ./
         continue-on-error: true
       
-      - name: Sync LLM reports to frontend
+      - name: Sync LLM and merged reports to frontend
         run: |
           # Ensure frontend directories exist
           mkdir -p stock-analysis-viewer/public/reports
-          
+
           # Copy LLM files from downloaded artifacts (if any) to frontend
           if [ "$(ls -A reports/*_llm_*.json 2>/dev/null)" ]; then
             cp reports/*_llm_*.json stock-analysis-viewer/public/reports/ 2>/dev/null || true
@@ -205,12 +310,24 @@ jobs:
           else
             echo "No LLM reports in artifacts to copy"
           fi
-          
+
+          # Copy merged complete files from downloaded artifacts (if any) to frontend
+          if [ "$(find reports -name "*_analysis_*.json" -not -name "*_analysis_base_*" -not -name "*_analysis_llm_*" -type f 2>/dev/null)" ]; then
+            find reports -name "*_analysis_*.json" -not -name "*_analysis_base_*" -not -name "*_analysis_llm_*" -type f | while read file; do
+              cp "$file" stock-analysis-viewer/public/reports/ 2>/dev/null || true
+              echo "Copied merged report: $(basename "$file")"
+            done
+          else
+            echo "No merged reports in artifacts to copy"
+          fi
+
           # List final frontend directory contents
           echo "Final frontend reports:"
           ls -la stock-analysis-viewer/public/reports/ || echo "No frontend reports"
           echo "LLM files specifically:"
           find stock-analysis-viewer/public/reports -name "*_llm_*.json" -type f || echo "No LLM files found"
+          echo "Complete merged files:"
+          find stock-analysis-viewer/public/reports -name "*_analysis_*.json" -not -name "*_analysis_base_*" -not -name "*_analysis_llm_*" -type f || echo "No merged files found"
           
           # Update data manifest for the frontend
           echo "Updating data manifest..."

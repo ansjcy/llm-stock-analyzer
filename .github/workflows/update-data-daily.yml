@@ -103,18 +103,99 @@ jobs:
             touch charts/placeholder.txt
             echo "Charts will be available after successful analysis" > charts/placeholder.txt
           fi
-      
+
+      - name: Clean up outdated files (keep last 7 days)
+        run: |
+          echo "Cleaning up files older than 7 days..."
+
+          # Calculate cutoff date (7 days ago)
+          CUTOFF_DATE=$(date -d '7 days ago' '+%Y%m%d' 2>/dev/null || date -v-7d '+%Y%m%d' 2>/dev/null || echo "20240101")
+          echo "Cutoff date: $CUTOFF_DATE"
+
+          # Function to clean files in a directory
+          cleanup_directory() {
+            local dir="$1"
+            local file_pattern="$2"
+            local description="$3"
+
+            if [ -d "$dir" ]; then
+              echo "Cleaning $description in $dir..."
+
+              # Find and list files to be deleted
+              find "$dir" -name "$file_pattern" -type f | while read file; do
+                # Extract date from filename (assuming format: *_YYYYMMDD_* or *_YYYY-MM-DD_*)
+                filename=$(basename "$file")
+
+                # Try different date extraction patterns
+                file_date=""
+
+                # Pattern 1: YYYYMMDD_HHMMSS format
+                if [[ "$filename" =~ _([0-9]{8})_[0-9]{6} ]]; then
+                  file_date="${BASH_REMATCH[1]}"
+                # Pattern 2: YYYY-MM-DD format
+                elif [[ "$filename" =~ _([0-9]{4}-[0-9]{2}-[0-9]{2}) ]]; then
+                  file_date=$(echo "${BASH_REMATCH[1]}" | tr -d '-')
+                # Pattern 3: YYYYMMDD format
+                elif [[ "$filename" =~ _([0-9]{8}) ]]; then
+                  file_date="${BASH_REMATCH[1]}"
+                fi
+
+                # Delete if file is older than cutoff date
+                if [ -n "$file_date" ] && [ "$file_date" -lt "$CUTOFF_DATE" ]; then
+                  echo "Deleting old file: $file (date: $file_date)"
+                  rm -f "$file"
+                else
+                  echo "Keeping file: $file (date: $file_date)"
+                fi
+              done
+            else
+              echo "Directory $dir does not exist, skipping cleanup"
+            fi
+          }
+
+          # Clean up different file types
+          cleanup_directory "reports" "*_analysis_*.json" "analysis reports"
+          cleanup_directory "reports" "*.json" "JSON reports"
+          cleanup_directory "charts" "*.png" "chart images"
+          cleanup_directory "charts" "*.jpg" "chart images"
+          cleanup_directory "charts" "*.svg" "chart images"
+          cleanup_directory "stock-analysis-viewer/public/reports" "*_analysis_*.json" "frontend analysis reports"
+          cleanup_directory "stock-analysis-viewer/public/reports" "*.json" "frontend JSON reports"
+          cleanup_directory "stock-analysis-viewer/public/charts" "*.png" "frontend chart images"
+          cleanup_directory "stock-analysis-viewer/public/charts" "*.jpg" "frontend chart images"
+          cleanup_directory "stock-analysis-viewer/public/charts" "*.svg" "frontend chart images"
+
+          # Show remaining files
+          echo "Remaining files after cleanup:"
+          echo "Reports directory:"
+          ls -la reports/ 2>/dev/null | head -20 || echo "No reports directory"
+          echo "Charts directory:"
+          ls -la charts/ 2>/dev/null | head -10 || echo "No charts directory"
+          echo "Frontend reports directory:"
+          ls -la stock-analysis-viewer/public/reports/ 2>/dev/null | head -20 || echo "No frontend reports directory"
+          echo "Frontend charts directory:"
+          ls -la stock-analysis-viewer/public/charts/ 2>/dev/null | head -10 || echo "No frontend charts directory"
+
       # Commit the updated data back to the repository
-      - name: Commit updated data
+      - name: Commit updated data and cleanup
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          # Add both root directories and frontend public directories
+
+          # Add new files and stage deletions
           git add reports/ charts/ stock-analysis-viewer/public/reports/ stock-analysis-viewer/public/charts/ || true
+
+          # Stage any deleted files (cleanup)
+          git add -u reports/ charts/ stock-analysis-viewer/public/reports/ stock-analysis-viewer/public/charts/ || true
+
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Auto-update base stock analysis data (daily) [skip ci]"
+            # Check what changes we're committing
+            echo "Changes to be committed:"
+            git diff --cached --name-status
+
+            git commit -m "Auto-update base stock analysis data (daily) and cleanup old files [skip ci]"
             git push
           fi
       

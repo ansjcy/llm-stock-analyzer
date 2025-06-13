@@ -1,17 +1,26 @@
-name: Update Stock Analysis and Deploy to GitHub Pages (Legacy - Disabled)
+name: Update Stock Analysis and Deploy to GitHub Pages (Legacy - Enhanced)
 
-# Disabled - replaced by split daily/weekly workflows
+# Legacy workflow with enhanced support for both base-only and full analysis
 on:
   workflow_dispatch:
     inputs:
+      analysis_mode:
+        description: 'Analysis mode to run'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - 'full'
+          - 'base-only'
+          - 'llm-only'
       force_run:
-        description: 'Force run this legacy workflow (not recommended)'
+        description: 'Force run this legacy workflow'
         required: false
         default: 'false'
   push:
     branches: [main]
     paths: ['src/**', 'requirements.txt', 'stock-analysis-viewer/**']
-# Original triggers (disabled):
+# Original triggers (disabled - use daily/weekly workflows instead):
 #   schedule:
 #     # Run at 1:00 PM (13:00 UTC) Monday to Friday
 #     - cron: '0 13 * * 1-5'
@@ -49,7 +58,27 @@ jobs:
           mkdir -p charts
           mkdir -p logs
       
-      - name: Run stock analysis
+      - name: Run stock analysis (Base-only mode)
+        if: ${{ github.event.inputs.analysis_mode == 'base-only' || github.event.inputs.analysis_mode == '' }}
+        run: |
+          python src/main.py --ticker AMZN,AAPL,GOOGL,DIS,KO,MSFT,NFLX,AVGO,SPY,QQQ,NVDA,TSLA --chinese --charts --save-report --format json --non-llm-only
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          CACHE_DURATION: "3600"
+          FUNDAMENTAL_ANALYSIS_ENABLED: "true"
+          LOG_LEVEL: "INFO"
+          NEWS_ANALYSIS_ENABLED: "true"
+          NODE_ENV: "production"
+          SAVE_REPORTS: "true"
+          SENTIMENT_ANALYSIS_ENABLED: "false"
+          SINA_FINANCE_ENABLED: "true"
+          TECHNICAL_ANALYSIS_PERIOD: "252"
+          USE_CACHE: "true"
+          YAHOO_FINANCE_ENABLED: "true"
+        continue-on-error: true
+
+      - name: Run stock analysis (Full mode with LLM)
+        if: ${{ github.event.inputs.analysis_mode == 'full' }}
         run: |
           python src/main.py --ticker AMZN,AAPL,GOOGL,DIS,KO,MSFT,NFLX,AVGO,SPY,QQQ,NVDA,TSLA --chinese --charts --save-report --format json
         env:
@@ -67,7 +96,54 @@ jobs:
           TECHNICAL_ANALYSIS_PERIOD: "252"
           USE_CACHE: "true"
           YAHOO_FINANCE_ENABLED: "true"
+        continue-on-error: true
 
+      - name: Run LLM-only analysis (Enhanced mode)
+        if: ${{ github.event.inputs.analysis_mode == 'llm-only' }}
+        run: |
+          # Define tickers
+          TICKERS="AMZN AAPL GOOGL DIS KO MSFT NFLX AVGO SPY QQQ NVDA TSLA"
+
+          echo "Running LLM-only analysis with enhanced merging..."
+
+          for ticker in $TICKERS; do
+            # Find the most recent base file for this ticker
+            LATEST_FILE=$(find stock-analysis-viewer/public/reports -name "${ticker}_analysis_base_*.json" -type f | sort -r | head -1)
+            if [ -n "$LATEST_FILE" ]; then
+              echo "Processing LLM analysis for $ticker using: $LATEST_FILE"
+
+              # Run enhanced LLM-only mode (creates both LLM and merged files)
+              timeout 480 python src/main.py --llm-only --base-data-path "$LATEST_FILE" --save-report --format json --chinese || {
+                echo "LLM analysis for $ticker timed out or failed"
+                # Create error file for this ticker
+                echo "{\"error\": \"LLM analysis timeout\", \"ticker\": \"$ticker\", \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > "stock-analysis-viewer/public/reports/${ticker}_llm_error_$(date +%Y%m%d_%H%M%S).json"
+              }
+            else
+              echo "Warning: No base file found for $ticker - skipping LLM analysis"
+            fi
+          done
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
+          CACHE_DURATION: "3600"
+          DEFAULT_LLM_PROVIDER: "gemini"
+          FUNDAMENTAL_ANALYSIS_ENABLED: "true"
+          LOG_LEVEL: "INFO"
+          NEWS_ANALYSIS_ENABLED: "true"
+          NODE_ENV: "production"
+          SAVE_REPORTS: "true"
+          SENTIMENT_ANALYSIS_ENABLED: "true"
+          SINA_FINANCE_ENABLED: "true"
+          TECHNICAL_ANALYSIS_PERIOD: "252"
+          USE_CACHE: "true"
+          YAHOO_FINANCE_ENABLED: "true"
+          # Timeout configurations
+          GEMINI_RETRY_MAX_ATTEMPTS: "4"
+          GEMINI_RETRY_BASE_DELAY: "0.5"
+          GEMINI_RETRY_MAX_DELAY: "10"
+          GEMINI_KEY_WAIT_TIMEOUT: "30"
+          LLM_ANALYSIS_TIMEOUT: "180"
+          LLM_TOTAL_TIMEOUT: "1200"
         continue-on-error: true
       
       - name: List generated files
@@ -80,6 +156,21 @@ jobs:
           ls -la stock-analysis-viewer/public/reports/ || echo "No frontend reports directory"
           echo "Frontend charts directory:"
           ls -la stock-analysis-viewer/public/charts/ || echo "No frontend charts directory"
+
+          # Show different file types based on analysis mode
+          echo "Analysis mode: ${{ github.event.inputs.analysis_mode }}"
+          if [ "${{ github.event.inputs.analysis_mode }}" = "base-only" ]; then
+            echo "Base files generated:"
+            find stock-analysis-viewer/public/reports -name "*_analysis_base_*.json" -type f || echo "No base files found"
+          elif [ "${{ github.event.inputs.analysis_mode }}" = "llm-only" ]; then
+            echo "LLM files generated:"
+            find stock-analysis-viewer/public/reports -name "*_llm_*.json" -type f || echo "No LLM files found"
+            echo "Complete merged files generated:"
+            find stock-analysis-viewer/public/reports -name "*_analysis_*.json" -not -name "*_analysis_base_*" -not -name "*_analysis_llm_*" -type f || echo "No merged files found"
+          else
+            echo "Complete analysis files generated:"
+            find stock-analysis-viewer/public/reports -name "*_analysis_*.json" -type f || echo "No analysis files found"
+          fi
           
       - name: Copy generated files to root directories for git tracking
         run: |
@@ -124,7 +215,16 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Auto-update stock analysis data [skip ci]"
+            ANALYSIS_MODE="${{ github.event.inputs.analysis_mode }}"
+            if [ "$ANALYSIS_MODE" = "base-only" ]; then
+              git commit -m "Auto-update base stock analysis data (legacy workflow) [skip ci]"
+            elif [ "$ANALYSIS_MODE" = "llm-only" ]; then
+              git commit -m "Auto-update LLM analysis and merged reports (legacy workflow) [skip ci]"
+            elif [ "$ANALYSIS_MODE" = "full" ]; then
+              git commit -m "Auto-update complete stock analysis data (legacy workflow) [skip ci]"
+            else
+              git commit -m "Auto-update stock analysis data (legacy workflow) [skip ci]"
+            fi
             git push
           fi
       
@@ -189,13 +289,18 @@ jobs:
           
           # Create a data manifest for the frontend
           echo "Creating data manifest..."
+          ANALYSIS_MODE="${{ github.event.inputs.analysis_mode }}"
           cat > stock-analysis-viewer/public/manifest.json << EOF
           {
             "lastUpdated": "$(date -u '+%Y-%m-%dT%H:%M:%S.%3NZ')",
             "ticker": "AMZN",
+            "analysisMode": "${ANALYSIS_MODE:-full}",
             "reports": $(find stock-analysis-viewer/public/reports -name "*.json" 2>/dev/null | jq -R -s -c 'split("\n")[:-1] | map(gsub("stock-analysis-viewer/public/reports/"; ""))' || echo '[]'),
             "charts": $(find stock-analysis-viewer/public/charts -type f 2>/dev/null | jq -R -s -c 'split("\n")[:-1] | map(gsub("stock-analysis-viewer/public/charts/"; ""))' || echo '[]'),
-            "status": "$([ -f "reports/placeholder.json" ] && echo "failed" || echo "success")"
+            "status": "$([ -f "reports/placeholder.json" ] && echo "failed" || echo "success")",
+            "baseFiles": $(find stock-analysis-viewer/public/reports -name "*_analysis_base_*.json" 2>/dev/null | jq -R -s -c 'split("\n")[:-1] | map(gsub("stock-analysis-viewer/public/reports/"; ""))' || echo '[]'),
+            "llmFiles": $(find stock-analysis-viewer/public/reports -name "*_llm_*.json" 2>/dev/null | jq -R -s -c 'split("\n")[:-1] | map(gsub("stock-analysis-viewer/public/reports/"; ""))' || echo '[]'),
+            "mergedFiles": $(find stock-analysis-viewer/public/reports -name "*_analysis_*.json" -not -name "*_analysis_base_*" -not -name "*_analysis_llm_*" 2>/dev/null | jq -R -s -c 'split("\n")[:-1] | map(gsub("stock-analysis-viewer/public/reports/"; ""))' || echo '[]')
           }
           EOF
       

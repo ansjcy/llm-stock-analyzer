@@ -90,7 +90,11 @@ export default function InsightsSummaryTable({
     }
   };
 
-  const getSignalColor = (signal: string) => {
+  const getSignalColor = (signal: string | undefined | null) => {
+    if (!signal) {
+      return 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300';
+    }
+
     switch (signal.toLowerCase()) {
       case 'buy':
       case 'strong_buy':
@@ -112,7 +116,11 @@ export default function InsightsSummaryTable({
     }
   };
 
-  const getSignalIcon = (signal: string) => {
+  const getSignalIcon = (signal: string | undefined | null) => {
+    if (!signal) {
+      return <Activity size={16} />;
+    }
+
     switch (signal.toLowerCase()) {
       case 'buy':
       case 'strong_buy':
@@ -129,7 +137,11 @@ export default function InsightsSummaryTable({
     }
   };
 
-  const formatSignalText = (signal: string) => {
+  const formatSignalText = (signal: string | undefined | null) => {
+    if (!signal) {
+      return '未知';
+    }
+
     const signalTranslations: { [key: string]: string } = {
       'buy': '买入',
       'strong_buy': '强烈买入',
@@ -138,7 +150,7 @@ export default function InsightsSummaryTable({
       'hold': '持有',
       'neutral': '中性'
     };
-    
+
     return signalTranslations[signal.toLowerCase()] || signal;
   };
 
@@ -157,10 +169,21 @@ export default function InsightsSummaryTable({
     return `$${value.toFixed(2)}`;
   };
 
-  const getScoreColor = (percentage: number) => {
+  const getScoreColor = (percentage: number | undefined | null) => {
+    if (!percentage && percentage !== 0) return 'text-gray-600 dark:text-gray-400';
     if (percentage >= 80) return 'text-green-600 dark:text-green-400';
     if (percentage >= 60) return 'text-yellow-600 dark:text-yellow-400';
     return 'text-red-600 dark:text-red-400';
+  };
+
+  const formatPercentage = (value: number | undefined | null, decimals: number = 1) => {
+    if (!value && value !== 0) return 'N/A';
+    return `${value.toFixed(decimals)}%`;
+  };
+
+  const formatNumber = (value: number | undefined | null, decimals: number = 2) => {
+    if (!value && value !== 0) return 'N/A';
+    return value.toFixed(decimals);
   };
 
   return (
@@ -276,7 +299,7 @@ export default function InsightsSummaryTable({
                 </div>
                 <div className="text-right">
                   <div className={`text-lg font-bold ${getScoreColor(warrenBuffettAnalysis.score_percentage)}`}>
-                    {warrenBuffettAnalysis.score_percentage.toFixed(1)}%
+                    {formatPercentage(warrenBuffettAnalysis.score_percentage)}
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-500">
                     质量评分
@@ -284,7 +307,7 @@ export default function InsightsSummaryTable({
                 </div>
                 <div className="text-right">
                   <div className="text-sm font-semibold text-purple-600 dark:text-purple-400">
-                    {warrenBuffettAnalysis.confidence.toFixed(1)}%
+                    {formatPercentage(warrenBuffettAnalysis.confidence)}
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-500">
                     信心度
@@ -337,7 +360,7 @@ export default function InsightsSummaryTable({
                 </div>
                 <div className="text-right">
                   <div className={`text-lg font-bold ${getScoreColor(peterLynchAnalysis.score_percentage)}`}>
-                    {peterLynchAnalysis.score_percentage.toFixed(1)}%
+                    {formatPercentage(peterLynchAnalysis.score_percentage)}
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-500">
                     GARP评分
@@ -345,7 +368,7 @@ export default function InsightsSummaryTable({
                 </div>
                 <div className="text-right">
                   <div className="text-sm font-semibold text-purple-600 dark:text-purple-400">
-                    {peterLynchAnalysis.confidence.toFixed(1)}%
+                    {formatPercentage(peterLynchAnalysis.confidence)}
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-500">
                     信心度
@@ -354,7 +377,7 @@ export default function InsightsSummaryTable({
                 {peterLynchAnalysis.garp_analysis?.metrics?.peg_ratio && (
                   <div className="text-right">
                     <div className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-                      {peterLynchAnalysis.garp_analysis.metrics.peg_ratio.toFixed(2)}
+                      {formatNumber(peterLynchAnalysis.garp_analysis.metrics.peg_ratio, 2)}
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-500">
                       PEG比率

@@ -34,49 +34,121 @@ export async function GET() {
         const type = newMatch[2]; // 'base' or 'llm'
         const date = newMatch[3];
         const time = newMatch[4];
+        const timestamp = `${date}_${time}`;
 
         if (!reportGroups[ticker]) {
           reportGroups[ticker] = {
             ticker,
             date,
             time,
+            timestamp,
             baseFile: null,
             llmFile: null,
-            hasComplete: false
+            hasComplete: false,
+            allFiles: []
           };
         }
 
-        if (type === 'base') {
-          reportGroups[ticker].baseFile = {
-            filename: file,
-            fullPath: `${basePath}/reports/${file}`,
-            date,
-            time
-          };
-        } else if (type === 'llm') {
-          reportGroups[ticker].llmFile = {
-            filename: file,
-            fullPath: `${basePath}/reports/${file}`,
-            date,
-            time
-          };
-        }
+        // Store all files for this ticker
+        reportGroups[ticker].allFiles.push({
+          filename: file,
+          fullPath: `${basePath}/reports/${file}`,
+          date,
+          time,
+          timestamp,
+          type
+        });
 
         // Update group timestamp to latest
-        if (date > reportGroups[ticker].date || (date === reportGroups[ticker].date && time > reportGroups[ticker].time)) {
+        if (timestamp > reportGroups[ticker].timestamp) {
           reportGroups[ticker].date = date;
           reportGroups[ticker].time = time;
+          reportGroups[ticker].timestamp = timestamp;
         }
-
-        // Check if we have both files
-        reportGroups[ticker].hasComplete = !!(reportGroups[ticker].baseFile && reportGroups[ticker].llmFile);
-
       }
       // Legacy files have been removed, only process base and LLM files
     });
 
-    // Convert to array and sort by date/time
-    const reports = Object.values(reportGroups).sort((a: any, b: any) => {
+    // Now process each ticker to find the best files (prefer files with data over latest timestamp)
+    for (const ticker of Object.keys(reportGroups)) {
+      const group = reportGroups[ticker];
+
+      // Sort files by timestamp (latest first)
+      group.allFiles.sort((a: any, b: any) => b.timestamp.localeCompare(a.timestamp));
+
+      // Find the best base file (prefer files with actual data)
+      let bestBaseFile = null;
+      for (const file of group.allFiles.filter((f: any) => f.type === 'base')) {
+        try {
+          const filePath = path.join(process.cwd(), 'public', 'reports', file.filename);
+          const fileContent = await fs.readFile(filePath, 'utf8');
+          const fileData = JSON.parse(fileContent);
+
+          // Check if this file has meaningful data
+          const hasValidStockInfo = fileData.stock_info && (
+            fileData.stock_info.current_price ||
+            fileData.stock_info.market_cap ||
+            fileData.stock_info.name
+          );
+
+          const hasValidTechnicalAnalysis = fileData.technical_analysis && (
+            fileData.technical_analysis.overall_signal ||
+            fileData.technical_analysis.moving_averages ||
+            fileData.technical_analysis.momentum
+          );
+
+          if (hasValidStockInfo || hasValidTechnicalAnalysis) {
+            bestBaseFile = file;
+            break; // Use the first (latest) file with valid data
+          }
+        } catch (error) {
+          console.error(`Error reading file ${file.filename}:`, error);
+        }
+      }
+
+      // If no file with data found, use the latest file anyway
+      if (!bestBaseFile) {
+        bestBaseFile = group.allFiles.find((f: any) => f.type === 'base');
+      }
+
+      // Find the latest LLM file (timestamp-based since LLM files are usually smaller)
+      const latestLlmFile = group.allFiles.find((f: any) => f.type === 'llm');
+
+      if (bestBaseFile) {
+        group.baseFile = {
+          filename: bestBaseFile.filename,
+          fullPath: bestBaseFile.fullPath,
+          date: bestBaseFile.date,
+          time: bestBaseFile.time
+        };
+
+        // Update group timestamp to match the selected base file
+        group.date = bestBaseFile.date;
+        group.time = bestBaseFile.time;
+      }
+
+      if (latestLlmFile) {
+        group.llmFile = {
+          filename: latestLlmFile.filename,
+          fullPath: latestLlmFile.fullPath,
+          date: latestLlmFile.date,
+          time: latestLlmFile.time
+        };
+      }
+
+      // Check if we have both files
+      group.hasComplete = !!(group.baseFile && group.llmFile);
+
+      // Clean up temporary data
+      delete group.allFiles;
+      delete group.timestamp;
+    }
+
+    // Convert to array (validation already done during file selection)
+    const validReports = Object.values(reportGroups).filter((group: any) => group.baseFile);
+
+    // Sort by date/time (latest first)
+    const reports = validReports.sort((a: any, b: any) => {
       if (a.date !== b.date) return b.date.localeCompare(a.date);
       return b.time.localeCompare(a.time);
     });
